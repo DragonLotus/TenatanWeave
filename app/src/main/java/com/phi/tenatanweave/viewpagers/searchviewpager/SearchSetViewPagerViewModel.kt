@@ -3,45 +3,61 @@ package com.phi.tenatanweave.viewpagers.searchviewpager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.phi.tenatanweave.data.ExpansionSet
 import com.phi.tenatanweave.data.enums.SetEnum
 
 class SearchSetViewPagerViewModel : ViewModel() {
+    private val mExpansionSetMap = MutableLiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>>().apply {
+        value = mutableMapOf()
+    }
+    val expansionSetMap: LiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>> = mExpansionSetMap
 
     private val mSetMasterList = SetEnum.values().toMutableList()
 
-    private val mSetDisplayList = MutableLiveData<MutableList<SetEnum>>().apply {
-        value = mutableListOf()
+    private val mExpansionSetDisplayMap = MutableLiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>>().apply {
+        value = mutableMapOf()
     }
-    val setList: LiveData<MutableList<SetEnum>> = mSetDisplayList
+    val expansionSetDisplayMap: LiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>> = mExpansionSetDisplayMap
 
     val setNameQuery : StringBuilder = StringBuilder()
 
     init {
-        mSetDisplayList.value?.addAll(mSetMasterList)
-        mSetDisplayList.notifyObserver()
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {
         this.value = this.value
     }
 
+    fun setExpansionSetMap(newExpansionSetMap : MutableMap<ExpansionSet, MutableSet<ExpansionSet>>){
+        mExpansionSetMap.value?.clear()
+        mExpansionSetMap.value?.putAll(newExpansionSetMap)
+        mExpansionSetDisplayMap.value?.clear()
+        mExpansionSetDisplayMap.value?.putAll(newExpansionSetMap)
+        mExpansionSetDisplayMap.notifyObserver()
+    }
+
     fun filterSetByName(searchText: String){
         //Save query for re-filtering
-        mSetDisplayList.value?.clear()
+        mExpansionSetDisplayMap.value?.clear()
         setNameQuery.clear()
         setNameQuery.append(searchText.replace("[^a-zA-Z0-9]", "").toLowerCase())
-        for(set in mSetMasterList){
-            if(set.toString().replace("[^a-zA-Z0-9]", "").toLowerCase().contains(setNameQuery))
-                mSetDisplayList.value?.add(set)
+
+        for((key, value) in mExpansionSetMap.value!!){
+            if(key.name.replace("[^a-zA-Z0-9]", "").toLowerCase().contains(setNameQuery))
+                mExpansionSetDisplayMap.value?.put(key, value)
+            else
+                for(expansionSet in value)
+                    if(expansionSet.name.replace("[^a-zA-Z0-9]", "").toLowerCase().contains(setNameQuery))
+                        mExpansionSetDisplayMap.value?.put(key,value)
         }
-        mSetDisplayList.notifyObserver()
+        mExpansionSetDisplayMap.notifyObserver()
     }
 
     fun reset(){
-        mSetDisplayList.value?.clear()
+        mExpansionSetDisplayMap.value?.clear()
         setNameQuery.clear()
-        mSetDisplayList.value?.addAll(mSetMasterList)
-        mSetDisplayList.notifyObserver()
+        mExpansionSetDisplayMap.value?.putAll(mExpansionSetMap.value!!)
+        mExpansionSetDisplayMap.notifyObserver()
     }
 
 }
