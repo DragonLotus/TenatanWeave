@@ -35,11 +35,19 @@ class SearchSetViewPagerFragment : Fragment() {
 //            val textView: TextView = view.findViewById(R.id.searchViewCardText)
 //            textView.text = getInt("object").toString()
 //        }
+        val setRecyclerView: RecyclerView = view.findViewById(R.id.set_list_recycler_view)
+
+        searchCardResultViewModel.expansionSetMap.observe(viewLifecycleOwner, {
+            searchSetViewPagerViewModel.setExpansionSetMap(it)
+        })
+
+        searchSetViewPagerViewModel.expansionSetDisplayMap.observe(viewLifecycleOwner, {
+            (setRecyclerView.adapter as SetRecyclerAdapter).notifyDataSetChangedAndUpdate()
+        })
 
         val linearLayoutManager = LinearLayoutManager(context)
-        val setRecyclerView: RecyclerView = view.findViewById(R.id.set_list_recycler_view)
         setRecyclerView.adapter =
-            SetRecyclerAdapter(requireContext(), searchCardResultViewModel.expansionSetMap.value!!, {
+            SetRecyclerAdapter(requireContext(), searchSetViewPagerViewModel.expansionSetDisplayMap.value!!, {
                 val expansionSet =
                     (setRecyclerView.adapter as SetRecyclerAdapter).getList()[setRecyclerView.getChildLayoutPosition(it)]
                 searchCardResultViewModel.filterCardsBySet(expansionSet.setCode)
@@ -63,9 +71,6 @@ class SearchSetViewPagerFragment : Fragment() {
             })
         setRecyclerView.layoutManager = linearLayoutManager
 
-        searchCardResultViewModel.expansionSetMap.observe(viewLifecycleOwner, {
-            (setRecyclerView.adapter!! as SetRecyclerAdapter).notifyDataSetChangedAndUpdate()
-        })
     }
 
     companion object {
