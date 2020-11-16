@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="wrap_content"
+                                                   android:layout_height="wrap_content" android:clipToPadding="false"
+                                                   android:clipChildren="false">
+    <ImageView
+            android:id="@+id/card_image"
+            android:src="@drawable/card_placeholder"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+
+    <TextView
+            android:id="@+id/card_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="@id/card_image"
+            app:layout_constraintStart_toEndOf="@id/card_image"
+            app:layout_constraintBottom_toTopOf="@id/card_textview"/>
+
+    <TextView
+            android:id="@+id/card_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/card_image"
+            app:layout_constraintTop_toBottomOf="@id/card_name"
+            app:layout_constraintBottom_toBottomOf="@id/card_text2"/>
+
+    <TextView
+            android:id="@+id/card_text2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/card_image"
+            app:layout_constraintTop_toBottomOf="@id/card_textview"
+            app:layout_constraintBottom_toBottomOf="@id/card_image"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

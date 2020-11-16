@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <data>
+        <variable
+                name="viewmodel"
+                type="com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel"/>
+        <import type="com.phi.tenatanweave.R"/>
+        <import type="com.phi.tenatanweave.data.enums.CompareTypeEnum"/>
+        <import type="com.phi.tenatanweave.data.enums.CompareEnum"/>
+        <import type="android.view.View"/>
+    </data>
+    <com.phi.tenatanweave.customviews.DisabledScrollView
+            android:id="@+id/search_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/search_options_constraint_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false">
+            <TextView
+                    android:id="@+id/class_spinner_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_class"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toTopOf="@id/include_generic_checkbox"
+                    app:layout_constraintBottom_toBottomOf="@id/include_generic_checkbox"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <Spinner
+                    android:id="@+id/class_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewmodel.classList}"
+                    android:selectedItemPosition="@={viewmodel.classSelection}"
+                    app:layout_constraintTop_toTopOf="@id/include_generic_checkbox"
+                    app:layout_constraintBottom_toBottomOf="@id/include_generic_checkbox"
+                    app:layout_constraintStart_toEndOf="@id/class_spinner_label"/>
+
+            <TextView
+                    android:id="@+id/include_generic_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_include_generic"
+                    android:textSize="16sp"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toTopOf="@id/include_generic_checkbox"
+                    app:layout_constraintBottom_toBottomOf="@id/include_generic_checkbox"
+                    app:layout_constraintEnd_toStartOf="@id/include_generic_checkbox"/>
+
+            <CheckBox
+                    android:id="@+id/include_generic_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@={viewmodel.includeGenerics}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/card_text_input_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:endIconMode="clear_text"
+                    android:hint="@string/card_text"
+                    app:layout_constraintTop_toBottomOf="@id/include_generic_checkbox"
+                    app:layout_constraintBottom_toTopOf="@id/type_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/card_text_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionGo"
+                        android:layout_marginHorizontal="8dp"
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/card_text_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/card_text_input_layout"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                    android:id="@+id/type_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_type"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toBottomOf="@id/card_text_input_layout"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/type_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/type_label"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                    android:id="@+id/subtype_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_subtype"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toBottomOf="@id/type_recyclerview"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subtype_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/subtype_label"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                    android:id="@+id/pitch_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_pitch"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subtype_recyclerview"
+                    app:layout_constraintBottom_toTopOf="@id/pitch_recyclerview"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/pitch_recyclerview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/pitch_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                    android:id="@+id/compare_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_compare"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/pitch_recyclerview"/>
+
+            <!--            <com.google.android.material.chip.Chip-->
+            <!--                    android:id="@+id/compare_type_chip"-->
+            <!--                    android:layout_width="100dp"-->
+            <!--                    android:layout_height="48dp"-->
+            <!--                    app:chipIconEnabled="true"-->
+            <!--                    app:chipIcon="@{(viewmodel.compareType == CompareTypeEnum.COST) ? @drawable/ic_resource : (viewmodel.compareType == CompareTypeEnum.POWER) ? @drawable/ic_power : @drawable/ic_defense }"-->
+            <!--                    app:chipBackgroundColor="@{(viewmodel.compareType == CompareTypeEnum.COST) ? @color/colorCost : (viewmodel.compareType == CompareTypeEnum.POWER) ? @color/colorPower : @color/colorDefense }"-->
+            <!--                    android:text="@{viewmodel.compareType.toString()}"-->
+            <!--                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"-->
+            <!--                    app:layout_constraintTop_toBottomOf="@id/compare_label"-->
+            <!--                    app:layout_constraintStart_toStartOf="parent"-->
+            <!--                    android:focusable="true"/>-->
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/compare_type_chip"
+                    android:layout_width="100dp"
+                    android:layout_height="48dp"
+                    android:context="@{context}"
+                    android:backgroundColor="@{(viewmodel.compareType == CompareTypeEnum.COST) ? R.color.colorCost : (viewmodel.compareType == CompareTypeEnum.POWER) ? R.color.colorPower : R.color.colorDefense }"
+                    android:text="@{viewmodel.compareType.toString()}"
+                    android:textColor="@color/white"
+                    app:cornerRadius="@dimen/chip_filter_corner_radius"
+                    app:layout_constraintTop_toBottomOf="@id/compare_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:focusable="true"/>
+
+            <!--            <com.google.android.material.chip.Chip-->
+            <!--                    android:id="@+id/compare_chip"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    app:chipBackgroundColor="@{(viewmodel.compare == CompareEnum.EQUAL) ? @color/colorEqual : (viewmodel.compare == CompareEnum.LESS_THAN) ? @color/colorLessThan : @color/colorGreaterThan }"-->
+            <!--                    android:textIsSelectable="false"-->
+            <!--                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"-->
+            <!--                    android:text="@{viewmodel.compare.toString()}"-->
+            <!--                    app:layout_constraintTop_toBottomOf="@id/compare_label"-->
+            <!--                    app:layout_constraintStart_toEndOf="@id/compare_type_chip"/>-->
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/compare_chip"
+                    android:layout_width="40dp"
+                    android:layout_height="48dp"
+                    android:textIsSelectable="false"
+                    app:backgroundTint="@color/colorEqual"
+                    app:cornerRadius="@dimen/chip_filter_corner_radius"
+                    android:text="@{viewmodel.compare.toString()}"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/compare_label"
+                    app:layout_constraintStart_toEndOf="@id/compare_type_chip"
+                    android:layout_marginHorizontal="8dp"/>
+
+            <EditText
+                    android:id="@+id/compare_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:maxLines="1"
+                    android:hint="@string/compare_hint"
+                    android:imeOptions="actionGo"
+                    android:text="@={``+ viewmodel.compareValue}"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/compare_label"
+                    app:layout_constraintStart_toEndOf="@id/compare_chip"
+                    android:layout_marginStart="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_compare_button"
+                    android:layout_width="80dp"
+                    android:layout_height="48dp"
+                    android:text="@string/label_add"
+                    app:cornerRadius="@dimen/chip_filter_corner_radius"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@id/compare_label"
+                    app:layout_constraintStart_toEndOf="@id/compare_edit_text"
+                    android:layout_marginStart="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/cost_recyclerview"
+                    android:layout_width="0dp"
+                    android:layout_height="128dp"
+                    android:visibility="@{viewmodel.compareListVisibility}"
+                    app:layout_constraintTop_toBottomOf="@id/add_compare_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/power_recyclerview"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/power_recyclerview"
+                    android:layout_width="0dp"
+                    android:layout_height="128dp"
+                    android:visibility="@{viewmodel.compareListVisibility}"
+                    app:layout_constraintTop_toBottomOf="@id/add_compare_button"
+                    app:layout_constraintStart_toEndOf="@id/cost_recyclerview"
+                    app:layout_constraintEnd_toStartOf="@id/defense_recyclerview"
+                    android:nestedScrollingEnabled="true"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/defense_recyclerview"
+                    android:layout_width="0dp"
+                    android:layout_height="128dp"
+                    android:visibility="@{viewmodel.compareListVisibility}"
+                    app:layout_constraintTop_toBottomOf="@id/add_compare_button"
+                    app:layout_constraintStart_toEndOf="@id/power_recyclerview"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:nestedScrollingEnabled="true"/>
+
+            <TextView
+                    android:id="@+id/rarity_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_rarity"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toBottomOf="@id/defense_recyclerview"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rarity_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/rarity_label"
+                    app:layout_constraintStart_toStartOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.phi.tenatanweave.customviews.DisabledScrollView>
+</layout>
+

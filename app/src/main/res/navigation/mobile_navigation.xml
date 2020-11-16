@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/mobile_navigation"
+            app:startDestination="@+id/navigation_home">
+
+    <fragment
+            android:id="@+id/navigation_home"
+            android:name="com.phi.tenatanweave.fragments.home.HomeFragment"
+            android:label="@string/title_home"
+            tools:layout="@layout/fragment_home">
+
+        <action
+                android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
+                app:destination="@id/navigation_home_second"/>
+    </fragment>
+    <fragment
+            android:id="@+id/navigation_home_second"
+            android:name="com.phi.tenatanweave.fragments.home.HomeSecondFragment"
+            android:label="@string/home_second"
+            tools:layout="@layout/fragment_home_second">
+        <action
+                android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
+                app:destination="@id/navigation_home"/>
+
+        <argument
+                android:name="myArg"
+                app:argType="string"/>
+    </fragment>
+
+    <fragment
+            android:id="@+id/navigation_search_card_result"
+            android:name="com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultFragment"
+            android:label="@string/title_search_card_result"
+            tools:layout="@layout/fragment_search_card_result"
+    >
+        <argument android:name="query" app:argType="string"/>
+        <action android:id="@+id/action_navigation_search_card_result_to_navigation_single_card"
+                app:destination="@id/navigation_single_card"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+            android:id="@+id/navigation_search"
+            android:name="com.phi.tenatanweave.fragments.search.SearchFragment"
+            android:label="@string/title_search"
+            tools:layout="@layout/fragment_search">
+
+        <action android:id="@+id/action_navigation_search_to_navigation_search_card_result"
+                app:destination="@id/navigation_search_card_result"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
+
+    </fragment>
+
+    <fragment
+            android:id="@+id/navigation_deck"
+            android:name="com.phi.tenatanweave.fragments.decks.DecksFragment"
+            android:label="@string/title_decks"
+            tools:layout="@layout/fragment_deck"/>
+
+    <fragment android:id="@+id/navigation_single_card"
+              android:name="com.phi.tenatanweave.fragments.singlecard.SingleCardFragment"
+              android:label="SingleCardFragment">
+        <argument android:name="clickedPosition" app:argType="integer"/>
+    </fragment>
+</navigation>

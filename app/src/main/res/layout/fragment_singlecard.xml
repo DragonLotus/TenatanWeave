@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/single_card_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+    >
+
+        <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"/>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ImageView
+                android:id="@+id/card_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/horizontal_placeholder"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                app:layout_constraintTop_toBottomOf="@id/app_bar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/card_detail_layout"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card_detail_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_image">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/resources_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+                <ImageView
+                        android:id="@+id/pitch_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="@dimen/single_card_icon_size"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+                <TextView
+                        android:id="@+id/cost_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/body_1"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toEndOf="@id/pitch_imageview"
+                        app:layout_constraintBottom_toBottomOf="@id/cost_imageview"
+                        app:layout_constraintTop_toTopOf="@id/cost_imageview"
+                />
+
+                <ImageView
+                        android:id="@+id/cost_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_resource"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintStart_toEndOf="@id/cost_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="6dp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/power_defense_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/resources_layout"
+                    app:layout_constraintStart_toStartOf="parent">
+                <TextView
+                        android:id="@+id/power_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/body_1"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/power_imageview"
+                        app:layout_constraintTop_toTopOf="@id/power_imageview"/>
+
+                <ImageView
+                        android:id="@+id/power_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_power"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintStart_toEndOf="@id/power_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="6dp"/>
+
+                <TextView
+                        android:id="@+id/defense_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/body_1"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toEndOf="@id/power_imageview"
+                        app:layout_constraintBottom_toBottomOf="@id/defense_imageview"
+                        app:layout_constraintTop_toTopOf="@id/defense_imageview"
+                />
+
+                <ImageView
+                        android:id="@+id/defense_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_defense"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintStart_toEndOf="@id/defense_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="6dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/hero_stats_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/power_defense_layout"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                        android:id="@+id/intelligence_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/body_1"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/intelligence_imageview"
+                        app:layout_constraintTop_toTopOf="@id/intelligence_imageview"/>
+
+                <ImageView
+                        android:id="@+id/intelligence_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_intelligence"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintStart_toEndOf="@id/intelligence_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="6dp"/>
+
+                <TextView
+                        android:id="@+id/health_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/body_1"
+                        android:layout_marginStart="@dimen/single_card_icon_start_margin"
+                        app:layout_constraintStart_toEndOf="@id/intelligence_imageview"
+                        app:layout_constraintBottom_toBottomOf="@id/health_imageview"
+                        app:layout_constraintTop_toTopOf="@id/health_imageview"
+                />
+
+                <ImageView
+                        android:id="@+id/health_imageview"
+                        android:layout_width="@dimen/single_card_icon_size"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_health"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintStart_toEndOf="@id/health_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:padding="6dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                    android:id="@+id/card_type_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/body_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/rarity_textview"
+            />
+
+            <TextView
+                    android:id="@+id/rarity_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/body_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_type_textview"
+                    app:layout_constraintBottom_toBottomOf="parent"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.chip.ChipGroup
+                android:id="@+id/versions_chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/card_detail_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/red_version_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_red_version"
+                    android:textSize="@dimen/body_1"
+                    app:chipBackgroundColor="@color/colorRedVersion"
+                    android:checkable="true"
+                    android:checked="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/yellow_version_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_yellow_version"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/colorYellowVersion"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/blue_version_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_blue_version"
+                    app:chipBackgroundColor="@color/colorBlueVersion"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <com.google.android.material.chip.ChipGroup
+                android:id="@+id/hero_versions_chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/versions_chip_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/adult_version_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_adult_version"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    android:checked="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/young_version_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_young_version"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <TextView
+                android:id="@+id/card_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/body_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hero_versions_chip_group"
+        />
+
+        <com.google.android.material.chip.ChipGroup
+                android:id="@+id/printings_rulings_chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/card_textview"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/printings_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_printings"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    android:checked="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/rulings_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_rulings"
+                    android:textSize="@dimen/body_1"
+                    android:checkable="true"
+                    app:chipCornerRadius="@dimen/chip_filter_corner_radius"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rulings_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/printings_rulings_chip_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/legality_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ruling_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/legality_recyclerview"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/printings_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/printings_rulings_chip_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/printings_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:clipToPadding="false"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

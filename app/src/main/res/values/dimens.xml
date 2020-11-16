@@ -1,0 +1,18 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="chip_filter_corner_radius">6dp</dimen>
+
+    <dimen name="single_card_icon_size">32dp</dimen>
+    <dimen name="single_card_icon_start_margin">8dp</dimen>
+
+    <dimen name="heading_1">20sp</dimen>
+    <dimen name="body_1">16sp</dimen>
+    <dimen name="body_2">14sp</dimen>
+
+    <dimen name="single_card_start_x" format="float">.1333</dimen>
+    <dimen name="single_card_start_y" format="float">.1433</dimen>
+    <dimen name="single_card_width" format="float">.7333</dimen>
+    <dimen name="single_card_height" format="float">.44586</dimen>
+</resources>

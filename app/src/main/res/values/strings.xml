@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">TenatanWeave</string>
+    <string name="next">Next</string>
+    <string name="sign_out_text">Sign Out</string>
+    <string name="previous">Previous</string>
+    <string name="title_search_card_query">\'%1$s\'</string>
+    <string name="title_single_card">%1$s</string>
+    <string name="title_search_card_query_empty">Filtering…</string>
+    <string name="hello_home_second">Hello HomeSecondFragment. Arg: %1$s</string>
+    <string name="hello_dashboard_second">Hello HomeSecondFragment. Arg: %1$s</string>
+    <string name="hello_notifications_second">Hello HomeSecondFragment. Arg: %1$s</string>
+    <string name="toggle_layout_manager">Toggle Layout</string>
+    <string name="title_home">Home</string>
+    <string name="title_decks">Decks</string>
+    <string name="title_search">Search</string>
+    <string name="title_search_card_result">Search Card Results</string>
+    <string name="title_cards">Cards</string>
+    <string name="title_sets">Sets</string>
+
+    <string name="label_class">Class: </string>
+    <string name="label_include_generic">Include Generic: </string>
+    <string name="label_type">Type: </string>
+    <string name="label_subtype">Sub-Type: </string>
+    <string name="label_pitch">Pitch: </string>
+    <string name="label_compare">Cost | Power | Defense: </string>
+    <string name="label_add">Add</string>
+    <string name="label_rarity">Rarity: </string>
+    <string name="label_printings">Printings</string>
+    <string name="label_rulings">Rulings</string>
+    <string name="label_red_version">Red</string>
+    <string name="label_yellow_version">Yellow</string>
+    <string name="label_blue_version">Blue</string>
+    <string name="label_adult_version">Adult</string>
+    <string name="label_young_version">Young</string>
+    <string name="home_second">Home Second</string>
+
+    <string name="label_legal">Legal</string>
+    <string name="label_not_legal">Not Legal</string>
+    <string name="label_banned">Banned</string>
+
+    <string name="cost_chip_text">%s %s</string>
+
+    <string name="variable_power">VARIABLE_POWER</string>
+    <string name="variable_defense">VARIABLE_DEFENSE</string>
+    <string name="variable_health">VARIABLE_HEALTH</string>
+    <string name="variable_value">VARIABLE_VALUE</string>
+
+    <string name="card_count">Cards: %s</string>
+
+    <string name="card_text">Search Card Text</string>
+    <string name="compare_hint">#</string>
+    <string name="db_collection_cards">cards</string>
+    <string name="db_collection_printings">printings</string>
+    <string name="db_collection_rulings">rulings</string>
+    <string name="db_collection_sets">sets</string>
+    <string name="web_client_id">315101567709-5h6mobcajdcphhu3obd1kls9pjdd7hv2.apps.googleusercontent.com</string>
+</resources>
