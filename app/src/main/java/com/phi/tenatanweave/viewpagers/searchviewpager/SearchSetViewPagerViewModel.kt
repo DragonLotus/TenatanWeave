@@ -12,8 +12,6 @@ class SearchSetViewPagerViewModel : ViewModel() {
     }
     val expansionSetMap: LiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>> = mExpansionSetMap
 
-    private val mSetMasterList = SetEnum.values().toMutableList()
-
     private val mExpansionSetDisplayMap = MutableLiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>>().apply {
         value = mutableMapOf()
     }

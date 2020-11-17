@@ -38,11 +38,11 @@ class SearchCardResultFragment : Fragment() {
             cardResultRecyclerView.adapter?.notifyDataSetChanged()
         })
 
-        val linearLayoutManager = LinearLayoutManager(context!!)
-        val gridLayoutManager = GridLayoutManager(context!!, 3)
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        val gridLayoutManager = GridLayoutManager(requireContext(), 3)
 
         cardResultRecyclerView.layoutManager = gridLayoutManager
-        cardResultRecyclerView.adapter = CardRecyclerAdapter(searchCardResultViewModel.cardPrintingList.value!!, context!!,true) {
+        cardResultRecyclerView.adapter = CardRecyclerAdapter(searchCardResultViewModel.cardPrintingList.value!!, requireContext(),true) {
             val position = cardResultRecyclerView.getChildLayoutPosition(it as View)
             val card = (cardResultRecyclerView.adapter as CardRecyclerAdapter).getList()[position]
 
