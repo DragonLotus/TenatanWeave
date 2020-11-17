@@ -56,8 +56,9 @@ class SingleCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_singlecard, container, false)
-//        val singleCardConstraintLayout = root.findViewById<ConstraintLayout>(R.id.single_card_constraint_layout)
+        val singleCardConstraintLayout = root.findViewById<ConstraintLayout>(R.id.single_card_constraint_layout)
 
+        singleCardViewModel.setCurrentPosition(args.clickedPosition)
         //On Resume list is empty
         searchCardResultViewModel.cardPrintingList.value?.get(args.clickedPosition)
             ?.let {
@@ -71,9 +72,6 @@ class SingleCardFragment : Fragment() {
             }
 
         val toolbar: Toolbar = root.findViewById(R.id.toolbar)
-        activity?.setActionBar(toolbar)
-        activity?.actionBar?.title =
-            getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.printing?.name)
 
         powerDrawable = requireContext().getDrawable(R.drawable.ic_power)!!
         defenseDrawable = requireContext().getDrawable(R.drawable.ic_defense)!!
@@ -105,6 +103,8 @@ class SingleCardFragment : Fragment() {
         val yellowVersionChip = root.findViewById<Chip>(R.id.yellow_version_chip)
         val blueVersionChip = root.findViewById<Chip>(R.id.blue_version_chip)
         val cardTextView = root.findViewById<TextView>(R.id.card_textview)
+        val leftArrowImageView = root.findViewById<ImageView>(R.id.left_arrow)
+        val rightArrowImageView = root.findViewById<ImageView>(R.id.right_arrow)
         val printingsRulingsChipGroup = root.findViewById<ChipGroup>(R.id.printings_rulings_chip_group)
         val rulingsLayout = root.findViewById<ConstraintLayout>(R.id.rulings_layout)
         val legalityRecyclerView = root.findViewById<RecyclerView>(R.id.legality_recyclerview)
@@ -112,27 +112,31 @@ class SingleCardFragment : Fragment() {
         val printingsLayout = root.findViewById<ConstraintLayout>(R.id.printings_layout)
         val printingsRecyclerView = root.findViewById<RecyclerView>(R.id.printings_recyclerview)
 
-        GlideApp.with(requireContext())
-            .asBitmap()
-            .load(
-                Firebase.storage.reference
-                    .child("card_images/" + singleCardViewModel.cardPrinting.value?.printing?.id + ".png")
-            )
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    if (isAdded)
-                        cardImage.setImageBitmap(adjustImage(resource, resources))
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    TODO("Not yet implemented")
-                }
-
-            })
-
         singleCardViewModel.cardPrinting.observe(viewLifecycleOwner, { it ->
             val version = it.printing.version
+
+            activity?.setActionBar(toolbar)
+            activity?.actionBar?.title =
+                getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.printing?.name)
+
+            GlideApp.with(requireContext())
+                .asBitmap()
+                .load(
+                    Firebase.storage.reference
+                        .child("card_images/" + singleCardViewModel.cardPrinting.value?.printing?.id + ".png")
+                )
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        if (isAdded)
+                            cardImage.setImageBitmap(adjustImage(resource, resources))
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
 
             if (it.baseCard.pitch.isNotEmpty()) {
                 pitchImageView.visibility = View.VISIBLE
@@ -225,13 +229,11 @@ class SingleCardFragment : Fragment() {
             if (it.baseCard.pitch.isNotEmpty()) {
                 versionsChipGroup.visibility = View.VISIBLE
                 heroVersionsChipGroup.visibility = View.GONE
-                if (singleCardViewModel.selectedVersions.value!!.size < versionsChipGroup.childCount) {
-                    for ((index, chip) in versionsChipGroup.children.withIndex()) {
-                        if (containsVersion(singleCardViewModel.selectedVersions.value!!, index + 1))
-                            chip.visibility = View.VISIBLE
-                        else
-                            chip.visibility = View.GONE
-                    }
+                for ((index, chip) in versionsChipGroup.children.withIndex()) {
+                    if (containsVersion(singleCardViewModel.selectedVersions.value!!, index + 1))
+                        chip.visibility = View.VISIBLE
+                    else
+                        chip.visibility = View.GONE
                 }
 
                 versionsChipGroup.setOnCheckedChangeListener(null)
@@ -254,6 +256,19 @@ class SingleCardFragment : Fragment() {
             legalityRecyclerView.suppressLayout(true)
             rulingRecyclerView.suppressLayout(true)
             printingsRecyclerView.suppressLayout(true)
+
+            if (singleCardViewModel.currentPosition.value ?: 0 < searchCardResultViewModel.cardPrintingList.value?.size?.minus(
+                    1
+                ) ?: 0
+            )
+                rightArrowImageView.visibility = View.VISIBLE
+            else
+                rightArrowImageView.visibility = View.GONE
+
+            if (singleCardViewModel.currentPosition.value ?: 0 > 0)
+                leftArrowImageView.visibility = View.VISIBLE
+            else
+                leftArrowImageView.visibility = View.GONE
         })
 
         printingsRulingsChipGroup.setOnCheckedChangeListener { chipGroup: ChipGroup, checkedId: Int ->
@@ -302,6 +317,38 @@ class SingleCardFragment : Fragment() {
             printingsRecyclerView.adapter = printingsRecyclerAdapter
             printingsRecyclerView.layoutManager = printingsRecyclerLayoutManager
             printingsRecyclerView.suppressLayout(true)
+        }
+
+        rightArrowImageView.setOnClickListener {
+            singleCardViewModel.currentPosition.value?.plus(1)
+                ?.let { newPosition ->
+                    singleCardViewModel.setCurrentPosition(newPosition)
+                    searchCardResultViewModel.cardPrintingList.value?.get(newPosition)?.let { newCard ->
+                        singleCardViewModel.setCardPrinting(
+                            newCard,
+                            searchCardResultViewModel.printingMap.value!!,
+                            searchCardResultViewModel.cardMap.value!!,
+                            searchCardResultViewModel.setMap.value!!,
+                            false
+                        )
+                    }
+                }
+        }
+
+        leftArrowImageView.setOnClickListener {
+            singleCardViewModel.currentPosition.value?.minus(1)
+                ?.let { newPosition ->
+                    singleCardViewModel.setCurrentPosition(newPosition)
+                    searchCardResultViewModel.cardPrintingList.value?.get(newPosition)?.let { newCard ->
+                        singleCardViewModel.setCardPrinting(
+                            newCard,
+                            searchCardResultViewModel.printingMap.value!!,
+                            searchCardResultViewModel.cardMap.value!!,
+                            searchCardResultViewModel.setMap.value!!,
+                            false
+                        )
+                    }
+                }
         }
 
         return root
@@ -394,7 +441,7 @@ class SingleCardFragment : Fragment() {
             endIndex = match.range.last + 1
         }
 
-        if(endIndex < cardText.length){
+        if (endIndex < cardText.length) {
             spannableStringBuilder.append(cardText.substring(endIndex))
         }
 

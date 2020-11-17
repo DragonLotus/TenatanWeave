@@ -243,7 +243,7 @@ class SearchCardResultViewModel : ViewModel() {
         cardNameQuery.clear()
 
         var distinctRarity = false
-        if (mRarityList.value?.get(0)!! != FilterStateEnum.IS && mRarityList.value!!.contains(FilterStateEnum.IS) || mRarityList.value!!.contains(
+        if (mRarityList.value?.get(0) != FilterStateEnum.IS && mRarityList.value?.contains(FilterStateEnum.IS) == true || mRarityList.value!!.contains(
                 FilterStateEnum.NOT
             )
         )

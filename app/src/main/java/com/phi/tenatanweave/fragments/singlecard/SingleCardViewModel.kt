@@ -7,27 +7,26 @@ import com.phi.tenatanweave.data.*
 
 class SingleCardViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private val mCurrentPosition = MutableLiveData<Int>().apply {
+        value = 0
     }
-    val text: LiveData<String> = _text
-
-    fun setText(text: String) {
-        _text.value = text
-    }
+    val currentPosition: LiveData<Int> = mCurrentPosition
 
     private val mCardPrinting = MutableLiveData<CardPrinting>().apply {
         value = null
     }
     val cardPrinting: LiveData<CardPrinting> = mCardPrinting
+
     private val mRulingMap = MutableLiveData<MutableMap<String, Ruling>>().apply {
         value = mutableMapOf()
     }
     val rulingMap: LiveData<MutableMap<String, Ruling>> = mRulingMap
+
     private val mSelectedRuling = MutableLiveData<MutableList<String>>().apply {
         value = mutableListOf()
     }
     val selectedRuling: LiveData<MutableList<String>> = mSelectedRuling
+
     private val mSelectedPrintingList = MutableLiveData<MutableList<Printing>>().apply {
         value = mutableListOf()
     }
@@ -35,6 +34,7 @@ class SingleCardViewModel : ViewModel() {
         value = mutableListOf()
     }
     val sectionedPrintings: LiveData<MutableList<RecyclerItem>> = mSectionedPrintingList
+
     private val mSelectedVersions = MutableLiveData<MutableMap<Int, CardPrinting>>().apply {
         value = mutableMapOf()
     }
@@ -102,6 +102,10 @@ class SingleCardViewModel : ViewModel() {
                     }
             }
         }
+    }
+
+    fun setCurrentPosition(position: Int) {
+        mCurrentPosition.value = position
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {
