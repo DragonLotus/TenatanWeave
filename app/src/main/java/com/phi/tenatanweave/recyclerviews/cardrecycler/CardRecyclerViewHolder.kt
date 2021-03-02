@@ -17,7 +17,7 @@ class CardRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     fun bindCard(card: BaseCard, printing: Printing, context: Context) {
         with(card) {
-            itemView.card_name.text = name
+            itemView.deck_list_card_name.text = name
 
             itemView.card_textview.text = when(getTypeAsEnum()) {
                     TypeEnum.HERO -> "Intellect: $intellect | Health: $health"
@@ -41,9 +41,9 @@ class CardRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
                         .child("card_images/" + printing.id + ".png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.card_placeholder)
-                .fallback(R.drawable.card_placeholder)
-                .into(itemView.card_image)
+                .placeholder(R.drawable.vertical_placeholder)
+                .fallback(R.drawable.vertical_placeholder)
+                .into(itemView.deck_list_card_image)
         }
     }
 }

@@ -12,11 +12,15 @@
     <string name="toggle_layout_manager">Toggle Layout</string>
     <string name="title_home">Home</string>
     <string name="title_decks">Decks</string>
+    <string name="title_new_deck">New Deck Details</string>
     <string name="title_search">Search</string>
     <string name="title_search_card_result">Search Card Results</string>
     <string name="title_cards">Cards</string>
     <string name="title_sets">Sets</string>
 
+    <string name="label_dialog_message">Message goes here</string>
+    <string name="label_ok">OK</string>
+    <string name="label_cancel">CANCEL</string>
     <string name="label_class">Class: </string>
     <string name="label_include_generic">Include Generic: </string>
     <string name="label_type">Type: </string>
@@ -32,6 +36,13 @@
     <string name="label_blue_version">Blue</string>
     <string name="label_adult_version">Adult</string>
     <string name="label_young_version">Young</string>
+    <string name="label_format">Format: </string>
+    <string name="label_hero_section">Hero (%1$s)</string>
+    <string name="label_equipment_section">Equipment (%1$s)</string>
+    <string name="label_pitch_misc">Pitch 0 (%1$s)</string>
+    <string name="label_pitch_red">Pitch 1 (%1$s)</string>
+    <string name="label_pitch_yellow">Pitch 2 (%1$s)</string>
+    <string name="label_pitch_blue">Pitch 3 (%1$s)</string>
     <string name="home_second">Home Second</string>
 
     <string name="label_legal">Legal</string>
@@ -47,11 +58,17 @@
 
     <string name="card_count">Cards: %s</string>
 
+    <string name="no_hero_selected">No Hero Selected</string>
+
     <string name="card_text">Search Card Text</string>
+    <string name="deck_name_text">Deck Name</string>
     <string name="compare_hint">#</string>
     <string name="db_collection_cards">cards</string>
     <string name="db_collection_printings">printings</string>
     <string name="db_collection_rulings">rulings</string>
     <string name="db_collection_sets">sets</string>
+    <string name="db_collection_users">users</string>
+    <string name="db_collection_decks">decks</string>
+    <string name="db_collection_deckIdSequence">deckIdSequence</string>
     <string name="web_client_id">315101567709-5h6mobcajdcphhu3obd1kls9pjdd7hv2.apps.googleusercontent.com</string>
 </resources>

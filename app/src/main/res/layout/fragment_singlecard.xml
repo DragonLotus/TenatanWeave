@@ -28,7 +28,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <ImageView
-                android:id="@+id/card_image"
+                android:id="@+id/deck_list_card_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/horizontal_placeholder"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_image">
+                app:layout_constraintTop_toBottomOf="@id/deck_list_card_image">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/resources_layout"

@@ -61,13 +61,24 @@
 
     <fragment
             android:id="@+id/navigation_deck"
-            android:name="com.phi.tenatanweave.fragments.decks.DecksFragment"
+            android:name="com.phi.tenatanweave.fragments.decks.DeckFragment"
             android:label="@string/title_decks"
-            tools:layout="@layout/fragment_deck"/>
+            tools:layout="@layout/fragment_deck">
+        <action android:id="@+id/action_navigation_deck_to_deckListFragment"
+                app:destination="@id/deckListFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 
     <fragment android:id="@+id/navigation_single_card"
               android:name="com.phi.tenatanweave.fragments.singlecard.SingleCardFragment"
               android:label="SingleCardFragment">
+        <argument android:name="clickedPosition" app:argType="integer"/>
+    </fragment>
+    <fragment android:id="@+id/deckListFragment" android:name="com.phi.tenatanweave.fragments.decklist.DeckListFragment"
+              android:label="fragment_deck_list" tools:layout="@layout/fragment_deck_list">
         <argument android:name="clickedPosition" app:argType="integer"/>
     </fragment>
 </navigation>

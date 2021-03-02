@@ -79,7 +79,7 @@ class SingleCardFragment : Fragment() {
         intelligenceDrawable = requireContext().getDrawable(R.drawable.ic_intelligence)!!
         resourceDrawable = requireContext().getDrawable(R.drawable.ic_resource)!!
 
-        val cardImage = root.findViewById<ImageView>(R.id.card_image)
+        val cardImage = root.findViewById<ImageView>(R.id.deck_list_card_image)
 //        val resourceLayout = root.findViewById<ConstraintLayout>(R.id.resource_layout)
 //        val heroStatsLayout = root.findViewById<ConstraintLayout>(R.id.hero_stats_layout)
         val pitchImageView = root.findViewById<ImageView>(R.id.pitch_imageview)
@@ -311,7 +311,6 @@ class SingleCardFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val printingsRecyclerAdapter =
             PrintingsRecyclerAdapter(singleCardViewModel.sectionedPrintings.value!!, requireContext())
-//                PrintingsRecyclerAdapter(singleCardViewModel.selectedPrintingList.value!!, requireContext())
 
         if (singleCardViewModel.sectionedPrintings.value!!.isNotEmpty()) {
             printingsRecyclerView.adapter = printingsRecyclerAdapter

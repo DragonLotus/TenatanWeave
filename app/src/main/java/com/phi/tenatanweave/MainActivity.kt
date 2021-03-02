@@ -9,15 +9,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.phi.tenatanweave.data.BaseCard
-import com.phi.tenatanweave.data.ExpansionSet
-import com.phi.tenatanweave.data.Printing
-import com.phi.tenatanweave.data.Ruling
+import com.phi.tenatanweave.data.*
+import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.fragments.singlecard.SingleCardViewModel
 
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val searchCardResultViewModel: SearchCardResultViewModel by viewModels()
     private val singleCardViewModel: SingleCardViewModel by viewModels()
-
+    private val deckViewModel: DeckViewModel by viewModels()
 
     private val cardValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
         }
 
     }
@@ -53,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
         }
 
     }
@@ -71,7 +69,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
         }
 
     }
@@ -90,7 +87,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
+        }
+
+    }
+
+    private val userValueListener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            if (snapshot.child("deckIdSequence").exists()) {
+                deckViewModel.userDeckIdSequence = snapshot.child("deckIdSequence").getValue(Long::class.java)!!
+            }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+
+    private val deckValueEventListener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            deckViewModel.userDeckList.value?.clear()
+            if (snapshot.exists()) {
+                deckViewModel.setUserDeckList(snapshot.getValue(object : GenericTypeIndicator<List<Deck>>() {})!!)
+            }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
         }
 
     }
@@ -128,12 +149,30 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Firebase.database.reference.child(R.string.db_collection_cards.toString())
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_cards))
             .removeEventListener(cardValueListener)
-        Firebase.database.reference.child(R.string.db_collection_printings.toString())
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_printings))
             .removeEventListener(printingValueListener)
-        Firebase.database.reference.child(R.string.db_collection_printings.toString())
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_printings))
             .removeEventListener(rulingValueListener)
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_sets))
+            .removeEventListener(rulingValueListener)
+        Firebase.auth.currentUser?.let {
+            Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(it.uid)
+                .removeEventListener(userValueListener)
+            Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(it.uid)
+                .child(resources.getString(R.string.db_collection_decks))
+                .removeEventListener(deckValueEventListener)
+        }
         viewModelStore.clear()
+    }
+
+    fun setFirebaseUserListener(uid: String): Boolean {
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+            .addValueEventListener(userValueListener)
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+            .child(resources.getString(R.string.db_collection_decks))
+            .addValueEventListener(deckValueEventListener)
+        return true
     }
 }

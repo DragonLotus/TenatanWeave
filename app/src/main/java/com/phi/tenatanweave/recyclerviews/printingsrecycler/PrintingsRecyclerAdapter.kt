@@ -14,11 +14,7 @@ class PrintingsRecyclerAdapter(
     RecyclerView.Adapter<PrintingsRecyclerViewHolder>() {
     private val TYPE_SETSECTION = 0
     private val TYPE_PRINTING = 1
-
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrintingsRecyclerViewHolder {
-//        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.printing_row, parent, false)
-//        return PrintingsRecyclerViewHolder(view)
-//    }
+    private val TYPE_HERO = 2
 
     override fun onCreateViewHolder(parent:ViewGroup, viewType: Int) = when(viewType) {
         TYPE_SETSECTION -> PrintingsRecyclerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false))
@@ -41,6 +37,7 @@ class PrintingsRecyclerAdapter(
     override fun getItemViewType(position: Int) = when(printingsList[position]){
         is RecyclerItem.SetSection -> TYPE_SETSECTION
         is RecyclerItem.Printing -> TYPE_PRINTING
+        is RecyclerItem.HeroPrinting -> TYPE_HERO
     }
 
     fun getList(): List<RecyclerItem> {
