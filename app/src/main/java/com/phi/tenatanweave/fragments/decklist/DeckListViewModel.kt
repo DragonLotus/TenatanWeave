@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.BaseCard
-import com.phi.tenatanweave.data.Deck
-import com.phi.tenatanweave.data.Printing
-import com.phi.tenatanweave.data.RecyclerItem
+import com.phi.tenatanweave.data.*
+import com.phi.tenatanweave.data.enums.ClassEnum
+import com.phi.tenatanweave.data.enums.TypeEnum
+import java.util.*
 
 class DeckListViewModel : ViewModel() {
 
@@ -32,6 +32,16 @@ class DeckListViewModel : ViewModel() {
     }
     val deckQuantityMap: LiveData<MutableMap<String, Int>> = mDeckQuantityMap
 
+    private val mDeckListCardSearchList = MutableLiveData<MutableList<CardPrinting>>().apply {
+        value = mutableListOf()
+    }
+    val deckListCardSearchList: LiveData<MutableList<CardPrinting>> = mDeckListCardSearchList
+
+    var redPitchQuantity = 0
+    var yellowPitchQuantity = 0
+    var bluePitchQuantity = 0
+    var miscPitchQuantity = 0
+
     fun setDeck(deck: Deck) {
         mDeck.value = deck
         mDeck.notifyObserver()
@@ -42,6 +52,10 @@ class DeckListViewModel : ViewModel() {
         cardMap: MutableMap<String, BaseCard>,
         context: Context
     ) {
+        redPitchQuantity = 0
+        yellowPitchQuantity = 0
+        bluePitchQuantity = 0
+        miscPitchQuantity = 0
         mPitchValueMap.value?.clear()
         mDeckQuantityMap.value?.clear()
         sectionedDeckList.value?.clear()
@@ -116,6 +130,7 @@ class DeckListViewModel : ViewModel() {
                                 mPitchValueMap.value?.set(printing.id, -1)
                             }
                         }
+                        miscPitchQuantity++
                     } else {
                         when (printing.version.let { baseCard?.pitch?.get(it) }) {
                             1 -> {
@@ -125,6 +140,7 @@ class DeckListViewModel : ViewModel() {
                                         mPitchValueMap.value?.set(printing.id, 1)
                                     }
                                 }
+                                redPitchQuantity++
                             }
                             2 -> {
                                 mDeckQuantityMap.value?.let {
@@ -133,6 +149,7 @@ class DeckListViewModel : ViewModel() {
                                         mPitchValueMap.value?.set(printing.id, 2)
                                     }
                                 }
+                                yellowPitchQuantity++
                             }
                             3 -> {
                                 mDeckQuantityMap.value?.let {
@@ -141,6 +158,7 @@ class DeckListViewModel : ViewModel() {
                                         mPitchValueMap.value?.set(printing.id, 3)
                                     }
                                 }
+                                bluePitchQuantity++
                             }
                         }
                     }
@@ -157,23 +175,23 @@ class DeckListViewModel : ViewModel() {
         if (printingMiscList.isNotEmpty()) {
             addSectionToList(
                 printingList,
-                context.getString(R.string.label_pitch_misc, printingMiscList.size),
+                context.getString(R.string.label_pitch_misc, miscPitchQuantity),
                 printingMiscList
             )
         }
         addSectionToList(
             printingList,
-            context.getString(R.string.label_pitch_red, printingRedList.size),
+            context.getString(R.string.label_pitch_red, redPitchQuantity),
             printingRedList
         )
         addSectionToList(
             printingList,
-            context.getString(R.string.label_pitch_yellow, printingYellowList.size),
+            context.getString(R.string.label_pitch_yellow, yellowPitchQuantity),
             printingYellowList
         )
         addSectionToList(
             printingList,
-            context.getString(R.string.label_pitch_blue, printingBlueList.size),
+            context.getString(R.string.label_pitch_blue, bluePitchQuantity),
             printingBlueList
         )
 
@@ -201,6 +219,80 @@ class DeckListViewModel : ViewModel() {
         list.addAll(
             listOf(RecyclerItem.SetSection(sectionName)) + sectionContents
         )
+    }
+
+    fun filterCardsPrioritizingPrintings(masterCardPrintingList: MutableList<CardPrinting>, searchText: String) {
+        if (!masterCardPrintingList.isNullOrEmpty()) {
+            mDeckListCardSearchList.value?.clear()
+            val cardNameCardPrintingMap = mutableMapOf<String, MutableList<CardPrinting>>()
+            val heroCardPrinting = if(mDeck.value?.heroId.isNullOrEmpty()) null else masterCardPrintingList.first { it.printing.id == mDeck.value?.heroId }
+
+            for (cardPrinting in masterCardPrintingList) {
+                val cardNameKey = cardPrinting.baseCard.name
+                    .replace("[^a-zA-Z0-9]", "")
+                    .toLowerCase(Locale.ROOT)
+                if (filterCard(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText)) {
+                    addCardPrintingToMap(cardPrinting, cardNameCardPrintingMap)
+                }
+            }
+
+            mDeckListCardSearchList.value?.addAll(cardNameCardPrintingMap.values.flatten())
+            mDeckListCardSearchList.notifyObserver()
+        }
+    }
+
+    private fun filterCard(cardPrinting: CardPrinting, heroCardPrinting: CardPrinting?): Boolean {
+        heroCardPrinting?.let {
+            if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO)
+                return false
+
+            if (ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.valueOf(it.baseCard.heroClass)
+                || ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.GENERIC
+            )
+                return true
+        }
+        return false
+    }
+
+    private fun addCardPrintingToMap(
+        cardPrinting: CardPrinting,
+        cardNameCardPrintingMap: MutableMap<String, MutableList<CardPrinting>>
+    ) {
+        val cardNameKey = cardPrinting.baseCard.name
+            .replace("[^a-zA-Z0-9]", "")
+            .toLowerCase(Locale.ROOT)
+
+        if (cardNameCardPrintingMap[cardNameKey] == null) {
+            cardNameCardPrintingMap[cardNameKey] = mutableListOf(cardPrinting)
+        } else if (cardNameCardPrintingMap[cardNameKey]?.isNotEmpty() == true) {
+            val cardPrintingList = cardNameCardPrintingMap[cardNameKey]
+            val currentCardPrintingPitch =
+                if (cardPrinting.baseCard.pitch.isNotEmpty()) cardPrinting.baseCard.pitch[cardPrinting.printing.version] else -1
+
+            val pitchInMapList = mutableListOf<Int>()
+            for (existingCardPrinting in cardPrintingList!!) {
+                pitchInMapList.add(if (existingCardPrinting.baseCard.pitch.isNotEmpty()) existingCardPrinting.baseCard.pitch[existingCardPrinting.printing.version] else -1)
+            }
+
+            if (!pitchInMapList.contains(currentCardPrintingPitch))
+                cardNameCardPrintingMap[cardNameKey]?.add(cardPrinting)
+            else {
+                cardPrintingList[pitchInMapList.indexOfFirst { it == currentCardPrintingPitch }].let {
+                    val existingQuantity =
+                        if (mDeckQuantityMap.value?.get(it.printing.id) == null) 0 else mDeckQuantityMap.value?.get(
+                            it.printing.id
+                        )
+                    val newQuantity =
+                        if (mDeckQuantityMap.value?.get(cardPrinting.printing.id) == null) 0 else mDeckQuantityMap.value?.get(
+                            cardPrinting.printing.id
+                        )
+                    if (newQuantity!! > existingQuantity!!) {
+                        cardNameCardPrintingMap[cardNameKey]?.add(cardPrinting)
+                    }
+                }
+            }
+
+        }
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

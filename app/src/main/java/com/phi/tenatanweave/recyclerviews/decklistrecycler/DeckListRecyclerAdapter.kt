@@ -20,24 +20,24 @@ class DeckListRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_SETSECTION -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false), deckListViewModel
         )
         TYPE_PRINTING -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false), deckListViewModel
         )
         TYPE_HERO -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false), deckListViewModel
         )
         else -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false), deckListViewModel
         )
     }
 
     override fun onBindViewHolder(holder: DeckListRecyclerViewHolder, position: Int) {
         when (val item = printingsList[holder.adapterPosition]) {
-            is RecyclerItem.Printing -> holder.bindCard(item, deckListViewModel, removeBottomMargin(position), context)
+            is RecyclerItem.Printing -> holder.bindCard(item, removeBottomMargin(position), context)
             is RecyclerItem.SetSection -> holder.bindSection(item, context)
-            is RecyclerItem.HeroPrinting -> holder.bindHero(item, deckListViewModel, context)
+            is RecyclerItem.HeroPrinting -> holder.bindHero(item, context)
         }
     }
 

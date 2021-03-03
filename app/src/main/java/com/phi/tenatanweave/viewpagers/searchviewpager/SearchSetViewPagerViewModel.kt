@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.phi.tenatanweave.data.ExpansionSet
 import com.phi.tenatanweave.data.enums.SetEnum
+import java.util.*
 
 class SearchSetViewPagerViewModel : ViewModel() {
     private val mExpansionSetMap = MutableLiveData<MutableMap<ExpansionSet, MutableSet<ExpansionSet>>>().apply {
@@ -38,14 +39,14 @@ class SearchSetViewPagerViewModel : ViewModel() {
         //Save query for re-filtering
         mExpansionSetDisplayMap.value?.clear()
         setNameQuery.clear()
-        setNameQuery.append(searchText.replace("[^a-zA-Z0-9]", "").toLowerCase())
+        setNameQuery.append(searchText.replace("[^a-zA-Z0-9]", "").toLowerCase(Locale.ROOT))
 
         for((key, value) in mExpansionSetMap.value!!){
-            if(key.name.replace("[^a-zA-Z0-9]", "").toLowerCase().contains(setNameQuery))
+            if(key.name.replace("[^a-zA-Z0-9]", "").toLowerCase(Locale.ROOT).contains(setNameQuery))
                 mExpansionSetDisplayMap.value?.put(key, value)
             else
                 for(expansionSet in value)
-                    if(expansionSet.name.replace("[^a-zA-Z0-9]", "").toLowerCase().contains(setNameQuery))
+                    if(expansionSet.name.replace("[^a-zA-Z0-9]", "").toLowerCase(Locale.ROOT).contains(setNameQuery))
                         mExpansionSetDisplayMap.value?.put(key,value)
         }
         mExpansionSetDisplayMap.notifyObserver()

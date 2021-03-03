@@ -33,10 +33,11 @@
             android:id="@+id/deck_list_card_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20sp"
+            android:textAlignment="textStart"
+            android:textSize="16sp"
             app:layout_constraintTop_toTopOf="@id/deck_list_card_view"
             app:layout_constraintStart_toEndOf="@id/deck_list_card_view"
+            app:layout_constraintEnd_toStartOf="@id/decrease_card_quantity_button"
             app:layout_constraintBottom_toBottomOf="@id/deck_list_card_view"
             android:paddingStart="8dp"/>
 
