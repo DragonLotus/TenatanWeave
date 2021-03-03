@@ -285,9 +285,12 @@ class SingleCardFragment : Fragment() {
             }
         }
 
+        val formatEnumList = FormatEnum.values().toMutableList()
+        formatEnumList.remove(FormatEnum.NONE)
+
         val legalityRecyclerLayoutManager = GridLayoutManager(requireContext(), 2)
         val legalityRecyclerAdapter = LegalityRecyclerAdapter(
-            FormatEnum.values().toMutableList(),
+            formatEnumList,
             singleCardViewModel.cardPrinting.value!!.baseCard.legalFormats,
             requireContext()
         )

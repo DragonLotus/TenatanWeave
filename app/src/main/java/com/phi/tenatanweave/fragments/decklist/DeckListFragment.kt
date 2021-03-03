@@ -29,7 +29,7 @@ class DeckListFragment : Fragment() {
         val deckListRecyclerView: RecyclerView = root.findViewById(R.id.deck_list_recycler_view)
 
         val deckListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        val deckListRecyclerAdapter = DeckListRecyclerAdapter(requireContext())
+        val deckListRecyclerAdapter = DeckListRecyclerAdapter(deckListViewModel, requireContext())
 
         deckListRecyclerView.layoutManager = deckListLayoutManager
         deckListRecyclerView.adapter = deckListRecyclerAdapter

@@ -13,6 +13,7 @@ class Deck(
     val coreDeckMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val sideBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val maybeBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
+    val foilMap: MutableMap<String, Int> = mutableMapOf(),
     val format: String = "",
     var lastModifiedDate: String = ""
 ) {

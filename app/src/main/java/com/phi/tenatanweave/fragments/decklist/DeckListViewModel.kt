@@ -22,6 +22,16 @@ class DeckListViewModel : ViewModel() {
     }
     val sectionedDeckList: LiveData<MutableList<RecyclerItem>> = mSectionedDeckList
 
+    private val mPitchValueMap = MutableLiveData<MutableMap<String, Int>>().apply {
+        value = mutableMapOf()
+    }
+    val pitchValueMap: LiveData<MutableMap<String, Int>> = mPitchValueMap
+
+    private val mDeckQuantityMap = MutableLiveData<MutableMap<String, Int>>().apply {
+        value = mutableMapOf()
+    }
+    val deckQuantityMap: LiveData<MutableMap<String, Int>> = mDeckQuantityMap
+
     fun setDeck(deck: Deck) {
         mDeck.value = deck
         mDeck.notifyObserver()
@@ -32,6 +42,8 @@ class DeckListViewModel : ViewModel() {
         cardMap: MutableMap<String, BaseCard>,
         context: Context
     ) {
+        mPitchValueMap.value?.clear()
+        mDeckQuantityMap.value?.clear()
         sectionedDeckList.value?.clear()
         sectionedDeckList.value?.addAll(
             listOf(
@@ -71,6 +83,9 @@ class DeckListViewModel : ViewModel() {
         if (equipmentList != null) {
             for (equipment in equipmentList) {
                 printingMap[equipment]?.let { RecyclerItem.Printing(it) }?.let { printingList.add(it) }
+                mDeckQuantityMap.value?.let {
+                    incrementMapAndCheckIfContains(it, equipment)
+                }
             }
         }
         printingList.sortWith(compareBy { it.printing.name })
@@ -87,17 +102,47 @@ class DeckListViewModel : ViewModel() {
         val printingYellowList = mutableListOf<RecyclerItem.Printing>()
         val printingBlueList = mutableListOf<RecyclerItem.Printing>()
         val printingMiscList = mutableListOf<RecyclerItem.Printing>()
+
         if (coreDeckList != null) {
             for (coreCard in coreDeckList) {
                 val printing = printingMap[coreCard]
                 val baseCard = cardMap[printing?.name]
-                if(baseCard?.pitch.isNullOrEmpty()){
-                    printing?.let { RecyclerItem.Printing(it) }?.let { printingMiscList.add(it) }
-                } else {
-                    when (printing?.version?.let { baseCard?.pitch?.get(it) }) {
-                        1 -> printingRedList.add(RecyclerItem.Printing(printing))
-                        2 -> printingYellowList.add(RecyclerItem.Printing(printing))
-                        3 -> printingBlueList.add(RecyclerItem.Printing(printing))
+                if (printing != null) {
+                    if (baseCard?.pitch.isNullOrEmpty()) {
+                        mDeckQuantityMap.value?.let {
+                            if (!incrementMapAndCheckIfContains(it, printing.id)) {
+                                printing.let { cardPrinting -> RecyclerItem.Printing(cardPrinting) }
+                                    .let { recyclerItem -> printingMiscList.add(recyclerItem) }
+                                mPitchValueMap.value?.set(printing.id, -1)
+                            }
+                        }
+                    } else {
+                        when (printing.version.let { baseCard?.pitch?.get(it) }) {
+                            1 -> {
+                                mDeckQuantityMap.value?.let {
+                                    if (!incrementMapAndCheckIfContains(it, printing.id)) {
+                                        printingRedList.add(RecyclerItem.Printing(printing))
+                                        mPitchValueMap.value?.set(printing.id, 1)
+                                    }
+                                }
+                            }
+                            2 -> {
+                                mDeckQuantityMap.value?.let {
+                                    if (!incrementMapAndCheckIfContains(it, printing.id)) {
+                                        printingYellowList.add(RecyclerItem.Printing(printing))
+                                        mPitchValueMap.value?.set(printing.id, 2)
+                                    }
+                                }
+                            }
+                            3 -> {
+                                mDeckQuantityMap.value?.let {
+                                    if (!incrementMapAndCheckIfContains(it, printing.id)) {
+                                        printingBlueList.add(RecyclerItem.Printing(printing))
+                                        mPitchValueMap.value?.set(printing.id, 3)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -109,53 +154,53 @@ class DeckListViewModel : ViewModel() {
         printingMiscList.sortWith(compareBy { it.printing.name })
 
         val printingList = mutableListOf<RecyclerItem>()
-        if(printingMiscList.isNotEmpty()){
-            printingList.addAll(
-                listOf(
-                    RecyclerItem.SetSection(
-                        context.getString(
-                            R.string.label_pitch_misc,
-                            printingMiscList.size
-                        )
-                    )
-                ) + printingMiscList
+        if (printingMiscList.isNotEmpty()) {
+            addSectionToList(
+                printingList,
+                context.getString(R.string.label_pitch_misc, printingMiscList.size),
+                printingMiscList
             )
         }
-
-        printingList.addAll(
-            listOf(
-                RecyclerItem.SetSection(
-                    context.getString(
-                        R.string.label_pitch_red,
-                        printingRedList.size
-                    )
-                )
-            ) + printingRedList
+        addSectionToList(
+            printingList,
+            context.getString(R.string.label_pitch_red, printingRedList.size),
+            printingRedList
         )
-
-        printingList.addAll(
-            listOf(
-                RecyclerItem.SetSection(
-                    context.getString(
-                        R.string.label_pitch_yellow,
-                        printingYellowList.size
-                    )
-                )
-            ) + printingYellowList
+        addSectionToList(
+            printingList,
+            context.getString(R.string.label_pitch_yellow, printingYellowList.size),
+            printingYellowList
         )
-
-        printingList.addAll(
-            listOf(
-                RecyclerItem.SetSection(
-                    context.getString(
-                        R.string.label_pitch_blue,
-                        printingBlueList.size
-                    )
-                )
-            ) + printingBlueList
+        addSectionToList(
+            printingList,
+            context.getString(R.string.label_pitch_blue, printingBlueList.size),
+            printingBlueList
         )
 
         return printingList
+    }
+
+    private fun incrementMapAndCheckIfContains(map: MutableMap<String, Int>, key: String): Boolean {
+        return when (val count = map[key]) {
+            null -> {
+                map[key] = 1
+                false
+            }
+            else -> {
+                map[key] = count + 1
+                true
+            }
+        }
+    }
+
+    private fun addSectionToList(
+        list: MutableList<RecyclerItem>,
+        sectionName: String,
+        sectionContents: MutableList<RecyclerItem.Printing>
+    ) {
+        list.addAll(
+            listOf(RecyclerItem.SetSection(sectionName)) + sectionContents
+        )
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {
