@@ -222,7 +222,7 @@ class DeckListViewModel : ViewModel() {
         } else if (cardNameCardPrintingMap[cardNameKey]?.isNotEmpty() == true) {
             val cardPrintingListFromMap = cardNameCardPrintingMap[cardNameKey]
             val currentCardPrintingPitch =
-                if (cardPrinting.baseCard.pitch.isEmpty()) cardPrinting.baseCard.pitch[cardPrinting.printing.version] else 0
+                if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
 
             val pitchInMapList = mutableListOf<Int>()
             for (existingCardPrinting in cardPrintingListFromMap!!) {
