@@ -1,6 +1,7 @@
 package com.phi.tenatanweave.fragments.decklist
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -95,7 +96,11 @@ class DeckListViewModel : ViewModel() {
                 }
         }
 
-        mSectionedDeckList.value?.addAll(coreDeckCardPrintingSet.groupBy {
+        val sortedSet =
+            coreDeckCardPrintingSet.sortedWith(
+                compareBy<CardPrinting> { if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version] }
+                    .thenBy { it.baseCard.name })
+        mSectionedDeckList.value?.addAll(sortedSet.groupBy {
             if (it.baseCard.pitch.isEmpty()) -1 else it.baseCard.pitch[it.printing.version]
         }.flatMap { (pitchValue, cardPrinting) ->
             listOf<RecyclerItem>(
@@ -119,7 +124,7 @@ class DeckListViewModel : ViewModel() {
                         else -> context.getString(
                             R.string.label_pitch_section,
                             0,
-                            getPitchCount(unsectionedCardPrintingDeckList, -1)
+                            getPitchCount(unsectionedCardPrintingDeckList, 0)
                         )
                     }
                 )
@@ -154,9 +159,13 @@ class DeckListViewModel : ViewModel() {
 
     private fun getPitchCount(cardPrintingList: MutableList<CardPrinting>, pitchValue: Int): Int {
         return cardPrintingList.count {
-            (pitchValue == if (it.baseCard.pitch.isEmpty()) -1 else it.baseCard.pitch[it.printing.version])
+            (pitchValue == if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
                     && !(it.baseCard.getTypeAsEnum() == TypeEnum.WEAPON || it.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT)
         }
+    }
+
+    private fun getEquipmentCount(cardPrintingList: MutableList<CardPrinting>): Int {
+        return cardPrintingList.count { it.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || it.baseCard.getTypeAsEnum() == TypeEnum.WEAPON }
     }
 
     fun filterCardsPrioritizingPrintings(masterCardPrintingList: MutableList<CardPrinting>, searchText: String) {
@@ -178,7 +187,7 @@ class DeckListViewModel : ViewModel() {
             mDeckListCardSearchList.value?.addAll(cardNameCardPrintingMap.values.flatten())
             mDeckListCardSearchList.value?.sortWith(
                 compareBy<CardPrinting> { it.baseCard.name }
-                    .thenBy { if (it.baseCard.pitch.isNotEmpty()) it.baseCard.pitch[it.printing.version] else -1 }
+                    .thenBy { if (it.baseCard.pitch.isNullOrEmpty()) it.baseCard.pitch[it.printing.version] else 0 }
             )
             mDeckListCardSearchList.notifyObserver()
         }
@@ -213,11 +222,11 @@ class DeckListViewModel : ViewModel() {
         } else if (cardNameCardPrintingMap[cardNameKey]?.isNotEmpty() == true) {
             val cardPrintingListFromMap = cardNameCardPrintingMap[cardNameKey]
             val currentCardPrintingPitch =
-                if (cardPrinting.baseCard.pitch.isNotEmpty()) cardPrinting.baseCard.pitch[cardPrinting.printing.version] else -1
+                if (cardPrinting.baseCard.pitch.isEmpty()) cardPrinting.baseCard.pitch[cardPrinting.printing.version] else 0
 
             val pitchInMapList = mutableListOf<Int>()
             for (existingCardPrinting in cardPrintingListFromMap!!) {
-                pitchInMapList.add(if (existingCardPrinting.baseCard.pitch.isNotEmpty()) existingCardPrinting.baseCard.pitch[existingCardPrinting.printing.version] else -1)
+                pitchInMapList.add(if (existingCardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else existingCardPrinting.baseCard.pitch[existingCardPrinting.printing.version])
             }
 
             if (!pitchInMapList.contains(currentCardPrintingPitch))
@@ -235,6 +244,75 @@ class DeckListViewModel : ViewModel() {
                 }
             }
 
+        }
+    }
+
+    fun checkIfMax(cardPrinting: CardPrinting): Boolean {
+        return unsectionedCardPrintingDeckList.count {
+            (it.baseCard.name == cardPrinting.baseCard.name)
+                    && (if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]) == (if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
+        } < 3
+    }
+
+    fun increaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): Int {
+        if(checkIfMax(cardPrinting)){
+            unsectionedCardPrintingDeckList.add(cardPrinting)
+
+            val pitch =
+                if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+            val sectionHeader = getSectionHeader(position)
+
+            if (sectionHeader != null) {
+                updateSectionHeader(sectionHeader, pitch, context)
+            }
+
+            return mSectionedDeckList.value?.indexOf(sectionHeader as RecyclerItem) ?: 0
+        }
+
+        return 0;
+    }
+
+    fun decreaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): Int {
+        unsectionedCardPrintingDeckList.remove(cardPrinting)
+
+        val pitch =
+            if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+        val sectionHeader = getSectionHeader(position)
+
+        if (sectionHeader != null) {
+            updateSectionHeader(sectionHeader, pitch, context)
+        }
+
+        return mSectionedDeckList.value?.indexOf(sectionHeader as RecyclerItem) ?: 0
+    }
+
+    private fun getSectionHeader(position: Int): RecyclerItem.SetSection? {
+        val sectionedList = mSectionedDeckList.value!!
+
+        sectionedList.let {
+            for (i in position downTo 0) {
+                if (sectionedList[i] is RecyclerItem.SetSection)
+                    return sectionedList[i] as RecyclerItem.SetSection
+            }
+        }
+        return null
+    }
+
+    private fun updateSectionHeader(sectionHeader: RecyclerItem.SetSection, pitch: Int = 0, context: Context) {
+        sectionHeader.apply {
+            when {
+                this.setName.contains(context.getString(R.string.label_pitch_section_regex, pitch)) -> setName =
+                    context.getString(
+                        R.string.label_pitch_section,
+                        pitch,
+                        getPitchCount(unsectionedCardPrintingDeckList, pitch)
+                    )
+                this.setName.contains(context.getString(R.string.label_equipment_section_regex, pitch)) -> setName =
+                    context.getString(
+                        R.string.label_equipment_section,
+                        getEquipmentCount(unsectionedCardPrintingDeckList)
+                    )
+            }
         }
     }
 

@@ -40,7 +40,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = if (this.baseCard.pitch.isNotEmpty()) this.baseCard.pitch[this.printing.version] else -1
+            val pitch = if (this.baseCard.pitch.isEmpty()) 0 else this.baseCard.pitch[this.printing.version]
             var pitchColor = R.color.white
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion

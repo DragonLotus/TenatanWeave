@@ -26,6 +26,8 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         printing: RecyclerItem.CardPrinting,
         position: Int,
         removeBottomMargin: Boolean,
+        increaseOnClickListener: View.OnClickListener,
+        decreaseOnClickListener: View.OnClickListener,
         context: Context
     ) {
         with(printing.cardPrinting) {
@@ -41,15 +43,17 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = if (this.baseCard.pitch.isEmpty()) -1 else this.baseCard.pitch[this.printing.version]
+            val pitch = if (this.baseCard.pitch.isEmpty()) 0 else this.baseCard.pitch[this.printing.version]
             var pitchColor = R.color.white
-            if (pitch != null)
-                when (pitch) {
-                    1 -> pitchColor = R.color.colorRedVersion
-                    2 -> pitchColor = R.color.colorYellowVersion
-                    3 -> pitchColor = R.color.colorBlueVersion
-                }
+            when (pitch) {
+                1 -> pitchColor = R.color.colorRedVersion
+                2 -> pitchColor = R.color.colorYellowVersion
+                3 -> pitchColor = R.color.colorBlueVersion
+            }
 
+            itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
+            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
 
             itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp

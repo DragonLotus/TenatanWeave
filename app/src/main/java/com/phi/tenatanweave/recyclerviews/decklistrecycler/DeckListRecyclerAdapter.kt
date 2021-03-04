@@ -2,6 +2,7 @@ package com.phi.tenatanweave.recyclerviews.decklistrecycler
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
@@ -10,7 +11,9 @@ import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 
 class DeckListRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,
-    val context: Context
+    val context: Context,
+    val increaseOnClickListener: View.OnClickListener,
+    val decreaseOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListRecyclerViewHolder>() {
     var printingsList: MutableList<RecyclerItem> = mutableListOf()
@@ -24,13 +27,16 @@ class DeckListRecyclerAdapter(
             LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false), deckListViewModel
         )
         TYPE_PRINTING -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false), deckListViewModel
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false),
+            deckListViewModel
         )
         TYPE_HERO -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false), deckListViewModel
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false),
+            deckListViewModel
         )
         TYPE_CARD_PRINTING -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false), deckListViewModel
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false),
+            deckListViewModel
         )
         else -> DeckListRecyclerViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false), deckListViewModel
@@ -39,7 +45,14 @@ class DeckListRecyclerAdapter(
 
     override fun onBindViewHolder(holder: DeckListRecyclerViewHolder, position: Int) {
         when (val item = printingsList[holder.adapterPosition]) {
-            is RecyclerItem.CardPrinting -> holder.bindCard(item, holder.adapterPosition, removeBottomMargin(position), context)
+            is RecyclerItem.CardPrinting -> holder.bindCard(
+                item,
+                holder.adapterPosition,
+                removeBottomMargin(position),
+                increaseOnClickListener,
+                decreaseOnClickListener,
+                context
+            )
             is RecyclerItem.SetSection -> holder.bindSection(item, context)
             is RecyclerItem.HeroPrinting -> holder.bindHero(item, context)
         }

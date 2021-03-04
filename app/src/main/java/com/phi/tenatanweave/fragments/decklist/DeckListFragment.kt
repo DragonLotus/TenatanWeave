@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.customviews.EmptySearchView
+import com.phi.tenatanweave.data.RecyclerItem
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler.DeckListCardSearchRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.decklistrecycler.DeckListRecyclerAdapter
+import kotlinx.android.synthetic.main.deck_list_detail_linear_row.*
 
 class DeckListFragment : Fragment() {
 
@@ -34,7 +36,21 @@ class DeckListFragment : Fragment() {
 
         val deckListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListCardSearchLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        val deckListRecyclerAdapter = DeckListRecyclerAdapter(deckListViewModel, requireContext())
+        val deckListRecyclerAdapter = DeckListRecyclerAdapter(deckListViewModel, requireContext(), {
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+
+            adapter.notifyItemChanged(deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext()))
+            adapter.notifyItemChanged(position)
+        }, {
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+
+            adapter.notifyItemChanged(deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext()))
+            adapter.notifyItemChanged(position)
+        })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext())
 
         deckListRecyclerView.layoutManager = deckListLayoutManager
@@ -53,7 +69,7 @@ class DeckListFragment : Fragment() {
 
         deckListCardSearchRecyclerView.layoutManager = deckListCardSearchLayoutManager
         deckListCardSearchRecyclerView.adapter = deckListCardSearchRecyclerAdapter
-        deckListViewModel.deckListCardSearchList.observe(viewLifecycleOwner,{
+        deckListViewModel.deckListCardSearchList.observe(viewLifecycleOwner, {
             deckListCardSearchRecyclerAdapter.setList(it)
         })
 
@@ -70,7 +86,10 @@ class DeckListFragment : Fragment() {
                     deckListRecyclerView.visibility = View.VISIBLE
                     deckListCardSearchRecyclerView.visibility = View.INVISIBLE
                 } else if (newText.isNotEmpty()) {
-                    deckListViewModel.filterCardsPrioritizingPrintings(searchCardResultViewModel.masterCardPrintingList, newText.toString())
+                    deckListViewModel.filterCardsPrioritizingPrintings(
+                        searchCardResultViewModel.masterCardPrintingList,
+                        newText.toString()
+                    )
                     deckListRecyclerView.visibility = View.INVISIBLE
                     deckListCardSearchRecyclerView.visibility = View.VISIBLE
                 }
