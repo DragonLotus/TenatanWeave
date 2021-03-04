@@ -34,15 +34,14 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 itemView.deck_list_card_name.text = it
             }
 
-            if (deckListViewModel.deckQuantityMap.value?.get(this.printing.id) != null)
-                itemView.deck_list_card_quantity.text = deckListViewModel.deckQuantityMap.value?.get(this.printing.id).toString()
-            else
-                itemView.deck_list_card_quantity.text = "0"
+            itemView.deck_list_card_quantity.text =
+                deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id }
+                    .toString()
 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = if(this.baseCard.pitch.isEmpty()) -1 else this.baseCard.pitch[this.printing.version]
+            val pitch = if (this.baseCard.pitch.isEmpty()) -1 else this.baseCard.pitch[this.printing.version]
             var pitchColor = R.color.white
             if (pitch != null)
                 when (pitch) {

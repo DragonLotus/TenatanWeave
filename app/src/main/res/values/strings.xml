@@ -39,10 +39,7 @@
     <string name="label_format">Format: </string>
     <string name="label_hero_section">Hero (%1$s)</string>
     <string name="label_equipment_section">Equipment (%1$s)</string>
-    <string name="label_pitch_misc">Pitch 0 (%1$s)</string>
-    <string name="label_pitch_red">Pitch 1 (%1$s)</string>
-    <string name="label_pitch_yellow">Pitch 2 (%1$s)</string>
-    <string name="label_pitch_blue">Pitch 3 (%1$s)</string>
+    <string name="label_pitch_section">Pitch %1$s (%2$s)</string>
     <string name="home_second">Home Second</string>
 
     <string name="label_legal">Legal</string>
