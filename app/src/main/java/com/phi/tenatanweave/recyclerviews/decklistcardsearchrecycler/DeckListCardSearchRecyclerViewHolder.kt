@@ -23,6 +23,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
 
     fun bindCard(
         cardPrinting: CardPrinting,
+        position: Int,
         removeBottomMargin: Boolean,
         context: Context
     ) {
@@ -41,14 +42,13 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = if(this.baseCard.pitch.isNotEmpty())this.baseCard.pitch[this.printing.version] else -1
+            val pitch = if (this.baseCard.pitch.isNotEmpty()) this.baseCard.pitch[this.printing.version] else -1
             var pitchColor = R.color.white
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
                 2 -> pitchColor = R.color.colorYellowVersion
                 3 -> pitchColor = R.color.colorBlueVersion
             }
-
 
             itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp

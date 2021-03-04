@@ -43,6 +43,7 @@ class DeckListFragment : Fragment() {
             deckListViewModel.processDeck(
                 searchCardResultViewModel.printingMap.value!!,
                 searchCardResultViewModel.cardMap.value!!,
+                searchCardResultViewModel.masterCardPrintingList,
                 requireContext()
             )
         })
@@ -59,13 +60,6 @@ class DeckListFragment : Fragment() {
         val deckListCardSearchView = root.findViewById<EmptySearchView>(R.id.deck_list_card_search)
         deckListCardSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-//                if (query.isNullOrEmpty()) {
-//                    deckListRecyclerView.visibility = View.VISIBLE
-//                    deckListCardSearchRecyclerView.visibility = View.INVISIBLE
-//                } else if (query.isNotEmpty()) {
-//                    deckListRecyclerView.visibility = View.INVISIBLE
-//                    deckListCardSearchRecyclerView.visibility = View.VISIBLE
-//                }
                 deckListCardSearchView.clearFocus()
                 return true
             }

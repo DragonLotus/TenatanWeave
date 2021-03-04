@@ -40,10 +40,10 @@ class NewDeckDialogFragment : DialogFragment() {
             .setTitle(getString(R.string.title_new_deck))
             .setView(rootView)
             .setPositiveButton(getString(R.string.label_ok)) { _, _ ->
-                deckViewModel.formatSelection.value?.let { deckViewModel.formatList.value?.get(it).toString() }?.let {
+                deckViewModel.formatSelection.value?.let { deckViewModel.formatList.value?.get(it) }?.let {
                     deckViewModel.addDeck(
                         deckNameEditText.text.toString(),
-                        it,
+                        it.name,
                         resources
                     )
                 }

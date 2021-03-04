@@ -19,28 +19,30 @@ import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 import kotlinx.android.synthetic.main.section_row.view.*
 
-class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: DeckListViewModel) : RecyclerView.ViewHolder(itemView) {
+class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: DeckListViewModel) :
+    RecyclerView.ViewHolder(itemView) {
 
     fun bindCard(
-        printing: RecyclerItem.Printing,
+        printing: RecyclerItem.CardPrinting,
+        position: Int,
         removeBottomMargin: Boolean,
         context: Context
     ) {
-        with(printing.printing) {
+        with(printing.cardPrinting) {
 
-            this.name.let {
+            this.baseCard.name.let {
                 itemView.deck_list_card_name.text = it
             }
 
-            if (deckListViewModel.deckQuantityMap.value?.get(this.id) != null)
-                itemView.deck_list_card_quantity.text = deckListViewModel.deckQuantityMap.value?.get(this.id).toString()
+            if (deckListViewModel.deckQuantityMap.value?.get(this.printing.id) != null)
+                itemView.deck_list_card_quantity.text = deckListViewModel.deckQuantityMap.value?.get(this.printing.id).toString()
             else
                 itemView.deck_list_card_quantity.text = "0"
 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = deckListViewModel.pitchValueMap.value?.get(this.id)
+            val pitch = if(this.baseCard.pitch.isEmpty()) -1 else this.baseCard.pitch[this.printing.version]
             var pitchColor = R.color.white
             if (pitch != null)
                 when (pitch) {
@@ -62,7 +64,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
-                        .child("card_images/${this.id}.png")
+                        .child("card_images/${this.printing.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.horizontal_placeholder)

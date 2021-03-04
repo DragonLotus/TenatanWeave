@@ -302,7 +302,7 @@ class SingleCardFragment : Fragment() {
 
         val rulingRecyclerLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val rulingRecyclerAdapter =
-            RulingRecyclerAdapter(singleCardViewModel.selectedRuling.value!!, requireContext())
+            RulingRecyclerAdapter(singleCardViewModel.selectedRuling.value!!, ::insertIconsIntoCardText, requireContext())
 
         if (singleCardViewModel.selectedRuling.value != null) {
             rulingRecyclerView.adapter = rulingRecyclerAdapter

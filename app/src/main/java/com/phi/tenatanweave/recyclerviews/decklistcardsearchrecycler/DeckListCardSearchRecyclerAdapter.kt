@@ -22,7 +22,7 @@ class DeckListCardSearchRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: DeckListCardSearchRecyclerViewHolder, position: Int) {
-        holder.bindCard(cardPrintingList[position], removeBottomMargin(position), context)
+        holder.bindCard(cardPrintingList[position], holder.adapterPosition, removeBottomMargin(position), context)
     }
 
     override fun getItemCount(): Int {
@@ -40,6 +40,6 @@ class DeckListCardSearchRecyclerAdapter(
     }
 
     private fun removeBottomMargin(position: Int): Boolean {
-        return position == cardPrintingList.size - 1
+        return position < cardPrintingList.size - 1
     }
 }
