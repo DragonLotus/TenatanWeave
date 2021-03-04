@@ -52,6 +52,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             }
 
             itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+            itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
             itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
             itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
 

@@ -248,10 +248,16 @@ class DeckListViewModel : ViewModel() {
     }
 
     fun checkIfMax(cardPrinting: CardPrinting): Boolean {
-        return unsectionedCardPrintingDeckList.count {
+        val pitch = if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+        val count = unsectionedCardPrintingDeckList.count {
             (it.baseCard.name == cardPrinting.baseCard.name)
-                    && (if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]) == (if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
-        } < 3
+                    && pitch == (if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
+        }
+
+        if(cardPrinting.baseCard.deckLimit > 0)
+            return count < cardPrinting.baseCard.deckLimit
+
+        return count < 3
     }
 
     fun increaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): Int {
