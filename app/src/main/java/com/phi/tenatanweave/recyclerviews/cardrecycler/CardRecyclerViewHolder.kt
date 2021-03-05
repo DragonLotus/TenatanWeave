@@ -21,13 +21,13 @@ class CardRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
             itemView.card_textview.text = when(getTypeAsEnum()) {
                     TypeEnum.HERO -> "Intellect: $intellect | Health: $health"
-                    TypeEnum.EQUIPMENT -> "Defense: ${if(defense.isNotEmpty()) defense[printing.version] else 0}"
-                    TypeEnum.WEAPON -> "Power: ${if(power.isNotEmpty()) power[printing.version] else 0}"
-                    TypeEnum.ACTION -> "Power: ${if(power.isNotEmpty()) power[printing.version] else 0} | Defense: ${if(defense.isNotEmpty()) defense[printing.version] else 0} | Pitch: ${if(pitch.isNotEmpty()) pitch[printing.version] else 0} | Cost: $cost"
-                    TypeEnum.ATTACK_REACTION -> "Power: ${if(power.isNotEmpty()) power[printing.version] else 0} | Defense: ${if(defense.isNotEmpty()) defense[printing.version] else 0} | Pitch: ${if(pitch.isNotEmpty()) pitch[printing.version] else 0} | Cost: $cost"
-                    TypeEnum.DEFENSE_REACTION -> "Defense: ${if(defense.isNotEmpty()) defense[printing.version] else 0} | Pitch: ${if(pitch.isNotEmpty()) pitch[printing.version] else 0} | Cost: $cost"
-                    TypeEnum.RESOURCE -> "Pitch: ${if(pitch.isNotEmpty()) pitch[printing.version] else 0}"
-                    TypeEnum.INSTANT -> "Pitch: ${if(pitch.isNotEmpty()) pitch[printing.version] else 0} | Cost: $cost"
+                    TypeEnum.EQUIPMENT -> "Defense: ${getDefenseSafe(printing.version)}"
+                    TypeEnum.WEAPON -> "Power: ${getPowerSafe(printing.version)}"
+                    TypeEnum.ACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
+                    TypeEnum.ATTACK_REACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
+                    TypeEnum.DEFENSE_REACTION -> "Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
+                    TypeEnum.RESOURCE -> "Pitch: ${getPitchSafe(printing.version)}"
+                    TypeEnum.INSTANT -> "Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
                     TypeEnum.TOKEN -> ""
                     TypeEnum.ALL -> ""
             }

@@ -113,10 +113,10 @@ class DeckListViewModel : ViewModel() {
 
         val sortedSet =
             coreDeckCardPrintingSet.sortedWith(
-                compareBy<CardPrinting> { if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version] }
+                compareBy<CardPrinting> { it.baseCard.getPitchSafe(it.printing.version) }
                     .thenBy { it.baseCard.name })
         mSectionedDeckList.value?.addAll(sortedSet.groupBy {
-            if (it.baseCard.pitch.isEmpty()) -1 else it.baseCard.pitch[it.printing.version]
+            it.baseCard.getPitchSafe(it.printing.version)
         }.flatMap { (pitchValue, cardPrinting) ->
             listOf<RecyclerItem>(
                 RecyclerItem.SetSection(
@@ -172,7 +172,7 @@ class DeckListViewModel : ViewModel() {
 
     private fun getPitchCount(cardPrintingList: MutableList<CardPrinting>, pitchValue: Int): Int {
         return cardPrintingList.count {
-            (pitchValue == if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
+            (pitchValue == it.baseCard.getPitchSafe(it.printing.version))
                     && !(it.baseCard.getTypeAsEnum() == TypeEnum.WEAPON || it.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT)
         }
     }
@@ -200,7 +200,7 @@ class DeckListViewModel : ViewModel() {
             mDeckListCardSearchList.value?.addAll(cardNameCardPrintingMap.values.flatten())
             mDeckListCardSearchList.value?.sortWith(
                 compareBy<CardPrinting> { it.baseCard.name }
-                    .thenBy { if (it.baseCard.pitch.isNullOrEmpty()) it.baseCard.pitch[it.printing.version] else 0 }
+                    .thenBy { it.baseCard.getPitchSafe(it.printing.version)}
             )
             mDeckListCardSearchList.notifyObserver()
         }
@@ -263,11 +263,10 @@ class DeckListViewModel : ViewModel() {
     }
 
     fun checkIfMax(cardPrinting: CardPrinting): Boolean {
-        val pitch =
-            if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+        val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
         val count = unsectionedCardPrintingDeckList.count {
             (it.baseCard.name == cardPrinting.baseCard.name)
-                    && pitch == (if (it.baseCard.pitch.isNullOrEmpty()) 0 else it.baseCard.pitch[it.printing.version])
+                    && pitch == (it.baseCard.getPitchSafe(it.printing.version))
         }
 
         if (cardPrinting.baseCard.deckLimit > 0)
@@ -280,8 +279,7 @@ class DeckListViewModel : ViewModel() {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         if (checkIfMax(cardPrinting)) {
             unsectionedCardPrintingDeckList.add(cardPrinting)
-            val pitch =
-                if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+            val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
 
             indicesToUpdateList.addAll(findIndicesOfSameNameAndPitch(cardPrinting))
 
@@ -301,8 +299,7 @@ class DeckListViewModel : ViewModel() {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         unsectionedCardPrintingDeckList.remove(cardPrinting)
         var countIsZero = false
-        val pitch =
-            if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
+        val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
 
         if (unsectionedCardPrintingDeckList.count { it.printing.id == cardPrinting.printing.id } == 0) {
             val removeIndex =

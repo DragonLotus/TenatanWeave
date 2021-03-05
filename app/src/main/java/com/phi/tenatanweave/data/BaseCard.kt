@@ -1,5 +1,6 @@
 package com.phi.tenatanweave.data
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.phi.tenatanweave.data.enums.*
 import java.lang.IllegalArgumentException
@@ -57,6 +58,45 @@ class BaseCard(
             }
         }
         return subTypeSet.toList()
+    }
+
+    fun getPowerSafe(version: Int): Int{
+        return if(power.isNullOrEmpty())
+            0
+        else
+            try {
+                power[version]
+            } catch (e: ArrayIndexOutOfBoundsException){
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get power value of $name.")
+                Log.d("BaseCard", e.toString())
+                0
+            }
+    }
+
+    fun getDefenseSafe(version: Int): Int{
+        return if(defense.isNullOrEmpty())
+            0
+        else
+            try {
+                defense[version]
+            } catch (e: ArrayIndexOutOfBoundsException){
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get defense value of $name.")
+                Log.d("BaseCard", e.toString())
+                0
+            }
+    }
+
+    fun getPitchSafe(version: Int): Int{
+        return if(pitch.isNullOrEmpty())
+            0
+        else
+            try {
+                pitch[version]
+            } catch (e: ArrayIndexOutOfBoundsException){
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get pitch value of $name.")
+                Log.d("BaseCard", e.toString())
+                0
+            }
     }
 
 //    companion object Factory {
