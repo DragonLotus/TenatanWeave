@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.customviews.EmptySearchView
+import com.phi.tenatanweave.data.AdapterUpdate
 import com.phi.tenatanweave.data.RecyclerItem
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
@@ -41,15 +42,25 @@ class DeckListFragment : Fragment() {
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
 
-            adapter.notifyItemChanged(deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext()))
-            adapter.notifyItemChanged(position)
+            val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext())
+            for (index in indicesToUpdateList){
+                when(index){
+                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
+                }
+            }
         }, {
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
 
-            adapter.notifyItemChanged(deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext()))
-            adapter.notifyItemChanged(position)
+            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext())
+            for (index in indicesToUpdateList){
+                when(index){
+                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
+                }
+            }
         })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext())
 

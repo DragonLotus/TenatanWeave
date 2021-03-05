@@ -48,6 +48,11 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 3 -> pitchColor = R.color.colorBlueVersion
             }
 
+            itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+            itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
+//            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
+//            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+
             itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp
 

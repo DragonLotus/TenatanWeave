@@ -69,6 +69,13 @@ class DeckListRecyclerAdapter(
         is RecyclerItem.CardPrinting -> TYPE_CARD_PRINTING
     }
 
+    fun removeItem(index: Int){
+        if(index < getList().size){
+            printingsList.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
     fun setList(newList: MutableList<RecyclerItem>) {
         printingsList.clear()
         printingsList.addAll(newList)
@@ -87,7 +94,7 @@ class DeckListRecyclerAdapter(
                 is RecyclerItem.Printing -> true
                 is RecyclerItem.SetSection -> false
                 is RecyclerItem.HeroPrinting -> false
-                is RecyclerItem.CardPrinting -> false
+                is RecyclerItem.CardPrinting -> true
             }
 
     }
