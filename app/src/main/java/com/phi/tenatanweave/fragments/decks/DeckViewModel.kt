@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Deck
+import com.phi.tenatanweave.data.PrintingWithFinish
 import com.phi.tenatanweave.data.enums.ClassEnum
 import com.phi.tenatanweave.data.enums.FormatEnum
 

@@ -61,15 +61,23 @@ class DeckListViewModel : ViewModel() {
     }
 
     private fun processEquipment(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
-        val equipmentList = mutableListOf<String>()
-        mDeck.value?.equipmentMap?.values?.flatten()?.let { equipmentList.addAll(it) }
+        val equipmentList = mutableListOf<PrintingWithFinish>()
+        equipmentList.addAll(mDeck.value?.equipmentList!!)
         val equipmentRecyclerItemList = mutableListOf<RecyclerItem.CardPrinting>()
 
-        for (equipmentId in equipmentList) {
-            masterCardPrintingList.first { masterCardPrint -> masterCardPrint.printing.id == equipmentId }
+        for (equipment in equipmentList) {
+            masterCardPrintingList.first { masterCardPrint -> masterCardPrint.printing.id == equipment.printingId }
                 .let {
-                    unsectionedCardPrintingDeckList.add(it)
-                    equipmentRecyclerItemList.add(RecyclerItem.CardPrinting(it))
+                    val cardPrinting =
+                        if (unsectionedCardPrintingDeckList.find { card -> card.printing.id == equipment.printingId && card.finish == equipment.finish } != null)
+                            unsectionedCardPrintingDeckList.first { card -> card.printing.id == equipment.printingId && card.finish == equipment.finish }
+                        else CardPrinting(
+                            it.baseCard,
+                            it.printing,
+                            equipment.finish
+                        )
+                    unsectionedCardPrintingDeckList.add(cardPrinting)
+                    equipmentRecyclerItemList.add(RecyclerItem.CardPrinting(cardPrinting))
                 }
         }
 
@@ -83,15 +91,23 @@ class DeckListViewModel : ViewModel() {
     }
 
     private fun processCoreDeck(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
-        val coreDeckList = mutableListOf<String>()
-        mDeck.value?.coreDeckMap?.values?.flatten()?.let { coreDeckList.addAll(it) }
+        val coreDeckList = mutableListOf<PrintingWithFinish>()
+        coreDeckList.addAll(mDeck.value?.coreDeckList!!)
         val coreDeckCardPrintingSet = mutableSetOf<CardPrinting>()
 
-        for (coreDeckPrintId in coreDeckList) {
-            masterCardPrintingList.first { masterCardPrint -> masterCardPrint.printing.id == coreDeckPrintId }
+        for (coreDeckCard in coreDeckList) {
+            masterCardPrintingList.first { masterCardPrint -> masterCardPrint.printing.id == coreDeckCard.printingId }
                 .let {
-                    unsectionedCardPrintingDeckList.add(it)
-                    coreDeckCardPrintingSet.add(it)
+                    val cardPrinting =
+                        if (unsectionedCardPrintingDeckList.find { card -> card.printing.id == coreDeckCard.printingId && card.finish == coreDeckCard.finish } != null)
+                            unsectionedCardPrintingDeckList.first { card -> card.printing.id == coreDeckCard.printingId && card.finish == coreDeckCard.finish }
+                        else CardPrinting(
+                            it.baseCard,
+                            it.printing,
+                            coreDeckCard.finish
+                        )
+                    unsectionedCardPrintingDeckList.add(cardPrinting)
+                    coreDeckCardPrintingSet.add(cardPrinting)
                 }
         }
 
@@ -133,15 +149,13 @@ class DeckListViewModel : ViewModel() {
         })
     }
 
-    private fun incrementMapAndCheckIfContains(map: MutableMap<String, Int>, key: String): Boolean {
+    private fun incrementMap(map: MutableMap<CardPrinting, Int>, key: CardPrinting) {
         return when (val count = map[key]) {
             null -> {
                 map[key] = 1
-                false
             }
             else -> {
                 map[key] = count + 1
-                true
             }
         }
     }
@@ -216,34 +230,36 @@ class DeckListViewModel : ViewModel() {
             .replace("[^a-zA-Z0-9]", "")
             .toLowerCase(Locale.ROOT)
 
+        val filteredUnsectionedList =
+            unsectionedCardPrintingDeckList.filter { it.printing.name == cardPrinting.printing.name && it.printing.version == cardPrinting.printing.version }
+        val filteredUnsectionedQuantityMap = mutableMapOf<CardPrinting, Int>()
+
+        if (filteredUnsectionedList.isNotEmpty()) {
+            for (filteredCardPrinting in filteredUnsectionedList) {
+                incrementMap(filteredUnsectionedQuantityMap, filteredCardPrinting)
+            }
+        }
+
+        val greatestQuantityCardPrinting =
+            findGreatestQuantityCardPrinting(filteredUnsectionedQuantityMap) ?: cardPrinting
+
         if (cardNameCardPrintingMap[cardNameKey] == null) {
-            cardNameCardPrintingMap[cardNameKey] = mutableListOf(cardPrinting)
+            cardNameCardPrintingMap[cardNameKey] = mutableListOf(greatestQuantityCardPrinting)
         } else if (cardNameCardPrintingMap[cardNameKey]?.isNotEmpty() == true) {
             val cardPrintingListFromMap = cardNameCardPrintingMap[cardNameKey]
-            val currentCardPrintingPitch =
-                if (cardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else cardPrinting.baseCard.pitch[cardPrinting.printing.version]
-
-            val pitchInMapList = mutableListOf<Int>()
-            for (existingCardPrinting in cardPrintingListFromMap!!) {
-                pitchInMapList.add(if (existingCardPrinting.baseCard.pitch.isNullOrEmpty()) 0 else existingCardPrinting.baseCard.pitch[existingCardPrinting.printing.version])
-            }
-
-            if (!pitchInMapList.contains(currentCardPrintingPitch))
+            val currentCardVersion = cardPrinting.printing.version
+            val index = cardPrintingListFromMap?.indexOfFirst { it.printing.version == currentCardVersion }
+            if (index != -1) {
+                if (index?.let { cardPrintingListFromMap[it] } != greatestQuantityCardPrinting)
+                    index?.let { cardNameCardPrintingMap[cardNameKey]?.set(it, cardPrinting) }
+            } else
                 cardNameCardPrintingMap[cardNameKey]?.add(cardPrinting)
-            else {
-                val index = pitchInMapList.indexOfFirst { it == currentCardPrintingPitch }
-                cardPrintingListFromMap[index].let { existingCardPrinting ->
-                    val existingQuantity =
-                        unsectionedCardPrintingDeckList.count { it.printing.id == existingCardPrinting.printing.id }
-                    val newQuantity =
-                        unsectionedCardPrintingDeckList.count { it.printing.id == cardPrinting.printing.id }
-                    if (newQuantity > existingQuantity) {
-                        cardNameCardPrintingMap[cardNameKey]?.set(index, cardPrinting)
-                    }
-                }
-            }
-
         }
+    }
+
+    private fun findGreatestQuantityCardPrinting(quantityMap: MutableMap<CardPrinting, Int>): CardPrinting? {
+        val greatestQuantity = quantityMap.maxByOrNull { it.value }
+        return greatestQuantity?.key
     }
 
     fun checkIfMax(cardPrinting: CardPrinting): Boolean {

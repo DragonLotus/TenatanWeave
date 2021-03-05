@@ -11,7 +11,9 @@ import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 
 class DeckListCardSearchRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,
-    val context: Context
+    val context: Context,
+    val increaseOnClickListener: View.OnClickListener,
+    val decreaseOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListCardSearchRecyclerViewHolder>() {
     var cardPrintingList: MutableList<CardPrinting> = mutableListOf()

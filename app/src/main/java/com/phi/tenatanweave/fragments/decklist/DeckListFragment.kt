@@ -62,7 +62,31 @@ class DeckListFragment : Fragment() {
                 }
             }
         })
-        val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext())
+        val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+
+            val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext())
+//            for (index in indicesToUpdateList){
+//                when(index){
+//                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+//                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
+//                }
+//            }
+        }, {
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+
+            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext())
+//            for (index in indicesToUpdateList){
+//                when(index){
+//                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+//                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
+//                }
+//            }
+        })
 
         deckListRecyclerView.layoutManager = deckListLayoutManager
         deckListRecyclerView.adapter = deckListRecyclerAdapter

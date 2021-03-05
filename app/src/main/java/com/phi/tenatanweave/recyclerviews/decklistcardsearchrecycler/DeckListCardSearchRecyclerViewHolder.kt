@@ -34,7 +34,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             }
 
             itemView.deck_list_card_quantity.text =
-                deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id }
+                deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id && it.finish == this.finish }
                     .toString()
 
             val scale: Float = context.resources.displayMetrics.density
