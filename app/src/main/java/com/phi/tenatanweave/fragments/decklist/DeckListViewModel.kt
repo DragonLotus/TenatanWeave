@@ -44,20 +44,35 @@ class DeckListViewModel : ViewModel() {
         sectionedDeckList.value?.clear()
         unsectionedCardPrintingDeckList.clear()
 
+        val heroCardPrinting =
+            if(mDeck.value?.heroId?.printingId.isNullOrEmpty()) null
+        else
+            with(masterCardPrintingList.find { it.printing.id  == mDeck.value?.heroId?.printingId }){
+                if (this?.finish != mDeck.value?.heroId?.finish)
+                    this?.let { mDeck.value?.heroId?.finish?.let { finishFromDeck ->
+                        CardPrinting(it.baseCard, this.printing,
+                            finishFromDeck
+                        )
+                    } }
+                else
+                    this
+            }
+
         sectionedDeckList.value?.addAll(
             listOf(
                 RecyclerItem.SetSection(
                     context.getString(
                         R.string.label_hero_section,
-                        "${if (mDeck.value?.heroId!!.isNotEmpty()) 1 else 0}"
+                        "${if (mDeck.value?.heroId?.printingId.isNullOrEmpty()) 0 else 1}"
                     )
                 ),
-                RecyclerItem.HeroPrinting(printingMap[mDeck.value?.heroId!!])
+                RecyclerItem.HeroPrinting(heroCardPrinting)
             )
         )
 
         processEquipment(masterCardPrintingList, context)
         processCoreDeck(masterCardPrintingList, context)
+        mSectionedDeckList.notifyObserver()
     }
 
     private fun processEquipment(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
@@ -186,7 +201,7 @@ class DeckListViewModel : ViewModel() {
             mDeckListCardSearchList.value?.clear()
             val cardNameCardPrintingMap = mutableMapOf<String, MutableList<CardPrinting>>()
             val heroCardPrinting =
-                if (mDeck.value?.heroId.isNullOrEmpty()) null else masterCardPrintingList.first { it.printing.id == mDeck.value?.heroId }
+                if (mDeck.value?.heroId?.printingId.isNullOrEmpty()) null else masterCardPrintingList.first { it.printing.id == mDeck.value?.heroId?.printingId }
 
             for (cardPrinting in masterCardPrintingList) {
                 val cardNameKey = cardPrinting.baseCard.name
@@ -321,6 +336,16 @@ class DeckListViewModel : ViewModel() {
         }
         return indicesToUpdateList
     }
+    fun increaseQuantityFromSearch(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
+        val indicesToUpdateList = mutableListOf<AdapterUpdate>()
+        if (checkIfMax(cardPrinting)) {
+            unsectionedCardPrintingDeckList.add(cardPrinting)
+            addToDeck(cardPrinting)
+            indicesToUpdateList.add(AdapterUpdate.Changed(position))
+            mDeck.notifyObserver()
+        }
+        return indicesToUpdateList
+    }
 
     private fun findIndicesOfSameNameAndPitch(cardPrinting: CardPrinting): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
@@ -365,6 +390,13 @@ class DeckListViewModel : ViewModel() {
                     )
             }
         }
+    }
+
+    private fun addToDeck(cardPrinting: CardPrinting){
+        if(cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON)
+            mDeck.value?.equipmentList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
+        else
+            mDeck.value?.coreDeckList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

@@ -63,23 +63,23 @@ class DeckListFragment : Fragment() {
             }
         })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
-            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
-            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
-            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+            val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
+            val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position]
 
-            val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext())
-//            for (index in indicesToUpdateList){
-//                when(index){
-//                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
-//                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
-//                }
-//            }
+            val indicesToUpdateList = deckListViewModel.increaseQuantityFromSearch(position, item, requireContext())
+            for (index in indicesToUpdateList){
+                when(index){
+                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
+                }
+            }
         }, {
-            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
-            val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
-            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+            val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
+            val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it.parent as View)
+            val item = adapter.getList()[position]
 
-            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext())
+            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item, requireContext())
 //            for (index in indicesToUpdateList){
 //                when(index){
 //                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)

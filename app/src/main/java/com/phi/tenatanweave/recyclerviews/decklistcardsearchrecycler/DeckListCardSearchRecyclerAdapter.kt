@@ -24,7 +24,14 @@ class DeckListCardSearchRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: DeckListCardSearchRecyclerViewHolder, position: Int) {
-        holder.bindCard(cardPrintingList[position], holder.adapterPosition, removeBottomMargin(position), context)
+        holder.bindCard(cardPrintingList[position], holder.adapterPosition, removeBottomMargin(position), increaseOnClickListener, decreaseOnClickListener, context)
+    }
+
+    fun removeItem(index: Int){
+        if(index < getList().size){
+            cardPrintingList.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     override fun getItemCount(): Int {

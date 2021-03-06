@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
@@ -25,6 +26,8 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
         cardPrinting: CardPrinting,
         position: Int,
         removeBottomMargin: Boolean,
+        increaseOnClickListener: View.OnClickListener,
+        decreaseOnClickListener: View.OnClickListener,
         context: Context
     ) {
         with(cardPrinting) {
@@ -50,8 +53,16 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
 
             itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
             itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
-//            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
-//            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
+            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+
+            itemView.finish_image.visibility = View.VISIBLE
+            when (this?.finish?.let { this.printing.getFinishSafe(it) }) {
+                FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
+                FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
+                FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
+                else -> itemView.finish_image.visibility = View.GONE
+            }
 
             itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp

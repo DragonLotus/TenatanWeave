@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.RecyclerItem
+import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
@@ -54,8 +54,16 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
 
             itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
             itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
-            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
-            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+            itemView.increase_card_quantity_button.setOnClickListener(increaseOnClickListener)
+            itemView.decrease_card_quantity_button.setOnClickListener(decreaseOnClickListener)
+
+            itemView.finish_image.visibility = View.VISIBLE
+            when (this.printing.getFinishSafe(this.finish)) {
+                FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
+                FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
+                FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
+                else -> itemView.finish_image.visibility = View.GONE
+            }
 
             itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp
@@ -93,36 +101,42 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
     }
 
     fun bindHero(heroPrinting: RecyclerItem.HeroPrinting, context: Context) {
-        itemView.deck_list_card_name.text = context.getString(R.string.no_hero_selected)
         itemView.increase_card_quantity_button.visibility = View.INVISIBLE
         itemView.decrease_card_quantity_button.visibility = View.INVISIBLE
         itemView.deck_list_card_quantity.visibility = View.INVISIBLE
 
-        if (heroPrinting.printing != null) {
-            with(heroPrinting.printing) {
+        with(heroPrinting.cardPrinting) {
 
-                itemView.deck_list_card_name.text = heroPrinting.printing.name
+            itemView.deck_list_card_name.text =
+                if (this?.printing?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.printing?.name
 
-                GlideApp.with(context)
-                    .asBitmap()
-                    .load(
-                        Firebase.storage.reference
-                            .child("card_images/${this.id}.png")
-                    )
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.horizontal_placeholder)
-                    .fallback(R.drawable.horizontal_placeholder)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            TODO("Not yet implemented")
-                        }
-
-                    })
+            itemView.finish_image.visibility = View.VISIBLE
+            when (this?.finish?.let { this.printing.getFinishSafe(it) }) {
+                FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
+                FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
+                FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
+                else -> itemView.finish_image.visibility = View.GONE
             }
+
+            GlideApp.with(context)
+                .asBitmap()
+                .load(
+                    Firebase.storage.reference
+                        .child("card_images/${this?.printing?.id}.png")
+                )
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.horizontal_placeholder)
+                .fallback(R.drawable.horizontal_placeholder)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
         }
     }
 
