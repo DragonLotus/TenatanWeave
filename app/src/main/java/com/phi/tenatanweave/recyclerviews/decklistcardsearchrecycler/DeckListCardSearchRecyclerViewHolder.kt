@@ -16,6 +16,7 @@ import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CardPrinting
 import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
+import com.phi.tenatanweave.data.enums.TypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
@@ -29,6 +30,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
         removeBottomMargin: Boolean,
         increaseOnClickListener: View.OnClickListener,
         decreaseOnClickListener: View.OnClickListener,
+        heroOnClickListener: View.OnClickListener,
         context: Context
     ) {
         with(cardPrinting) {
@@ -65,8 +67,17 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             } else
                 itemView.defense_layout.visibility = View.GONE
 
-            itemView.intelligence_layout.visibility = View.GONE
-            itemView.health_layout.visibility = View.GONE
+            if (this.baseCard.intellect >= 0) {
+                itemView.intelligence_layout.visibility = View.VISIBLE
+                itemView.intelligence_textview.text = this.baseCard.intellect.toString()
+            } else
+                itemView.intelligence_layout.visibility = View.GONE
+
+            if (this.baseCard.health >= 0) {
+                itemView.health_layout.visibility = View.VISIBLE
+                itemView.health_textview.text = this.baseCard.health.toString()
+            } else
+                itemView.health_layout.visibility = View.GONE
 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
@@ -79,10 +90,20 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 3 -> pitchColor = R.color.colorBlueVersion
             }
 
-            itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
-            itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
-            itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
-            itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+            if(this.baseCard.getTypeAsEnum() != TypeEnum.HERO){
+                itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+                itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
+                itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
+                itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+                itemView.increase_card_quantity_button.visibility = View.VISIBLE
+                itemView.decrease_card_quantity_button.visibility = View.VISIBLE
+                itemView.deck_list_card_quantity.visibility = View.VISIBLE
+            } else {
+                itemView.setOnClickListener(heroOnClickListener)
+                itemView.increase_card_quantity_button.visibility = View.GONE
+                itemView.decrease_card_quantity_button.visibility = View.GONE
+                itemView.deck_list_card_quantity.visibility = View.GONE
+            }
 
             itemView.finish_image.visibility = View.VISIBLE
             when (this.finish.let { this.printing.getFinishSafe(it) }) {

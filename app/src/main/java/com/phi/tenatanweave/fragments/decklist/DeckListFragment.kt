@@ -1,9 +1,11 @@
 package com.phi.tenatanweave.fragments.decklist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,7 +20,6 @@ import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler.DeckListCardSearchRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.decklistrecycler.DeckListRecyclerAdapter
-import kotlinx.android.synthetic.main.deck_list_detail_linear_row.*
 
 class DeckListFragment : Fragment() {
 
@@ -44,13 +45,13 @@ class DeckListFragment : Fragment() {
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
 
             val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext())
-            for (index in indicesToUpdateList){
-                when(index){
+            for (index in indicesToUpdateList) {
+                when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
         }, {
             //Decrease
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
@@ -58,13 +59,22 @@ class DeckListFragment : Fragment() {
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
 
             val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext())
-            for (index in indicesToUpdateList){
-                when(index){
+            for (index in indicesToUpdateList) {
+                when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
-                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
+                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+        }, {
+            //Hero onClick
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it as View)
+
+            deckListViewModel.isHeroSearchMode = true
+            deckListViewModel.setupHeroSearch(searchCardResultViewModel.masterCardPrintingList)
+            deckListRecyclerView.visibility = View.INVISIBLE
+            deckListCardSearchRecyclerView.visibility = View.VISIBLE
         })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
             //Increase from search
@@ -73,13 +83,13 @@ class DeckListFragment : Fragment() {
             val item = adapter.getList()[position]
 
             val indicesToUpdateList = deckListViewModel.increaseQuantityFromSearch(position, item, requireContext())
-            for (index in indicesToUpdateList){
-                when(index){
+            for (index in indicesToUpdateList) {
+                when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
         }, {
             //Decrease from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
@@ -87,21 +97,31 @@ class DeckListFragment : Fragment() {
             val item = adapter.getList()[position]
 
             val indicesToUpdateList = deckListViewModel.decreaseQuantityFromSearch(position, item, requireContext())
-            for (index in indicesToUpdateList){
-                when(index){
+            for (index in indicesToUpdateList) {
+                when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
-                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
+                    is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+        }, {
+            //Hero onClick from search
+            val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
+            val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it as View)
+            val item = adapter.getList()[position]
+
+            deckListViewModel.setHero(item)
+            deckListRecyclerView.visibility = View.VISIBLE
+            deckListCardSearchRecyclerView.visibility = View.INVISIBLE
+            deckListViewModel.isHeroSearchMode = false
+
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
         })
 
         deckListRecyclerView.layoutManager = deckListLayoutManager
         deckListRecyclerView.adapter = deckListRecyclerAdapter
         deckListViewModel.deck.observe(viewLifecycleOwner, Observer {
             deckListViewModel.processDeck(
-                searchCardResultViewModel.printingMap.value!!,
-                searchCardResultViewModel.cardMap.value!!,
                 searchCardResultViewModel.masterCardPrintingList,
                 requireContext()
             )
@@ -124,22 +144,40 @@ class DeckListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
-                if (newText.isNullOrEmpty()) {
-                    deckListRecyclerView.visibility = View.VISIBLE
-                    deckListCardSearchRecyclerView.visibility = View.INVISIBLE
-                } else if (newText.isNotEmpty()) {
-                    deckListViewModel.filterCardsPrioritizingPrintings(
-                        searchCardResultViewModel.masterCardPrintingList,
-                        newText.toString()
-                    )
-                    deckListRecyclerView.visibility = View.INVISIBLE
-                    deckListCardSearchRecyclerView.visibility = View.VISIBLE
+                if (!deckListViewModel.isHeroSearchMode) {
+                    if (newText.isNullOrEmpty()) {
+                        deckListRecyclerView.visibility = View.VISIBLE
+                        deckListCardSearchRecyclerView.visibility = View.INVISIBLE
+                    } else if (newText.isNotEmpty()) {
+                        deckListViewModel.filterCardsPrioritizingPrintings(
+                            searchCardResultViewModel.masterCardPrintingList,
+                            newText.toString()
+                        )
+                        deckListRecyclerView.visibility = View.INVISIBLE
+                        deckListCardSearchRecyclerView.visibility = View.VISIBLE
+                    }
+                } else {
+                    if(!newText.isNullOrEmpty())
+                        deckListViewModel.filterHeroCards(newText)
                 }
+
                 return true
             }
 
         })
+
+        val searchViewCloseButton: ImageView =
+            deckListCardSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+
+        searchViewCloseButton.setOnClickListener {
+            Log.d("SearchViewOnClose", "SearchView OnClickListener")
+            Log.d("SearchViewOnClose", "Hero mode is: ${deckListViewModel.isHeroSearchMode}")
+            if (deckListViewModel.isHeroSearchMode)
+                deckListViewModel.isHeroSearchMode = false
+            deckListCardSearchView.clearFocus()
+            deckListCardSearchView.isIconified = true
+        }
+
         return root
     }
 }

@@ -128,10 +128,15 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.set_section_name.text = setSection.setName
     }
 
-    fun bindHero(heroPrinting: RecyclerItem.HeroPrinting, context: Context) {
-        itemView.increase_card_quantity_button.visibility = View.INVISIBLE
-        itemView.decrease_card_quantity_button.visibility = View.INVISIBLE
-        itemView.deck_list_card_quantity.visibility = View.INVISIBLE
+    fun bindHero(heroPrinting: RecyclerItem.HeroPrinting, heroOnClickListener: View.OnClickListener, context: Context) {
+        itemView.increase_card_quantity_button.visibility = View.GONE
+        itemView.decrease_card_quantity_button.visibility = View.GONE
+        itemView.deck_list_card_quantity.visibility = View.GONE
+        itemView.deck_list_card_type.visibility = View.GONE
+        itemView.cost_layout.visibility = View.GONE
+        itemView.power_layout.visibility = View.GONE
+        itemView.defense_layout.visibility = View.GONE
+        itemView.setOnClickListener(heroOnClickListener)
 
         with(heroPrinting.cardPrinting) {
 
@@ -144,10 +149,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .joinToString(" ")
                         .replace(SubTypeEnum.ALL.toString(), "NA") else ""
                 }"
-
-            itemView.cost_layout.visibility = View.GONE
-            itemView.power_layout.visibility = View.GONE
-            itemView.defense_layout.visibility = View.GONE
+            itemView.deck_list_card_type.visibility = View.VISIBLE
 
             if (this?.baseCard?.intellect != null && this.baseCard.intellect >= 0) {
                 itemView.intelligence_layout.visibility = View.VISIBLE

@@ -13,22 +13,32 @@ class DeckListCardSearchRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,
     val context: Context,
     val increaseOnClickListener: View.OnClickListener,
-    val decreaseOnClickListener: View.OnClickListener
+    val decreaseOnClickListener: View.OnClickListener,
+    val heroOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListCardSearchRecyclerViewHolder>() {
     var cardPrintingList: MutableList<CardPrinting> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeckListCardSearchRecyclerViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false)
+        val view: View =
+            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false)
         return DeckListCardSearchRecyclerViewHolder(view, deckListViewModel)
     }
 
     override fun onBindViewHolder(holder: DeckListCardSearchRecyclerViewHolder, position: Int) {
-        holder.bindCard(cardPrintingList[position], holder.adapterPosition, removeBottomMargin(position), increaseOnClickListener, decreaseOnClickListener, context)
+        holder.bindCard(
+            cardPrintingList[position],
+            holder.adapterPosition,
+            removeBottomMargin(position),
+            increaseOnClickListener,
+            decreaseOnClickListener,
+            heroOnClickListener,
+            context
+        )
     }
 
-    fun removeItem(index: Int){
-        if(index < getList().size){
+    fun removeItem(index: Int) {
+        if (index < getList().size) {
             cardPrintingList.removeAt(index)
             notifyItemRemoved(index)
         }

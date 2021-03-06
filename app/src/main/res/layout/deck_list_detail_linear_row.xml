@@ -31,8 +31,8 @@
 
     <ImageView
             android:id="@+id/finish_image"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="@dimen/deck_list_card_icon_size"
+            android:layout_height="@dimen/deck_list_card_icon_size"
             android:src="@drawable/rainbow_finish"
             app:layout_constraintTop_toTopOf="@id/deck_list_card_name"
             app:layout_constraintBottom_toBottomOf="@id/deck_list_card_name"
@@ -91,7 +91,7 @@
 
             <ImageView
                     android:id="@+id/cost_imageview"
-                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_width="@dimen/deck_list_card_detail_icon_size"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_resource"
                     android:adjustViewBounds="true"
@@ -119,7 +119,7 @@
 
             <ImageView
                     android:id="@+id/power_imageview"
-                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_width="@dimen/deck_list_card_detail_icon_size"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_power"
                     android:adjustViewBounds="true"
@@ -147,7 +147,7 @@
 
             <ImageView
                     android:id="@+id/defense_imageview"
-                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_width="@dimen/deck_list_card_detail_icon_size"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_defense"
                     android:adjustViewBounds="true"
@@ -175,7 +175,7 @@
 
             <ImageView
                     android:id="@+id/intelligence_imageview"
-                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_width="@dimen/deck_list_card_detail_icon_size"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_intelligence"
                     android:adjustViewBounds="true"
@@ -203,7 +203,7 @@
 
             <ImageView
                     android:id="@+id/health_imageview"
-                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_width="@dimen/deck_list_card_detail_icon_size"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_health"
                     android:adjustViewBounds="true"

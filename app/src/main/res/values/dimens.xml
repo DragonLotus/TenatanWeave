@@ -13,7 +13,8 @@
     <dimen name="body_2">14sp</dimen>
     <dimen name="detail_1">12sp</dimen>
 
-    <dimen name="deck_list_card_icon_size">10dp</dimen>
+    <dimen name="deck_list_card_detail_icon_size">10dp</dimen>
+    <dimen name="deck_list_card_icon_size">14dp</dimen>
 
     <dimen name="single_card_start_x" format="float">.1333</dimen>
     <dimen name="single_card_start_y" format="float">.1433</dimen>

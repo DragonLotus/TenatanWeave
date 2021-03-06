@@ -10,7 +10,6 @@ import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.data.enums.ClassEnum
 import com.phi.tenatanweave.data.enums.FormatEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
-import java.lang.Exception
 import java.util.*
 
 class DeckListViewModel : ViewModel() {
@@ -32,14 +31,15 @@ class DeckListViewModel : ViewModel() {
 
     val unsectionedCardPrintingDeckList: MutableList<CardPrinting> = mutableListOf()
 
+    var isHeroSearchMode = false
+    val heroList = mutableListOf<CardPrinting>()
+
     fun setDeck(deck: Deck) {
         mDeck.value = deck
         mDeck.notifyObserver()
     }
 
     fun processDeck(
-        printingMap: MutableMap<String, Printing>,
-        cardMap: MutableMap<String, BaseCard>,
         masterCardPrintingList: MutableList<CardPrinting>,
         context: Context
     ) {
@@ -47,18 +47,21 @@ class DeckListViewModel : ViewModel() {
         unsectionedCardPrintingDeckList.clear()
 
         val heroCardPrinting =
-            if(mDeck.value?.heroId?.printingId.isNullOrEmpty()) null
-        else
-            with(masterCardPrintingList.find { it.printing.id  == mDeck.value?.heroId?.printingId }){
-                if (this?.finish != mDeck.value?.heroId?.finish)
-                    this?.let { mDeck.value?.heroId?.finish?.let { finishFromDeck ->
-                        CardPrinting(it.baseCard, this.printing,
-                            finishFromDeck
-                        )
-                    } }
-                else
-                    this
-            }
+            if (mDeck.value?.heroId?.printingId.isNullOrEmpty()) null
+            else
+                with(masterCardPrintingList.find { it.printing.id == mDeck.value?.heroId?.printingId }) {
+                    if (this?.finish != mDeck.value?.heroId?.finish)
+                        this?.let {
+                            mDeck.value?.heroId?.finish?.let { finishFromDeck ->
+                                CardPrinting(
+                                    it.baseCard, this.printing,
+                                    finishFromDeck
+                                )
+                            }
+                        }
+                    else
+                        this
+                }
 
         sectionedDeckList.value?.addAll(
             listOf(
@@ -199,6 +202,33 @@ class DeckListViewModel : ViewModel() {
         return cardPrintingList.count { it.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || it.baseCard.getTypeAsEnum() == TypeEnum.WEAPON }
     }
 
+    fun setupHeroSearch(masterCardPrintingList: MutableList<CardPrinting>) {
+        mDeckListCardSearchList.value?.clear()
+        if (heroList.isEmpty())
+            heroList.addAll(masterCardPrintingList.filter {
+                it.baseCard.getTypeAsEnum() == TypeEnum.HERO && it.baseCard.legalFormats.contains(
+                    mDeck.value?.getFormatAsEnum()
+                )
+            }.distinctBy { it.baseCard.name })
+        mDeckListCardSearchList.value?.addAll(heroList)
+        mDeckListCardSearchList.notifyObserver()
+    }
+
+    fun filterHeroCards(searchText: String) {
+        mDeckListCardSearchList.value?.clear()
+        val filteredList = heroList.filter {
+            it.baseCard.name
+                .replace("[^a-zA-Z0-9]", "")
+                .toLowerCase(Locale.ROOT).contains(
+                    searchText
+                        .replace("[^a-zA-Z0-9]", "")
+                        .toLowerCase(Locale.ROOT)
+                )
+        }
+        mDeckListCardSearchList.value?.addAll(filteredList)
+        mDeckListCardSearchList.notifyObserver()
+    }
+
     fun filterCardsPrioritizingPrintings(masterCardPrintingList: MutableList<CardPrinting>, searchText: String) {
         if (!masterCardPrintingList.isNullOrEmpty()) {
             mDeckListCardSearchList.value?.clear()
@@ -218,7 +248,7 @@ class DeckListViewModel : ViewModel() {
             mDeckListCardSearchList.value?.addAll(cardNameCardPrintingMap.values.flatten())
             mDeckListCardSearchList.value?.sortWith(
                 compareBy<CardPrinting> { it.baseCard.name }
-                    .thenBy { it.baseCard.getPitchSafe(it.printing.version)}
+                    .thenBy { it.baseCard.getPitchSafe(it.printing.version) }
             )
             mDeckListCardSearchList.notifyObserver()
         }
@@ -293,6 +323,13 @@ class DeckListViewModel : ViewModel() {
         return count < 3
     }
 
+    fun setHero(cardPrinting: CardPrinting) {
+        mDeck.value?.heroId = PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish)
+        mDeck.value?.deckPictureId = cardPrinting.printing.id
+        mDeck.value?.setNewLastModifiedDate()
+        mDeck.notifyObserver()
+    }
+
     fun increaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         if (checkIfMax(cardPrinting)) {
@@ -342,7 +379,11 @@ class DeckListViewModel : ViewModel() {
         return indicesToUpdateList
     }
 
-    fun increaseQuantityFromSearch(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
+    fun increaseQuantityFromSearch(
+        position: Int,
+        cardPrinting: CardPrinting,
+        context: Context
+    ): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         if (checkIfMax(cardPrinting)) {
             unsectionedCardPrintingDeckList.add(cardPrinting)
@@ -353,7 +394,11 @@ class DeckListViewModel : ViewModel() {
         return indicesToUpdateList
     }
 
-    fun decreaseQuantityFromSearch(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
+    fun decreaseQuantityFromSearch(
+        position: Int,
+        cardPrinting: CardPrinting,
+        context: Context
+    ): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         unsectionedCardPrintingDeckList.remove(cardPrinting)
         removeFromDeck(cardPrinting)
@@ -407,31 +452,38 @@ class DeckListViewModel : ViewModel() {
         }
     }
 
-    private fun addToDeck(cardPrinting: CardPrinting){
-        if(cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON)
+    private fun addToDeck(cardPrinting: CardPrinting) {
+        if (cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON)
             mDeck.value?.equipmentList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
         else
             mDeck.value?.coreDeckList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
         mDeck.value?.setNewLastModifiedDate()
     }
 
-    private fun removeFromDeck(cardPrinting: CardPrinting){
-        if(cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON){
-            val index = mDeck.value?.equipmentList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
+    private fun removeFromDeck(cardPrinting: CardPrinting) {
+        if (cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON) {
+            val index =
+                mDeck.value?.equipmentList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
             try {
                 if (index != null)
                     mDeck.value?.equipmentList?.removeAt(index)
-            } catch (e: Exception){
-                Log.d("DeckListViewModel", "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.equipmentList} with index $index.")
+            } catch (e: Exception) {
+                Log.d(
+                    "DeckListViewModel",
+                    "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.equipmentList} with index $index."
+                )
             }
-        }
-        else {
-            val index = mDeck.value?.coreDeckList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
+        } else {
+            val index =
+                mDeck.value?.coreDeckList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
             try {
                 if (index != null)
                     mDeck.value?.coreDeckList?.removeAt(index)
-            } catch (e: Exception){
-                Log.d("DeckListViewModel", "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.coreDeckList} with index $index.")
+            } catch (e: Exception) {
+                Log.d(
+                    "DeckListViewModel",
+                    "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.coreDeckList} with index $index."
+                )
             }
         }
         mDeck.value?.setNewLastModifiedDate()

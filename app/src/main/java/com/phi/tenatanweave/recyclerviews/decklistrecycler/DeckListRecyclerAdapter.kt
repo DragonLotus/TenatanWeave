@@ -13,7 +13,8 @@ class DeckListRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,
     val context: Context,
     val increaseOnClickListener: View.OnClickListener,
-    val decreaseOnClickListener: View.OnClickListener
+    val decreaseOnClickListener: View.OnClickListener,
+    val heroOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListRecyclerViewHolder>() {
     var printingsList: MutableList<RecyclerItem> = mutableListOf()
@@ -54,7 +55,7 @@ class DeckListRecyclerAdapter(
                 context
             )
             is RecyclerItem.SetSection -> holder.bindSection(item, context)
-            is RecyclerItem.HeroPrinting -> holder.bindHero(item, context)
+            is RecyclerItem.HeroPrinting -> holder.bindHero(item, heroOnClickListener, context)
         }
     }
 

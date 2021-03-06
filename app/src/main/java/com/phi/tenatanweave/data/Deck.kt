@@ -7,8 +7,8 @@ import java.util.*
 class Deck(
     val id: String = "",
     val deckName: String = "",
-    val deckPictureId: String = "",
-    val heroId: PrintingWithFinish = PrintingWithFinish(),
+    var deckPictureId: String = "",
+    var heroId: PrintingWithFinish = PrintingWithFinish(),
     val equipmentList: MutableList<PrintingWithFinish> = mutableListOf(),
     val coreDeckList: MutableList<PrintingWithFinish> = mutableListOf(),
     val sideBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
