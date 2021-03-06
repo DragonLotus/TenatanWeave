@@ -105,7 +105,7 @@ class DeckListViewModel : ViewModel() {
 
         addSectionToList(
             mSectionedDeckList.value!!,
-            context.getString(R.string.label_equipment_section, equipmentRecyclerItemSet.size),
+            context.getString(R.string.label_equipment_section, equipmentList.size),
             sortedSet.toMutableList()
         )
     }
