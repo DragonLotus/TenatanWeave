@@ -44,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
-            android:textSize="16sp"
+            android:textSize="@dimen/body_1"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
@@ -55,6 +55,166 @@
             app:layout_constraintStart_toEndOf="@id/finish_image"
             app:layout_constraintEnd_toStartOf="@id/decrease_card_quantity_button"
             android:layout_marginStart="4dp"/>
+
+    <TextView
+            android:id="@+id/deck_list_card_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:textSize="@dimen/detail_1"
+            android:maxLines="1"
+            app:layout_constraintTop_toBottomOf="@id/deck_list_card_name"
+            app:layout_constraintStart_toEndOf="@id/deck_list_card_view"
+            app:layout_constraintEnd_toStartOf="@id/decrease_card_quantity_button"
+            android:layout_marginStart="4dp"/>
+
+    <LinearLayout
+            android:id="@+id/deck_list_card_detail_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/deck_list_card_type"
+            app:layout_constraintStart_toEndOf="@id/deck_list_card_view">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cost_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="4dp">
+
+            <TextView
+                    android:id="@+id/cost_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/detail_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <ImageView
+                    android:id="@+id/cost_imageview"
+                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_resource"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="@id/cost_textview"
+                    app:layout_constraintBottom_toBottomOf="@id/cost_textview"
+                    app:layout_constraintStart_toEndOf="@id/cost_textview"
+                    android:layout_marginStart="1dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/power_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="4dp">
+
+            <TextView
+                    android:id="@+id/power_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/detail_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <ImageView
+                    android:id="@+id/power_imageview"
+                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_power"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="@id/power_textview"
+                    app:layout_constraintBottom_toBottomOf="@id/power_textview"
+                    app:layout_constraintStart_toEndOf="@id/power_textview"
+                    android:layout_marginStart="1dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/defense_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="4dp">
+
+            <TextView
+                    android:id="@+id/defense_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/detail_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <ImageView
+                    android:id="@+id/defense_imageview"
+                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_defense"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="@id/defense_textview"
+                    app:layout_constraintBottom_toBottomOf="@id/defense_textview"
+                    app:layout_constraintStart_toEndOf="@id/defense_textview"
+                    android:layout_marginStart="1dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/intelligence_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="4dp">
+
+            <TextView
+                    android:id="@+id/intelligence_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/detail_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <ImageView
+                    android:id="@+id/intelligence_imageview"
+                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_intelligence"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="@id/intelligence_textview"
+                    app:layout_constraintBottom_toBottomOf="@id/intelligence_textview"
+                    app:layout_constraintStart_toEndOf="@id/intelligence_textview"
+                    android:layout_marginStart="1dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/health_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginStart="4dp">
+
+            <TextView
+                    android:id="@+id/health_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/detail_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <ImageView
+                    android:id="@+id/health_imageview"
+                    android:layout_width="@dimen/deck_list_card_icon_size"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_health"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="@id/health_textview"
+                    app:layout_constraintBottom_toBottomOf="@id/health_textview"
+                    app:layout_constraintStart_toEndOf="@id/health_textview"
+                    android:layout_marginStart="1dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 
     <ImageView
             android:id="@+id/increase_card_quantity_button"

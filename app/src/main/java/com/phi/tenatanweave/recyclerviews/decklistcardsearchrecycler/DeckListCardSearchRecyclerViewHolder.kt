@@ -15,6 +15,7 @@ import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CardPrinting
 import com.phi.tenatanweave.data.enums.FinishEnum
+import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
@@ -40,6 +41,33 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id && it.finish == this.finish }
                     .toString()
 
+            itemView.deck_list_card_type.text =
+                "${this.baseCard.getHeroClassAsEnum()} ${this.baseCard.getTypeAsEnum().toFullString()} ${
+                    if (this.baseCard.subTypes.isNotEmpty()) "- " + this.baseCard.getSubTypesAsEnum().joinToString(" ")
+                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
+                }"
+
+            if (this.baseCard.cost >= 0) {
+                itemView.cost_layout.visibility = View.VISIBLE
+                itemView.cost_textview.text = this.baseCard.cost.toString()
+            } else
+                itemView.cost_layout.visibility = View.GONE
+
+            if (this.baseCard.power.isNotEmpty()) {
+                itemView.power_layout.visibility = View.VISIBLE
+                itemView.power_textview.text = this.baseCard.getPowerSafe(this.printing.version).toString()
+            } else
+                itemView.power_layout.visibility = View.GONE
+
+            if (this.baseCard.defense.isNotEmpty()) {
+                itemView.defense_layout.visibility = View.VISIBLE
+                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.printing.version).toString()
+            } else
+                itemView.defense_layout.visibility = View.GONE
+
+            itemView.intelligence_layout.visibility = View.GONE
+            itemView.health_layout.visibility = View.GONE
+
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
@@ -57,7 +85,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
 
             itemView.finish_image.visibility = View.VISIBLE
-            when (this?.finish?.let { this.printing.getFinishSafe(it) }) {
+            when (this.finish.let { this.printing.getFinishSafe(it) }) {
                 FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
                 FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
                 FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)

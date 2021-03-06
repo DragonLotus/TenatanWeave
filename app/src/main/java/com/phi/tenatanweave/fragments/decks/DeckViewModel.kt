@@ -51,14 +51,27 @@ class DeckViewModel : ViewModel() {
     fun setLoggedInUser(user : FirebaseUser){
         mLoggedInUser.value = user
     }
+
     fun setDatabaseDirectory(db: DatabaseReference){
         mDatabaseDirectory.value = db
     }
+
     fun addDeck(deckName: String, deckFormat: String, resources: Resources) {
         mUserDeckList.value?.add(Deck(id = userDeckIdSequence.toString(), deckName = deckName, format = deckFormat))
         //Uhhhhhh
         userDeckIdSequence++
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_deckIdSequence))?.setValue(userDeckIdSequence)
+        databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
+    }
+
+    fun updateDeck(deck: Deck, resources: Resources){
+        val index = mUserDeckList.value?.indexOfFirst { it.id == deck.id }
+        if (index != null && index >= 0) {
+            mUserDeckList.value?.set(index, deck)
+        } else {
+            mUserDeckList.value?.add(deck)
+        }
+
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
     }
 

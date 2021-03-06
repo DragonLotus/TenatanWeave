@@ -38,6 +38,7 @@ class DeckListFragment : Fragment() {
         val deckListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListCardSearchLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListRecyclerAdapter = DeckListRecyclerAdapter(deckListViewModel, requireContext(), {
+            //Increase
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
@@ -49,7 +50,9 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
         }, {
+            //Decrease
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position] as RecyclerItem.CardPrinting
@@ -61,8 +64,10 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
                 }
             }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
         })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
+            //Increase from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
             val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position]
@@ -74,18 +79,21 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
         }, {
+            //Decrease from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
             val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it.parent as View)
             val item = adapter.getList()[position]
 
-            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item, requireContext())
-//            for (index in indicesToUpdateList){
-//                when(index){
-//                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
-//                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
-//                }
-//            }
+            val indicesToUpdateList = deckListViewModel.decreaseQuantityFromSearch(position, item, requireContext())
+            for (index in indicesToUpdateList){
+                when(index){
+                    is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
+                    is AdapterUpdate.Remove ->  adapter.removeItem(index.index)
+                }
+            }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate , resources)}
         })
 
         deckListRecyclerView.layoutManager = deckListLayoutManager

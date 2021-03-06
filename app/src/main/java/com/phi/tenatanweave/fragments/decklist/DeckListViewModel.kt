@@ -1,6 +1,7 @@
 package com.phi.tenatanweave.fragments.decklist
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.data.enums.ClassEnum
 import com.phi.tenatanweave.data.enums.FormatEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
+import java.lang.Exception
 import java.util.*
 
 class DeckListViewModel : ViewModel() {
@@ -78,7 +80,7 @@ class DeckListViewModel : ViewModel() {
     private fun processEquipment(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
         val equipmentList = mutableListOf<PrintingWithFinish>()
         equipmentList.addAll(mDeck.value?.equipmentList!!)
-        val equipmentRecyclerItemList = mutableListOf<RecyclerItem.CardPrinting>()
+        val equipmentRecyclerItemSet = mutableSetOf<RecyclerItem.CardPrinting>()
 
         for (equipment in equipmentList) {
             masterCardPrintingList.first { masterCardPrint -> masterCardPrint.printing.id == equipment.printingId }
@@ -92,16 +94,16 @@ class DeckListViewModel : ViewModel() {
                             equipment.finish
                         )
                     unsectionedCardPrintingDeckList.add(cardPrinting)
-                    equipmentRecyclerItemList.add(RecyclerItem.CardPrinting(cardPrinting))
+                    equipmentRecyclerItemSet.add(RecyclerItem.CardPrinting(cardPrinting))
                 }
         }
 
-        equipmentRecyclerItemList.sortWith(compareBy { it.cardPrinting.baseCard.name })
+        val sortedSet = equipmentRecyclerItemSet.sortedWith(compareBy { it.cardPrinting.baseCard.name })
 
         addSectionToList(
             mSectionedDeckList.value!!,
-            context.getString(R.string.label_equipment_section, equipmentRecyclerItemList.size),
-            equipmentRecyclerItemList
+            context.getString(R.string.label_equipment_section, equipmentRecyclerItemSet.size),
+            sortedSet.toMutableList()
         )
     }
 
@@ -129,7 +131,8 @@ class DeckListViewModel : ViewModel() {
         val sortedSet =
             coreDeckCardPrintingSet.sortedWith(
                 compareBy<CardPrinting> { it.baseCard.getPitchSafe(it.printing.version) }
-                    .thenBy { it.baseCard.name })
+                    .thenBy { it.baseCard.name }
+                    .thenByDescending { it.finish })
         mSectionedDeckList.value?.addAll(sortedSet.groupBy {
             it.baseCard.getPitchSafe(it.printing.version)
         }.flatMap { (pitchValue, cardPrinting) ->
@@ -294,6 +297,7 @@ class DeckListViewModel : ViewModel() {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         if (checkIfMax(cardPrinting)) {
             unsectionedCardPrintingDeckList.add(cardPrinting)
+            addToDeck(cardPrinting)
             val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
 
             indicesToUpdateList.addAll(findIndicesOfSameNameAndPitch(cardPrinting))
@@ -313,6 +317,7 @@ class DeckListViewModel : ViewModel() {
     fun decreaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         unsectionedCardPrintingDeckList.remove(cardPrinting)
+        removeFromDeck(cardPrinting)
         var countIsZero = false
         val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
 
@@ -336,6 +341,7 @@ class DeckListViewModel : ViewModel() {
         }
         return indicesToUpdateList
     }
+
     fun increaseQuantityFromSearch(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
         if (checkIfMax(cardPrinting)) {
@@ -344,6 +350,15 @@ class DeckListViewModel : ViewModel() {
             indicesToUpdateList.add(AdapterUpdate.Changed(position))
             mDeck.notifyObserver()
         }
+        return indicesToUpdateList
+    }
+
+    fun decreaseQuantityFromSearch(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
+        val indicesToUpdateList = mutableListOf<AdapterUpdate>()
+        unsectionedCardPrintingDeckList.remove(cardPrinting)
+        removeFromDeck(cardPrinting)
+        indicesToUpdateList.add(AdapterUpdate.Changed(position))
+        mDeck.notifyObserver()
         return indicesToUpdateList
     }
 
@@ -397,6 +412,29 @@ class DeckListViewModel : ViewModel() {
             mDeck.value?.equipmentList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
         else
             mDeck.value?.coreDeckList?.add(PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish))
+        mDeck.value?.setNewLastModifiedDate()
+    }
+
+    private fun removeFromDeck(cardPrinting: CardPrinting){
+        if(cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.EQUIPMENT || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.WEAPON){
+            val index = mDeck.value?.equipmentList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
+            try {
+                if (index != null)
+                    mDeck.value?.equipmentList?.removeAt(index)
+            } catch (e: Exception){
+                Log.d("DeckListViewModel", "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.equipmentList} with index $index.")
+            }
+        }
+        else {
+            val index = mDeck.value?.coreDeckList?.indexOfFirst { it.printingId == cardPrinting.printing.id && it.finish == cardPrinting.finish }
+            try {
+                if (index != null)
+                    mDeck.value?.coreDeckList?.removeAt(index)
+            } catch (e: Exception){
+                Log.d("DeckListViewModel", "Cannot find ${cardPrinting.printing.name} to remove from ${mDeck.value?.coreDeckList} with index $index.")
+            }
+        }
+        mDeck.value?.setNewLastModifiedDate()
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {
