@@ -51,7 +51,7 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         }, {
             //Decrease
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
@@ -65,7 +65,7 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         }, {
             //Hero onClick
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
@@ -89,7 +89,7 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         }, {
             //Decrease from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
@@ -103,7 +103,7 @@ class DeckListFragment : Fragment() {
                     is AdapterUpdate.Remove -> adapter.removeItem(index.index)
                 }
             }
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         }, {
             //Hero onClick from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
@@ -115,7 +115,7 @@ class DeckListFragment : Fragment() {
             deckListCardSearchRecyclerView.visibility = View.INVISIBLE
             deckListViewModel.isHeroSearchMode = false
 
-            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateDeck(deckToUpdate, resources) }
+            deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         })
 
         deckListRecyclerView.layoutManager = deckListLayoutManager

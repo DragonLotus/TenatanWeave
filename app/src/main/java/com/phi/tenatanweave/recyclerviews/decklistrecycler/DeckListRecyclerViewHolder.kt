@@ -145,7 +145,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
 
             itemView.deck_list_card_type.text =
                 "${this?.baseCard?.getHeroClassAsEnum()} ${this?.baseCard?.getTypeAsEnum()?.toFullString()} ${
-                    if (this?.baseCard?.subTypes?.isNotEmpty() != null) "- " + this.baseCard.getSubTypesAsEnum()
+                    if (this?.baseCard?.subTypes?.isNotEmpty() == true) "- " + this.baseCard.getSubTypesAsEnum()
                         .joinToString(" ")
                         .replace(SubTypeEnum.ALL.toString(), "NA") else ""
                 }"

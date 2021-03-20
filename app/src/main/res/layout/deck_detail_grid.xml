@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -33,42 +33,40 @@
                     app:srcCompat="@drawable/horizontal_placeholder"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-            />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:layout_constraintBottom_toBottomOf="@id/deck_image"
+                          app:layout_constraintStart_toStartOf="parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@color/black_75_opacity"
+                    android:paddingVertical="4dp"
+                    android:paddingHorizontal="8dp"
+            >
 
-                <!-- Title, secondary and supporting text -->
+
                 <TextView
                         android:id="@+id/deck_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Deck Name"
-                        android:textAppearance="?attr/textAppearanceHeadline6"
-                />
-<!--                <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="8dp"-->
-<!--                        android:text="@string/secondary_text"-->
-<!--                        android:textAppearance="?attr/textAppearanceBody2"-->
-<!--                        android:textColor="?android:attr/textColorSecondary"-->
-<!--                />-->
-<!--                <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="16dp"-->
-<!--                        android:text="@string/supporting_text"-->
-<!--                        android:textAppearance="?attr/textAppearanceBody2"-->
-<!--                        android:textColor="?android:attr/textColorSecondary"-->
-<!--                />-->
+                        android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="@dimen/body_1"/>
 
+                <TextView
+                        android:id="@+id/deck_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="@dimen/detail_1"/>
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

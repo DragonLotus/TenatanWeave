@@ -6,7 +6,7 @@ import java.util.*
 
 class Deck(
     val id: String = "",
-    val deckName: String = "",
+    var deckName: String = "",
     var deckPictureId: String = "",
     var heroId: PrintingWithFinish = PrintingWithFinish(),
     val equipmentList: MutableList<PrintingWithFinish> = mutableListOf(),
@@ -14,7 +14,7 @@ class Deck(
     val sideBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val maybeBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val foilMap: MutableMap<String, Int> = mutableMapOf(),
-    val format: String = "",
+    var format: String = "",
     var lastModifiedDate: String = ""
 ) {
     private val lastModifiedDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)

@@ -16,4 +16,6 @@
     <color name="colorBlueVersion">#00a0e8</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="black_50_opacity">#80000000</color>
+    <color name="black_75_opacity">#C0000000</color>
 </resources>

@@ -11,7 +11,8 @@ import com.phi.tenatanweave.data.Deck
 
 class DeckDisplayRecyclerAdapter(
     val context: Context,
-    val onClickListener: View.OnClickListener
+    val onClickListener: View.OnClickListener,
+    val onLongClickListener: View.OnLongClickListener
 ) :
     RecyclerView.Adapter<DeckDisplayRecyclerViewHolder>() {
     private val deckList: MutableList<Deck> = mutableListOf()
@@ -19,6 +20,7 @@ class DeckDisplayRecyclerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeckDisplayRecyclerViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.deck_detail_grid, parent, false)
         view.setOnClickListener(onClickListener)
+        view.setOnLongClickListener(onLongClickListener)
         return DeckDisplayRecyclerViewHolder(view)
     }
 

@@ -64,13 +64,20 @@ class DeckViewModel : ViewModel() {
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
     }
 
-    fun updateDeck(deck: Deck, resources: Resources){
+    fun updateOrAddDeck(deck: Deck, resources: Resources){
         val index = mUserDeckList.value?.indexOfFirst { it.id == deck.id }
         if (index != null && index >= 0) {
             mUserDeckList.value?.set(index, deck)
         } else {
             mUserDeckList.value?.add(deck)
         }
+
+        databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
+    }
+
+    fun deleteDeck(deck: Deck, resources: Resources){
+        mUserDeckList.value?.removeIf { it.id == deck.id }
+        mUserDeckList.notifyObserver()
 
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
     }

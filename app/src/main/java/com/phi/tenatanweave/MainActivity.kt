@@ -17,11 +17,14 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
+import com.phi.tenatanweave.fragments.dialogfragments.DeckOptionsBottomSheetFragment
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
+import com.phi.tenatanweave.fragments.dialogfragments.DeleteConfirmationDialogFragment
+import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.fragments.singlecard.SingleCardViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemClickListener {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val searchCardResultViewModel: SearchCardResultViewModel by viewModels()
     private val singleCardViewModel: SingleCardViewModel by viewModels()
@@ -174,5 +177,19 @@ class MainActivity : AppCompatActivity() {
             .child(resources.getString(R.string.db_collection_decks))
             .addValueEventListener(deckValueEventListener)
         return true
+    }
+
+    override fun onItemClick(item: String, bundle: Bundle) {
+        when (item) {
+            getString(R.string.deck_options_edit) -> {
+                DeckDetailsDialogFragment.newInstance(bundle).show(supportFragmentManager, "MainActivity")
+            }
+            getString(R.string.deck_options_delete) -> {
+                DeleteConfirmationDialogFragment.newInstance(bundle).show(supportFragmentManager, "MainActivity")
+            }
+            else -> {
+                //Handle data
+            }
+        }
     }
 }

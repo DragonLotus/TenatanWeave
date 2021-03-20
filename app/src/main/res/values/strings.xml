@@ -13,14 +13,20 @@
     <string name="title_home">Home</string>
     <string name="title_decks">Decks</string>
     <string name="title_new_deck">New Deck Details</string>
+    <string name="title_edit_deck">Edit Deck Details</string>
     <string name="title_search">Search</string>
     <string name="title_search_card_result">Search Card Results</string>
     <string name="title_cards">Cards</string>
     <string name="title_sets">Sets</string>
+    <string name="title_delete">Confirm Deletion</string>
+
+    <string name="message_delete">Are you sure you want to delete \"%1$s\"?</string>
 
     <string name="label_dialog_message">Message goes here</string>
     <string name="label_ok">OK</string>
+    <string name="label_yes">YES</string>
     <string name="label_cancel">CANCEL</string>
+    <string name="label_no">NO</string>
     <string name="label_class">Class: </string>
     <string name="label_include_generic">Include Generic: </string>
     <string name="label_type">Type: </string>
@@ -70,4 +76,9 @@
     <string name="db_collection_decks">decks</string>
     <string name="db_collection_deckIdSequence">deckIdSequence</string>
     <string name="web_client_id">315101567709-5h6mobcajdcphhu3obd1kls9pjdd7hv2.apps.googleusercontent.com</string>
+
+    <string name="deck_options_edit">Edit</string>
+    <string name="deck_options_delete">Delete</string>
+    <string name="deck_options_copy">Copy</string>
+    <string name="deck_index">deckIndex</string>
 </resources>

@@ -115,8 +115,8 @@ class SingleCardFragment : Fragment() {
         singleCardViewModel.cardPrinting.observe(viewLifecycleOwner, { it ->
             val version = it.printing.version
 
-            activity?.setActionBar(toolbar)
-            activity?.actionBar?.title =
+            requireActivity().setActionBar(toolbar)
+            requireActivity().actionBar?.title =
                 getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.printing?.name)
 
             GlideApp.with(requireContext())
