@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.legality_row.view.*
 
 class LegalityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bindCard(format: String, legalFormatList: MutableList<String>, context: Context) {
+    fun bindCard(format: String, legalFormatList: List<String>, context: Context) {
         with(format) {
             itemView.format_name.text = this
 

@@ -34,6 +34,11 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
     ) {
         with(printing.cardPrinting) {
 
+            if(!deckListViewModel.checkIfLegal(this))
+                itemView.not_legal_button.visibility = View.VISIBLE
+            else
+                itemView.not_legal_button.visibility = View.GONE
+
             this.baseCard.name.let {
                 itemView.deck_list_card_name.text = it
             }
@@ -73,14 +78,14 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
             val pitch = this.baseCard.getPitchSafe(this.printing.version)
-            var pitchColor = R.color.white
+            var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
                 2 -> pitchColor = R.color.colorYellowVersion
                 3 -> pitchColor = R.color.colorBlueVersion
             }
 
-            itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+            itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfNotMax(this)
             itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
             itemView.increase_card_quantity_button.setOnClickListener(increaseOnClickListener)
             itemView.decrease_card_quantity_button.setOnClickListener(decreaseOnClickListener)
@@ -139,6 +144,11 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.setOnClickListener(heroOnClickListener)
 
         with(heroPrinting.cardPrinting) {
+
+            if(this?.let { deckListViewModel.checkIfLegal(it) } == false)
+                itemView.not_legal_button.visibility = View.VISIBLE
+            else
+                itemView.not_legal_button.visibility = View.GONE
 
             itemView.deck_list_card_name.text =
                 if (this?.printing?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.printing?.name

@@ -34,6 +34,7 @@ class DeckListViewModel : ViewModel() {
     val formatList: LiveData<MutableList<Format>> = mFormatList
 
     val unsectionedCardPrintingDeckList: MutableList<CardPrinting> = mutableListOf()
+    val notLegalCardSet: MutableSet<String> = mutableSetOf()
 
     var isHeroSearchMode = false
     val heroList = mutableListOf<CardPrinting>()
@@ -49,6 +50,7 @@ class DeckListViewModel : ViewModel() {
     ) {
         sectionedDeckList.value?.clear()
         unsectionedCardPrintingDeckList.clear()
+        notLegalCardSet.clear()
 
         val heroCardPrinting =
             if (mDeck.value?.heroId?.printingId.isNullOrEmpty()) null
@@ -67,6 +69,13 @@ class DeckListViewModel : ViewModel() {
                         this
                 }
 
+        heroCardPrinting.let {
+            if (it != null) {
+                if (mDeck.value?.format != "None" && !it.baseCard.legalFormats.contains(mDeck.value?.format))
+                    notLegalCardSet.add(it.baseCard.name)
+            }
+        }
+
         sectionedDeckList.value?.addAll(
             listOf(
                 RecyclerItem.SetSection(
@@ -79,12 +88,16 @@ class DeckListViewModel : ViewModel() {
             )
         )
 
-        processEquipment(masterCardPrintingList, context)
-        processCoreDeck(masterCardPrintingList, context)
+        processEquipment(masterCardPrintingList, heroCardPrinting, context)
+        processCoreDeck(masterCardPrintingList, heroCardPrinting, context)
         mSectionedDeckList.notifyObserver()
     }
 
-    private fun processEquipment(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
+    private fun processEquipment(
+        masterCardPrintingList: MutableList<CardPrinting>,
+        heroCardPrinting: CardPrinting?,
+        context: Context
+    ) {
         val equipmentList = mutableListOf<PrintingWithFinish>()
         equipmentList.addAll(mDeck.value?.equipmentList!!)
         val equipmentRecyclerItemSet = mutableSetOf<RecyclerItem.CardPrinting>()
@@ -100,6 +113,8 @@ class DeckListViewModel : ViewModel() {
                             it.printing,
                             equipment.finish
                         )
+                    if (!checkIfLegalWithHero(cardPrinting, heroCardPrinting))
+                        notLegalCardSet.add(cardPrinting.baseCard.name)
                     unsectionedCardPrintingDeckList.add(cardPrinting)
                     equipmentRecyclerItemSet.add(RecyclerItem.CardPrinting(cardPrinting))
                 }
@@ -114,7 +129,11 @@ class DeckListViewModel : ViewModel() {
         )
     }
 
-    private fun processCoreDeck(masterCardPrintingList: MutableList<CardPrinting>, context: Context) {
+    private fun processCoreDeck(
+        masterCardPrintingList: MutableList<CardPrinting>,
+        heroCardPrinting: CardPrinting?,
+        context: Context
+    ) {
         val coreDeckList = mutableListOf<PrintingWithFinish>()
         coreDeckList.addAll(mDeck.value?.coreDeckList!!)
         val coreDeckCardPrintingSet = mutableSetOf<CardPrinting>()
@@ -130,6 +149,8 @@ class DeckListViewModel : ViewModel() {
                             it.printing,
                             coreDeckCard.finish
                         )
+                    if (!checkIfLegalWithHero(cardPrinting, heroCardPrinting))
+                        notLegalCardSet.add(cardPrinting.baseCard.name)
                     unsectionedCardPrintingDeckList.add(cardPrinting)
                     coreDeckCardPrintingSet.add(cardPrinting)
                 }
@@ -247,7 +268,7 @@ class DeckListViewModel : ViewModel() {
                 val cardNameKey = cardPrinting.baseCard.name
                     .replace("[^a-zA-Z0-9]", "")
                     .toLowerCase(Locale.ROOT)
-                if (filterCard(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText)) {
+                if (checkIfLegalWithHero(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText)) {
                     addCardPrintingToMap(cardPrinting, cardNameCardPrintingMap)
                 }
             }
@@ -261,10 +282,12 @@ class DeckListViewModel : ViewModel() {
         }
     }
 
-    private fun filterCard(cardPrinting: CardPrinting, heroCardPrinting: CardPrinting?): Boolean {
+    private fun checkIfLegalWithHero(cardPrinting: CardPrinting, heroCardPrinting: CardPrinting?): Boolean {
         heroCardPrinting?.let {
             if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
                 return true
+            else if (cardPrinting.baseCard.specialization.isNotEmpty())
+                return false
 
             if (mDeck.value?.format != "None") {
                 if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
@@ -327,7 +350,7 @@ class DeckListViewModel : ViewModel() {
         return greatestQuantity?.key
     }
 
-    fun checkIfMax(cardPrinting: CardPrinting): Boolean {
+    fun checkIfNotMax(cardPrinting: CardPrinting): Boolean {
         val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
         val count = unsectionedCardPrintingDeckList.count {
             (it.baseCard.name == cardPrinting.baseCard.name)
@@ -344,6 +367,10 @@ class DeckListViewModel : ViewModel() {
             true
     }
 
+    fun checkIfLegal(cardPrinting: CardPrinting): Boolean {
+        return !notLegalCardSet.contains(cardPrinting.baseCard.name)
+    }
+
     fun setHero(cardPrinting: CardPrinting) {
         mDeck.value?.heroId = PrintingWithFinish(cardPrinting.printing.id, cardPrinting.finish)
         mDeck.value?.deckPictureId = cardPrinting.printing.id
@@ -353,7 +380,7 @@ class DeckListViewModel : ViewModel() {
 
     fun increaseQuantity(position: Int, cardPrinting: CardPrinting, context: Context): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
-        if (checkIfMax(cardPrinting)) {
+        if (checkIfNotMax(cardPrinting)) {
             unsectionedCardPrintingDeckList.add(cardPrinting)
             addToDeck(cardPrinting)
             val pitch = cardPrinting.baseCard.getPitchSafe(cardPrinting.printing.version)
@@ -406,7 +433,7 @@ class DeckListViewModel : ViewModel() {
         context: Context
     ): MutableList<AdapterUpdate> {
         val indicesToUpdateList = mutableListOf<AdapterUpdate>()
-        if (checkIfMax(cardPrinting)) {
+        if (checkIfNotMax(cardPrinting)) {
             unsectionedCardPrintingDeckList.add(cardPrinting)
             addToDeck(cardPrinting)
             indicesToUpdateList.add(AdapterUpdate.Changed(position))

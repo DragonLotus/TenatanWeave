@@ -70,6 +70,8 @@ class DeckViewModel : ViewModel() {
             mUserDeckList.value?.add(deck)
         }
 
+        //Am I really just sending the whole deck list over and over again?
+        //AM I DUMB?
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
     }
 

@@ -25,7 +25,7 @@ class BaseCard(
     val cost: Int = -1,
     val deckLimit: Int = -1,
     val specialization: List<String> = listOf(),
-    val legalFormats: MutableList<String> = mutableListOf(),
+    val legalFormats: List<String> = listOf(),
     val printings: List<String> = listOf()
 ) {
 

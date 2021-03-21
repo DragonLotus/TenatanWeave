@@ -9,7 +9,7 @@ import com.phi.tenatanweave.R
 
 class LegalityRecyclerAdapter(
     var formatList: MutableList<String>,
-    var legalFormatList: MutableList<String>,
+    var legalFormatList: List<String>,
     val context: Context
 ) :
     RecyclerView.Adapter<LegalityRecyclerViewHolder>() {

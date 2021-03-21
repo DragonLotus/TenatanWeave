@@ -83,7 +83,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
             val pitch = this.baseCard.getPitchSafe(this.printing.version)
-            var pitchColor = R.color.white
+            var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
                 2 -> pitchColor = R.color.colorYellowVersion
@@ -91,7 +91,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             }
 
             if(this.baseCard.getTypeAsEnum() != TypeEnum.HERO){
-                itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfMax(this)
+                itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfNotMax(this)
                 itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
                 itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
                 itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
