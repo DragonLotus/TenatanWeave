@@ -208,12 +208,15 @@ class DeckListViewModel : ViewModel() {
 
     fun setupHeroSearch(masterCardPrintingList: MutableList<CardPrinting>) {
         mDeckListCardSearchList.value?.clear()
-        if (heroList.isEmpty())
-            heroList.addAll(masterCardPrintingList.filter {
+        heroList.clear()
+        heroList.addAll(masterCardPrintingList.filter {
+            if (mDeck.value?.format != "None") {
                 it.baseCard.getTypeAsEnum() == TypeEnum.HERO && it.baseCard.legalFormats.contains(
                     mDeck.value?.format
                 )
-            }.distinctBy { it.baseCard.name })
+            } else
+                it.baseCard.getTypeAsEnum() == TypeEnum.HERO
+        }.distinctBy { it.baseCard.name }.sortedWith(compareBy { it.baseCard.name }))
         mDeckListCardSearchList.value?.addAll(heroList)
         mDeckListCardSearchList.notifyObserver()
     }
@@ -260,11 +263,21 @@ class DeckListViewModel : ViewModel() {
 
     private fun filterCard(cardPrinting: CardPrinting, heroCardPrinting: CardPrinting?): Boolean {
         heroCardPrinting?.let {
-            if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
-                || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
-                || !cardPrinting.baseCard.legalFormats.contains(mDeck.value?.format)
-            )
-                return false
+            if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
+                return true
+
+            if (mDeck.value?.format != "None") {
+                if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
+                    || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
+                    || !cardPrinting.baseCard.legalFormats.contains(mDeck.value?.format)
+                )
+                    return false
+            } else {
+                if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
+                    || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
+                )
+                    return false
+            }
 
             if (ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.valueOf(it.baseCard.heroClass)
                 || ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.GENERIC
@@ -324,7 +337,11 @@ class DeckListViewModel : ViewModel() {
         if (cardPrinting.baseCard.deckLimit > 0)
             return count < cardPrinting.baseCard.deckLimit
 
-        return count < 3
+        val format = formatList.value?.first { it.name == deck.value?.format } ?: Format()
+        return if (format.maxCopyLimit > 0)
+            count < formatList.value?.first { it.name == deck.value?.format }?.maxCopyLimit ?: 3
+        else
+            true
     }
 
     fun setHero(cardPrinting: CardPrinting) {

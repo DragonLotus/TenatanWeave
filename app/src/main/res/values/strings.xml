@@ -64,6 +64,7 @@
     <string name="card_count">Cards: %s</string>
 
     <string name="no_hero_selected">No Hero Selected</string>
+    <string name="format_none">None</string>
 
     <string name="card_text">Search Card Text</string>
     <string name="deck_name_text">Deck Name</string>
