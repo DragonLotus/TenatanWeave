@@ -39,8 +39,7 @@ class DeckFragment : Fragment() {
 
         val toolbar: Toolbar = root.findViewById(R.id.toolbar)
         requireActivity().setActionBar(toolbar)
-        requireActivity().actionBar?.title =
-            getString(R.string.title_decks)
+        requireActivity().actionBar?.title = getString(R.string.title_decks)
 
         val navController = findNavController()
 
@@ -55,7 +54,6 @@ class DeckFragment : Fragment() {
                     .child(it.uid)
             )
             floatingActionButton.setOnClickListener{
-//                NewDeckDialogFragment().show(childFragmentManager, NewDeckDialogFragment.TAG)
                 DeckDetailsDialogFragment.newInstance(Bundle()).show(requireActivity().supportFragmentManager, this.tag)
             }
         }

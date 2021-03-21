@@ -1,9 +1,9 @@
 package com.phi.tenatanweave.data
 
 import android.util.Log
-import com.google.firebase.database.DataSnapshot
-import com.phi.tenatanweave.data.enums.*
-import java.lang.IllegalArgumentException
+import com.phi.tenatanweave.data.enums.ClassEnum
+import com.phi.tenatanweave.data.enums.SubTypeEnum
+import com.phi.tenatanweave.data.enums.TypeEnum
 
 class BaseCard(
     val id: String = "",
@@ -28,71 +28,71 @@ class BaseCard(
     val cost: Int = -1,
     val deckLimit: Int = -1,
     val specialization: List<String> = listOf(),
-    val legalFormats: MutableList<FormatEnum> = mutableListOf(),
+    val legalFormats: MutableList<String> = mutableListOf(),
     val printings: List<String> = listOf()
 ) {
 
-    fun getHeroClassAsEnum() : ClassEnum{
+    fun getHeroClassAsEnum(): ClassEnum {
         return try {
             ClassEnum.valueOf(heroClass)
-        } catch (e: IllegalArgumentException){
+        } catch (e: IllegalArgumentException) {
             ClassEnum.ALL
         }
     }
 
-    fun getTypeAsEnum() : TypeEnum{
+    fun getTypeAsEnum(): TypeEnum {
         return try {
             TypeEnum.valueOf(type)
-        } catch (e: IllegalArgumentException){
+        } catch (e: IllegalArgumentException) {
             TypeEnum.ALL
         }
     }
 
-    fun getSubTypesAsEnum() : List<SubTypeEnum>{
+    fun getSubTypesAsEnum(): List<SubTypeEnum> {
         val subTypeSet = mutableSetOf<SubTypeEnum>()
         for (subType in subTypes) {
             try {
                 subTypeSet.add(SubTypeEnum.valueOf(subType))
-            } catch (e: IllegalArgumentException){
+            } catch (e: IllegalArgumentException) {
                 subTypeSet.add(SubTypeEnum.ALL)
             }
         }
         return subTypeSet.toList()
     }
 
-    fun getPowerSafe(version: Int): Int{
-        return if(power.isNullOrEmpty())
+    fun getPowerSafe(version: Int): Int {
+        return if (power.isNullOrEmpty())
             0
         else
             try {
                 power[version]
-            } catch (e: ArrayIndexOutOfBoundsException){
+            } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get power value of $name.")
                 Log.d("BaseCard", e.toString())
                 0
             }
     }
 
-    fun getDefenseSafe(version: Int): Int{
-        return if(defense.isNullOrEmpty())
+    fun getDefenseSafe(version: Int): Int {
+        return if (defense.isNullOrEmpty())
             0
         else
             try {
                 defense[version]
-            } catch (e: ArrayIndexOutOfBoundsException){
+            } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get defense value of $name.")
                 Log.d("BaseCard", e.toString())
                 0
             }
     }
 
-    fun getPitchSafe(version: Int): Int{
-        return if(pitch.isNullOrEmpty())
+    fun getPitchSafe(version: Int): Int {
+        return if (pitch.isNullOrEmpty())
             0
         else
             try {
                 pitch[version]
-            } catch (e: ArrayIndexOutOfBoundsException){
+            } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get pitch value of $name.")
                 Log.d("BaseCard", e.toString())
                 0

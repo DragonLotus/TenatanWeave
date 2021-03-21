@@ -8,16 +8,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Deck
-import com.phi.tenatanweave.data.PrintingWithFinish
-import com.phi.tenatanweave.data.enums.ClassEnum
-import com.phi.tenatanweave.data.enums.FormatEnum
+import com.phi.tenatanweave.data.Format
 
 class DeckViewModel : ViewModel() {
 
-    private val mFormatList = MutableLiveData<MutableList<FormatEnum>>().apply {
-        value = FormatEnum.values().toMutableList()
+    private val mFormatList = MutableLiveData<MutableList<String>>().apply {
+        value = mutableListOf()
     }
-    val formatList: LiveData<MutableList<FormatEnum>> = mFormatList
+    val formatList: LiveData<MutableList<String>> = mFormatList
     val formatSelection = MutableLiveData<Int>()
 
     private val _text = MutableLiveData<String>().apply {
@@ -80,6 +78,11 @@ class DeckViewModel : ViewModel() {
         mUserDeckList.notifyObserver()
 
         databaseDirectory.value?.child(resources.getString(R.string.db_collection_decks))?.setValue(mUserDeckList.value)
+    }
+
+    fun populateFormatList(formatList : MutableList<Format>){
+        mFormatList.value?.clear()
+        formatList.forEach { mFormatList.value?.add(it.name) }
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

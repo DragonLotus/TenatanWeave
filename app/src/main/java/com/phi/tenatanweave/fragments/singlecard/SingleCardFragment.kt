@@ -29,8 +29,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CardPrinting
-import com.phi.tenatanweave.data.enums.FormatEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
+import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
@@ -42,6 +42,7 @@ class SingleCardFragment : Fragment() {
 
     private val singleCardViewModel: SingleCardViewModel by activityViewModels()
     private val searchCardResultViewModel: SearchCardResultViewModel by activityViewModels()
+    private val deckListViewModel: DeckListViewModel by activityViewModels()
     private val args: SingleCardFragmentArgs by navArgs()
 
     private lateinit var powerDrawable: Drawable
@@ -285,12 +286,12 @@ class SingleCardFragment : Fragment() {
             }
         }
 
-        val formatEnumList = FormatEnum.values().toMutableList()
-        formatEnumList.remove(FormatEnum.NONE)
+        val formatList = deckListViewModel.formatList.value?.map { it.name }?.toMutableList() ?: mutableListOf()
+        formatList.removeIf { it == "None" }
 
         val legalityRecyclerLayoutManager = GridLayoutManager(requireContext(), 2)
         val legalityRecyclerAdapter = LegalityRecyclerAdapter(
-            formatEnumList,
+            formatList,
             singleCardViewModel.cardPrinting.value!!.baseCard.legalFormats,
             requireContext()
         )
@@ -302,7 +303,11 @@ class SingleCardFragment : Fragment() {
 
         val rulingRecyclerLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val rulingRecyclerAdapter =
-            RulingRecyclerAdapter(singleCardViewModel.selectedRuling.value!!, ::insertIconsIntoCardText, requireContext())
+            RulingRecyclerAdapter(
+                singleCardViewModel.selectedRuling.value!!,
+                ::insertIconsIntoCardText,
+                requireContext()
+            )
 
         if (singleCardViewModel.selectedRuling.value != null) {
             rulingRecyclerView.adapter = rulingRecyclerAdapter

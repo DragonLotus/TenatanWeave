@@ -17,10 +17,11 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
-import com.phi.tenatanweave.fragments.dialogfragments.DeckOptionsBottomSheetFragment
+import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
-import com.phi.tenatanweave.fragments.dialogfragments.DeleteConfirmationDialogFragment
 import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
+import com.phi.tenatanweave.fragments.dialogfragments.DeckOptionsBottomSheetFragment
+import com.phi.tenatanweave.fragments.dialogfragments.DeleteConfirmationDialogFragment
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.fragments.singlecard.SingleCardViewModel
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemCli
     private val searchCardResultViewModel: SearchCardResultViewModel by viewModels()
     private val singleCardViewModel: SingleCardViewModel by viewModels()
     private val deckViewModel: DeckViewModel by viewModels()
+    private val deckListViewModel: DeckListViewModel by viewModels()
 
     private val cardValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -94,6 +96,20 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemCli
 
     }
 
+    private val formatValueListener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            deckListViewModel.formatList.value?.clear()
+            for (data: DataSnapshot in snapshot.children) {
+                data.getValue(Format::class.java)?.let { deckListViewModel.formatList.value?.add(it) }
+            }
+            deckListViewModel.formatList.value?.let { deckViewModel.populateFormatList(it) }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+
     private val userValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.child("deckIdSequence").exists()) {
@@ -129,7 +145,8 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemCli
             .addValueEventListener(rulingValueListener)
         Firebase.database.reference.child(resources.getString(R.string.db_collection_sets))
             .addValueEventListener(expansionSetValueListener)
-
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_formats))
+            .addValueEventListener(formatValueListener)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,7 +176,9 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemCli
         Firebase.database.reference.child(resources.getString(R.string.db_collection_printings))
             .removeEventListener(rulingValueListener)
         Firebase.database.reference.child(resources.getString(R.string.db_collection_sets))
-            .removeEventListener(rulingValueListener)
+            .removeEventListener(expansionSetValueListener)
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_formats))
+            .removeEventListener(formatValueListener)
         Firebase.auth.currentUser?.let {
             Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(it.uid)
                 .removeEventListener(userValueListener)

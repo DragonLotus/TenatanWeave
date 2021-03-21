@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.data.enums.ClassEnum
-import com.phi.tenatanweave.data.enums.FormatEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
 import java.util.*
 
@@ -28,6 +27,11 @@ class DeckListViewModel : ViewModel() {
         value = mutableListOf()
     }
     val deckListCardSearchList: LiveData<MutableList<CardPrinting>> = mDeckListCardSearchList
+
+    private val mFormatList = MutableLiveData<MutableList<Format>>().apply {
+        value = mutableListOf()
+    }
+    val formatList: LiveData<MutableList<Format>> = mFormatList
 
     val unsectionedCardPrintingDeckList: MutableList<CardPrinting> = mutableListOf()
 
@@ -207,7 +211,7 @@ class DeckListViewModel : ViewModel() {
         if (heroList.isEmpty())
             heroList.addAll(masterCardPrintingList.filter {
                 it.baseCard.getTypeAsEnum() == TypeEnum.HERO && it.baseCard.legalFormats.contains(
-                    mDeck.value?.getFormatAsEnum()
+                    mDeck.value?.format
                 )
             }.distinctBy { it.baseCard.name })
         mDeckListCardSearchList.value?.addAll(heroList)
@@ -258,7 +262,7 @@ class DeckListViewModel : ViewModel() {
         heroCardPrinting?.let {
             if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
                 || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
-                || !cardPrinting.baseCard.legalFormats.contains(FormatEnum.valueOf(mDeck.value?.format!!))
+                || !cardPrinting.baseCard.legalFormats.contains(mDeck.value?.format)
             )
                 return false
 

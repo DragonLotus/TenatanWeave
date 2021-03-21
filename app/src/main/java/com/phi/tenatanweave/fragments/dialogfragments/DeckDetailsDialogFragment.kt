@@ -12,8 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.textfield.TextInputEditText
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.enums.FormatEnum
-import com.phi.tenatanweave.databinding.FragmentNewDeckDialogBinding
+import com.phi.tenatanweave.databinding.FragmentDeckDetailDialogBinding
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 
 class DeckDetailsDialogFragment : DialogFragment() {
@@ -29,9 +28,9 @@ class DeckDetailsDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val rootView: View = View.inflate(activity, R.layout.fragment_new_deck_dialog, null)
+        val rootView: View = View.inflate(activity, R.layout.fragment_deck_detail_dialog, null)
 
-        DataBindingUtil.bind<FragmentNewDeckDialogBinding>(rootView)?.apply {
+        DataBindingUtil.bind<FragmentDeckDetailDialogBinding>(rootView)?.apply {
             this.lifecycleOwner = lifecycleOwner
             this.viewmodel = deckViewModel
         }
@@ -49,14 +48,14 @@ class DeckDetailsDialogFragment : DialogFragment() {
                     deckViewModel.formatSelection.value?.let { deckViewModel.formatList.value?.get(it) }?.let {
                         deckViewModel.addDeck(
                             deckNameEditText.text.toString(),
-                            it.name,
+                            it,
                             resources
                         )
                     }
                 else {
                     deckViewModel.formatSelection.value?.let { deckViewModel.formatList.value?.get(it) }?.let {
-                        if(it.name != deck.format){
-                            deck.format = it.name
+                        if(it != deck.format){
+                            deck.format = it
                             deck.setNewLastModifiedDate()
                         }
                     }
@@ -88,7 +87,7 @@ class DeckDetailsDialogFragment : DialogFragment() {
         }
 
         deck?.let {
-            val index = FormatEnum.values().indexOfFirst { it == deck.getFormatAsEnum() }
+            val index = deckViewModel.formatList.value?.indexOfFirst { it == deck.format }
             deckViewModel.formatSelection.value = index
             deckNameEditText.setText(deck.deckName)
         }

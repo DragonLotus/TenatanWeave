@@ -21,7 +21,7 @@ class DeckDisplayRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(it
     fun bindDeck(deck: Deck, context: Context) {
         with(deck) {
             itemView.deck_name.text = deckName
-            itemView.deck_format.text = getFormatAsEnum().toString()
+            itemView.deck_format.text = format
 
             //Take hero image?
             GlideApp.with(context)
