@@ -11,7 +11,7 @@ class ExpansionSet(
     val cardCount: String = ""
 
 ) {
-    val releaseDateFormatDisplay = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+    private val releaseDateFormatDisplay = SimpleDateFormat("dd-MM-yyyy", Locale.US)
     val releaseDateFormatToSort = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 
     fun getReleaseDateAsDateToSort(): Date? {

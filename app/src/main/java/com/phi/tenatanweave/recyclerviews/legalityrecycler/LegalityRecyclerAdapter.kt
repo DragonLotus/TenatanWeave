@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.enums.FormatEnum
 
 class LegalityRecyclerAdapter(
-    var formatList: MutableList<FormatEnum>,
-    var legalFormatList: MutableList<FormatEnum>,
+    var formatList: MutableList<String>,
+    var legalFormatList: List<String>,
     val context: Context
 ) :
     RecyclerView.Adapter<LegalityRecyclerViewHolder>() {
@@ -28,7 +27,7 @@ class LegalityRecyclerAdapter(
         return formatList.size
     }
 
-    fun getList(): MutableList<FormatEnum> {
+    fun getList(): MutableList<String> {
         return formatList
     }
 }

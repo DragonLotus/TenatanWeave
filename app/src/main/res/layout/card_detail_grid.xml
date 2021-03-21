@@ -11,26 +11,26 @@
         android:descendantFocusability="beforeDescendants"
 >
     <ImageView
-            android:id="@+id/card_image"
-            android:src="@drawable/card_placeholder"
+            android:id="@+id/deck_list_card_image"
+            android:src="@drawable/vertical_placeholder"
             android:layout_width="128dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/card_name"
+            app:layout_constraintEnd_toEndOf="@id/deck_list_card_name"
             app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-            android:id="@+id/card_name"
+            android:id="@+id/deck_list_card_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/card_image"
-            app:layout_constraintStart_toStartOf="@id/card_image"
-            app:layout_constraintEnd_toEndOf="@id/card_image"/>
+            app:layout_constraintTop_toBottomOf="@id/deck_list_card_image"
+            app:layout_constraintStart_toStartOf="@id/deck_list_card_image"
+            app:layout_constraintEnd_toEndOf="@id/deck_list_card_image"/>
 
     <TextView
             android:id="@+id/card_textview"
@@ -39,8 +39,8 @@
             android:textAlignment="center"
             android:textSize="16sp"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/card_image"
-            app:layout_constraintTop_toBottomOf="@id/card_name"
+            app:layout_constraintStart_toEndOf="@id/deck_list_card_image"
+            app:layout_constraintTop_toBottomOf="@id/deck_list_card_name"
             app:layout_constraintBottom_toBottomOf="@id/card_text2"/>
 
     <TextView
@@ -50,7 +50,7 @@
             android:textAlignment="center"
             android:textSize="16sp"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@id/card_image"
+            app:layout_constraintStart_toEndOf="@id/deck_list_card_image"
             app:layout_constraintTop_toBottomOf="@id/card_textview"
-            app:layout_constraintBottom_toBottomOf="@id/card_image"/>
+            app:layout_constraintBottom_toBottomOf="@id/deck_list_card_image"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

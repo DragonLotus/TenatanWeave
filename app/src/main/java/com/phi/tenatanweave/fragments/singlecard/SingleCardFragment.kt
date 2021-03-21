@@ -29,8 +29,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CardPrinting
-import com.phi.tenatanweave.data.enums.FormatEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
+import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
@@ -42,6 +42,7 @@ class SingleCardFragment : Fragment() {
 
     private val singleCardViewModel: SingleCardViewModel by activityViewModels()
     private val searchCardResultViewModel: SearchCardResultViewModel by activityViewModels()
+    private val deckListViewModel: DeckListViewModel by activityViewModels()
     private val args: SingleCardFragmentArgs by navArgs()
 
     private lateinit var powerDrawable: Drawable
@@ -79,7 +80,7 @@ class SingleCardFragment : Fragment() {
         intelligenceDrawable = requireContext().getDrawable(R.drawable.ic_intelligence)!!
         resourceDrawable = requireContext().getDrawable(R.drawable.ic_resource)!!
 
-        val cardImage = root.findViewById<ImageView>(R.id.card_image)
+        val cardImage = root.findViewById<ImageView>(R.id.deck_list_card_image)
 //        val resourceLayout = root.findViewById<ConstraintLayout>(R.id.resource_layout)
 //        val heroStatsLayout = root.findViewById<ConstraintLayout>(R.id.hero_stats_layout)
         val pitchImageView = root.findViewById<ImageView>(R.id.pitch_imageview)
@@ -115,8 +116,8 @@ class SingleCardFragment : Fragment() {
         singleCardViewModel.cardPrinting.observe(viewLifecycleOwner, { it ->
             val version = it.printing.version
 
-            activity?.setActionBar(toolbar)
-            activity?.actionBar?.title =
+            requireActivity().setActionBar(toolbar)
+            requireActivity().actionBar?.title =
                 getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.printing?.name)
 
             GlideApp.with(requireContext())
@@ -285,9 +286,12 @@ class SingleCardFragment : Fragment() {
             }
         }
 
+        val formatList = deckListViewModel.formatList.value?.map { it.name }?.toMutableList() ?: mutableListOf()
+        formatList.removeIf { it == "None" }
+
         val legalityRecyclerLayoutManager = GridLayoutManager(requireContext(), 2)
         val legalityRecyclerAdapter = LegalityRecyclerAdapter(
-            FormatEnum.values().toMutableList(),
+            formatList,
             singleCardViewModel.cardPrinting.value!!.baseCard.legalFormats,
             requireContext()
         )
@@ -299,7 +303,11 @@ class SingleCardFragment : Fragment() {
 
         val rulingRecyclerLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val rulingRecyclerAdapter =
-            RulingRecyclerAdapter(singleCardViewModel.selectedRuling.value!!, requireContext())
+            RulingRecyclerAdapter(
+                singleCardViewModel.selectedRuling.value!!,
+                ::insertIconsIntoCardText,
+                requireContext()
+            )
 
         if (singleCardViewModel.selectedRuling.value != null) {
             rulingRecyclerView.adapter = rulingRecyclerAdapter
@@ -311,7 +319,6 @@ class SingleCardFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val printingsRecyclerAdapter =
             PrintingsRecyclerAdapter(singleCardViewModel.sectionedPrintings.value!!, requireContext())
-//                PrintingsRecyclerAdapter(singleCardViewModel.selectedPrintingList.value!!, requireContext())
 
         if (singleCardViewModel.sectionedPrintings.value!!.isNotEmpty()) {
             printingsRecyclerView.adapter = printingsRecyclerAdapter

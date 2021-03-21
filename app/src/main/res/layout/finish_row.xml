@@ -4,14 +4,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+android:gravity="center">
+
+    <ImageView
+            android:id="@+id/finish_image"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/rainbow_finish"
+            android:layout_marginEnd="4dp"/>
 
     <TextView
             android:id="@+id/finish_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/body_1"
-            android:gravity="center"
+
     />
 
 </LinearLayout>

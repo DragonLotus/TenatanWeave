@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edit_text_view"
+            style="@style/BottomSheetItem"
+            android:drawableStart="@android:drawable/ic_menu_edit"
+            android:text="@string/deck_options_edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    <androidx.appcompat.widget.AppCompatTextView-->
+    <!--            android:id="@+id/copy_text_view"-->
+    <!--            style="@style/BottomSheetItem"-->
+    <!--            android:drawableStart="@android:drawable/ic_menu_copy"-->
+    <!--            android:text="@string/deck_options_copy"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/delete_text_view" />-->
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/delete_text_view"
+            style="@style/BottomSheetItem"
+            android:drawableStart="@android:drawable/ic_menu_delete"
+            android:text="@string/deck_options_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_text_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
