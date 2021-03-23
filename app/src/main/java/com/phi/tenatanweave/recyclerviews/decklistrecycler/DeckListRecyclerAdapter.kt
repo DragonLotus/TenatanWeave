@@ -14,14 +14,14 @@ class DeckListRecyclerAdapter(
     val context: Context,
     val increaseOnClickListener: View.OnClickListener,
     val decreaseOnClickListener: View.OnClickListener,
-    val heroOnClickListener: View.OnClickListener
+    val heroOnClickListener: View.OnClickListener,
+    val showCardOptionsOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListRecyclerViewHolder>() {
     var printingsList: MutableList<RecyclerItem> = mutableListOf()
     private val TYPE_SETSECTION = 0
     private val TYPE_PRINTING = 1
     private val TYPE_HERO = 2
-    private val TYPE_CARD_PRINTING = 3
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_SETSECTION -> DeckListRecyclerViewHolder(
@@ -35,10 +35,6 @@ class DeckListRecyclerAdapter(
             LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false),
             deckListViewModel
         )
-        TYPE_CARD_PRINTING -> DeckListRecyclerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.deck_list_detail_linear_row, parent, false),
-            deckListViewModel
-        )
         else -> DeckListRecyclerViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.section_row, parent, false), deckListViewModel
         )
@@ -46,12 +42,13 @@ class DeckListRecyclerAdapter(
 
     override fun onBindViewHolder(holder: DeckListRecyclerViewHolder, position: Int) {
         when (val item = printingsList[holder.adapterPosition]) {
-            is RecyclerItem.CardPrinting -> holder.bindCard(
+            is RecyclerItem.Printing -> holder.bindCard(
                 item,
                 holder.adapterPosition,
                 removeBottomMargin(position),
                 increaseOnClickListener,
                 decreaseOnClickListener,
+                showCardOptionsOnClickListener,
                 context
             )
             is RecyclerItem.SetSection -> holder.bindSection(item, context)
@@ -67,7 +64,6 @@ class DeckListRecyclerAdapter(
         is RecyclerItem.SetSection -> TYPE_SETSECTION
         is RecyclerItem.Printing -> TYPE_PRINTING
         is RecyclerItem.HeroPrinting -> TYPE_HERO
-        is RecyclerItem.CardPrinting -> TYPE_CARD_PRINTING
     }
 
     fun removeItem(index: Int){
@@ -95,7 +91,6 @@ class DeckListRecyclerAdapter(
                 is RecyclerItem.Printing -> true
                 is RecyclerItem.SetSection -> false
                 is RecyclerItem.HeroPrinting -> false
-                is RecyclerItem.CardPrinting -> true
             }
 
     }

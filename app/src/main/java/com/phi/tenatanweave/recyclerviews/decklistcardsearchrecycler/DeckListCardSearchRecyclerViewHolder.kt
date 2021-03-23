@@ -13,7 +13,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
@@ -25,7 +25,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
     RecyclerView.ViewHolder(itemView) {
 
     fun bindCard(
-        cardPrinting: CardPrinting,
+        cardPrinting: Printing,
         position: Int,
         removeBottomMargin: Boolean,
         increaseOnClickListener: View.OnClickListener,
@@ -35,12 +35,12 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
     ) {
         with(cardPrinting) {
 
-            this.printing.name.let {
+            this.name.let {
                 itemView.deck_list_card_name.text = it
             }
 
             itemView.deck_list_card_quantity.text =
-                deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id && it.finish == this.finish }
+                deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
             itemView.deck_list_card_type.text =
@@ -57,13 +57,13 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.printing.version).toString()
+                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.printing.version).toString()
+                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
@@ -82,7 +82,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.printing.version)
+            val pitch = this.baseCard.getPitchSafe(this.version)
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -106,7 +106,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             }
 
             itemView.finish_image.visibility = View.VISIBLE
-            when (this.finish.let { this.printing.getFinishSafe(it) }) {
+            when (this.finishVersion.let { this.getFinishSafe(it) }) {
                 FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
                 FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
                 FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
@@ -125,7 +125,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
-                        .child("card_images/${this.printing.id}.png")
+                        .child("card_images/${this.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.horizontal_placeholder)

@@ -30,8 +30,8 @@ class PrintingsRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(item
                 .into(itemView.deck_list_card_image)
 
             val finishRecycler = itemView.finish_recycler
-            val finishRecyclerAdapter = FinishRecyclerAdapter(this.finish, context)
-            val finishRecyclerLayoutManager = GridLayoutManager(context, this.finish.size)
+            val finishRecyclerAdapter = FinishRecyclerAdapter(this.finishList, context)
+            val finishRecyclerLayoutManager = GridLayoutManager(context, this.finishList.size)
             finishRecycler.adapter = finishRecyclerAdapter
             finishRecycler.layoutManager = finishRecyclerLayoutManager
             finishRecycler.suppressLayout(true)

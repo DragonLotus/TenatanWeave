@@ -89,9 +89,9 @@ class SearchCardResultViewModel : ViewModel() {
     //End Search Options
 
     //Begin Search Results
-    val masterCardPrintingList = mutableListOf<CardPrinting>()
-    val displayCardPrintingList = mutableListOf<CardPrinting>()
-    private val mCardPrintingList = MutableLiveData<MutableList<CardPrinting>>().apply {
+    val masterCardPrintingList = mutableListOf<Printing>()
+    val displayCardPrintingList = mutableListOf<Printing>()
+    private val mCardPrintingList = MutableLiveData<MutableList<Printing>>().apply {
         value = mutableListOf()
     }
     private val mCardMap = MutableLiveData<MutableMap<String, BaseCard>>().apply {
@@ -107,7 +107,7 @@ class SearchCardResultViewModel : ViewModel() {
         value = mutableMapOf()
     }
 
-    val cardPrintingList: LiveData<MutableList<CardPrinting>> = mCardPrintingList
+    val cardPrintingList: LiveData<MutableList<Printing>> = mCardPrintingList
     val cardMap: LiveData<MutableMap<String, BaseCard>> = mCardMap
     val printingMap: LiveData<MutableMap<String, Printing>> = mPrintingMap
     val setMap: LiveData<MutableMap<String, ExpansionSet>> = mSetMap
@@ -130,18 +130,16 @@ class SearchCardResultViewModel : ViewModel() {
                     } else if (setMap.value?.get("ZZZ") != null) {
                         printing.set = setMap.value?.get("ZZZ")
                     }
+                    printing.baseCard = mCardMap.value?.get(printing.name.replace(".","")) ?: BaseCard()
                     masterCardPrintingList.add(
-                        CardPrinting(
-                            mCardMap.value!![printing.name.replace(".", "")]!!,
-                            printing
-                        )
+                        printing
                     )
                 }
                 masterCardPrintingList.sortWith(
-                    compareBy<CardPrinting> {
-                        it.printing.set?.getReleaseDateAsDateToSort()
+                    compareBy<Printing> {
+                        it.set?.getReleaseDateAsDateToSort()
                     }.thenBy {
-                        it.printing.collectorNumber
+                        it.collectorNumber
                     }
                 )
                 //Re-filter here
@@ -265,8 +263,8 @@ class SearchCardResultViewModel : ViewModel() {
 
         outerLoop@ for (card in masterCardPrintingList) {
             if (!includedBaseCardVersionMap.keys.contains(card.baseCard.name))
-                includedBaseCardVersionMap[card.baseCard.name] = mutableSetOf(card.printing.version)
-            else if (!includedBaseCardVersionMap[card.baseCard.name]?.add(card.printing.version)!!)
+                includedBaseCardVersionMap[card.baseCard.name] = mutableSetOf(card.version)
+            else if (!includedBaseCardVersionMap[card.baseCard.name]?.add(card.version)!!)
                 if (!distinctRarity)
                     continue
 
@@ -319,14 +317,14 @@ class SearchCardResultViewModel : ViewModel() {
         mCardPrintingList.value?.clear()
         mCardPrintingList.value?.addAll(displayCardPrintingList)
         mCardPrintingList.value?.sortWith(
-            compareBy<CardPrinting> {
+            compareBy<Printing> {
                 it.baseCard.getHeroClassAsEnum()
             }.thenBy {
                 it.baseCard.getTypeAsEnum()
             }.thenBy {
-                it.printing.set?.getReleaseDateAsDateToSort()
+                it.set?.getReleaseDateAsDateToSort()
             }.thenBy {
-                it.printing.collectorNumber
+                it.collectorNumber
             }
         )
         mCardPrintingList.notifyObserver()
@@ -336,7 +334,7 @@ class SearchCardResultViewModel : ViewModel() {
         filterCards(cardNameQuery.toString())
     }
 
-    private fun passCardTextFilter(card: CardPrinting): Boolean {
+    private fun passCardTextFilter(card: Printing): Boolean {
         for (text in mCardTextList.value!!) {
             if (!card.baseCard.text.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))
                 return false
@@ -345,35 +343,35 @@ class SearchCardResultViewModel : ViewModel() {
     }
 
     private fun passRarityFilter(
-        cardPrinting: CardPrinting,
+        cardPrinting: Printing,
         includedBaseCardRarityMap: MutableMap<String, MutableSet<RarityEnum>>
     ): Boolean {
         if (!includedBaseCardRarityMap.keys.contains(cardPrinting.baseCard.name))
-            includedBaseCardRarityMap[cardPrinting.baseCard.name] = mutableSetOf(cardPrinting.printing.rarity)
-        else if (!includedBaseCardRarityMap[cardPrinting.baseCard.name]?.add(cardPrinting.printing.rarity)!!)
+            includedBaseCardRarityMap[cardPrinting.baseCard.name] = mutableSetOf(cardPrinting.rarity)
+        else if (!includedBaseCardRarityMap[cardPrinting.baseCard.name]?.add(cardPrinting.rarity)!!)
             return false
 
         if (!mRarityList.value!!.contains(FilterStateEnum.IS)) {
-            if (mRarityList.value!![cardPrinting.printing.rarity.ordinal] == FilterStateEnum.NOT)
+            if (mRarityList.value!![cardPrinting.rarity.ordinal] == FilterStateEnum.NOT)
                 return false
         } else {
-            if (mRarityList.value!![cardPrinting.printing.rarity.ordinal] != FilterStateEnum.IS)
+            if (mRarityList.value!![cardPrinting.rarity.ordinal] != FilterStateEnum.IS)
                 return false
         }
         return true
     }
 
-    private fun containsPitch(cardPrinting: CardPrinting, selectedPitchList: List<Int>): Boolean {
+    private fun containsPitch(cardPrinting: Printing, selectedPitchList: List<Int>): Boolean {
 
         if (selectedPitchList.contains(0) && cardPrinting.baseCard.pitch.isEmpty())
             return true
-        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.baseCard.pitch[cardPrinting.printing.version]))
+        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.baseCard.pitch[cardPrinting.version]))
             return true
 
         return false
     }
 
-    private fun passSubTypeFilter(cardPrinting: CardPrinting): Boolean {
+    private fun passSubTypeFilter(cardPrinting: Printing): Boolean {
         var passFilter = false
         if (!mSubTypeList.value!!.contains(FilterStateEnum.IS)) {
             passFilter = true
@@ -396,7 +394,7 @@ class SearchCardResultViewModel : ViewModel() {
         return passFilter
     }
 
-    private fun passCostFilter(card: CardPrinting): Boolean {
+    private fun passCostFilter(card: Printing): Boolean {
         for (comparison in mCompareCostList.value!!) {
             when (comparison.compare) {
                 CompareEnum.EQUAL -> {
@@ -416,9 +414,9 @@ class SearchCardResultViewModel : ViewModel() {
         return true
     }
 
-    private fun passPowerFilter(card: CardPrinting): Boolean {
+    private fun passPowerFilter(card: Printing): Boolean {
         if (card.baseCard.power.isNotEmpty()) {
-            val power = card.baseCard.power[card.printing.version]
+            val power = card.baseCard.power[card.version]
             for (comparison in mComparePowerList.value!!) {
                 when (comparison.compare) {
                     CompareEnum.EQUAL -> {
@@ -440,9 +438,9 @@ class SearchCardResultViewModel : ViewModel() {
         return false
     }
 
-    private fun passDefenseFilter(card: CardPrinting): Boolean {
+    private fun passDefenseFilter(card: Printing): Boolean {
         if (card.baseCard.defense.isNotEmpty()) {
-            val defense = card.baseCard.defense[card.printing.version]
+            val defense = card.baseCard.defense[card.version]
             for (comparison in mCompareDefenseList.value!!) {
                 when (comparison.compare) {
                     CompareEnum.EQUAL -> {
@@ -464,7 +462,7 @@ class SearchCardResultViewModel : ViewModel() {
         return false
     }
 
-    private fun filterCardsByName(card: CardPrinting, searchText: String): Boolean {
+    private fun filterCardsByName(card: Printing, searchText: String): Boolean {
         if (card.baseCard.name.replace("[^a-zA-Z0-9]", "").toLowerCase(Locale.ROOT).contains(searchText))
             return true
         return false
@@ -475,17 +473,14 @@ class SearchCardResultViewModel : ViewModel() {
         setNameQuery.clear()
         setNameQuery.append(searchSet)
         for ((key, printing) in mPrintingMap.value!!) {
-            if (printing.set!!.setCode == searchSet.toString())
+            if (printing.set!!.setCode == searchSet)
                 displayCardPrintingList.add(
-                    CardPrinting(
-                        cardMap.value?.get(printing.name.replace(".", ""))!!,
-                        printing
-                    )
+                    printing
                 )
         }
         displayCardPrintingList.sortWith(
             compareBy {
-                it.printing.collectorNumber
+                it.collectorNumber
             }
         )
         mCardPrintingList.value?.clear()

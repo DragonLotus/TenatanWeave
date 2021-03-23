@@ -9,9 +9,9 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
-import kotlinx.android.synthetic.main.bottom_sheet_deck.*
+import kotlinx.android.synthetic.main.bottom_sheet_card.*
 
-class DeckOptionsBottomSheetFragment : BottomSheetDialogFragment() {
+class CardOptionsBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val deckViewModel: DeckViewModel by activityViewModels()
 
@@ -19,7 +19,7 @@ class DeckOptionsBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.bottom_sheet_deck, container, false)
+        return inflater.inflate(R.layout.bottom_sheet_card, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,21 +34,21 @@ class DeckOptionsBottomSheetFragment : BottomSheetDialogFragment() {
     private fun setUpViews(bundle: Bundle) {
         // We can have cross button on the top right corner for providing elemnet to dismiss the bottom sheet
         //iv_close.setOnClickListener { dismissAllowingStateLoss() }
-        delete_text_view.setOnClickListener {
+        printings_text_view.setOnClickListener {
             dismissAllowingStateLoss()
-            mListener?.onItemClick(requireActivity().getString(R.string.deck_options_delete), bundle)
+            mListener?.onItemClick(requireActivity().getString(R.string.card_options_printings), bundle)
         }
-        edit_text_view.setOnClickListener {
+        details_text_view.setOnClickListener {
             dismissAllowingStateLoss()
-            mListener?.onItemClick(requireActivity().getString(R.string.deck_options_edit), bundle)
+            mListener?.onItemClick(requireActivity().getString(R.string.card_options_details), bundle)
         }
     }
 
-    private var mListener: DeckOptionsItemClickListener? = null
+    private var mListener: CardOptionsItemClickListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is DeckOptionsItemClickListener) {
+        if (context is CardOptionsItemClickListener) {
             mListener = context
         } else {
             throw RuntimeException(
@@ -63,14 +63,14 @@ class DeckOptionsBottomSheetFragment : BottomSheetDialogFragment() {
         mListener = null
     }
 
-    interface DeckOptionsItemClickListener {
+    interface CardOptionsItemClickListener {
         fun onItemClick(item: String, bundle: Bundle)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(bundle: Bundle): DeckOptionsBottomSheetFragment {
-            val fragment = DeckOptionsBottomSheetFragment()
+        fun newInstance(bundle: Bundle): CardOptionsBottomSheetFragment {
+            val fragment = CardOptionsBottomSheetFragment()
             fragment.arguments = bundle
             return fragment
         }

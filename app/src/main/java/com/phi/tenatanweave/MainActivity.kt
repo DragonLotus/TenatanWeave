@@ -19,13 +19,11 @@ import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
-import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
-import com.phi.tenatanweave.fragments.dialogfragments.DeckOptionsBottomSheetFragment
-import com.phi.tenatanweave.fragments.dialogfragments.DeleteConfirmationDialogFragment
+import com.phi.tenatanweave.fragments.dialogfragments.*
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.fragments.singlecard.SingleCardViewModel
 
-class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemClickListener {
+class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOptionsItemClickListener, CardOptionsBottomSheetFragment.CardOptionsItemClickListener, CardPrintingsBottomSheetFragment.CardPrintingItemClickListener {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val searchCardResultViewModel: SearchCardResultViewModel by viewModels()
     private val singleCardViewModel: SingleCardViewModel by viewModels()
@@ -205,6 +203,9 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.ItemCli
             }
             getString(R.string.deck_options_delete) -> {
                 DeleteConfirmationDialogFragment.newInstance(bundle).show(supportFragmentManager, "MainActivity")
+            }
+            getString(R.string.card_options_printings) -> {
+                CardPrintingsBottomSheetFragment.newInstance(bundle).show(supportFragmentManager, "MainActivity")
             }
             else -> {
                 //Handle data

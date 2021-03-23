@@ -28,7 +28,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
@@ -114,17 +114,17 @@ class SingleCardFragment : Fragment() {
         val printingsRecyclerView = root.findViewById<RecyclerView>(R.id.printings_recyclerview)
 
         singleCardViewModel.cardPrinting.observe(viewLifecycleOwner, { it ->
-            val version = it.printing.version
+            val version = it.version
 
             requireActivity().setActionBar(toolbar)
             requireActivity().actionBar?.title =
-                getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.printing?.name)
+                getString(R.string.title_single_card, singleCardViewModel.cardPrinting.value?.name)
 
             GlideApp.with(requireContext())
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
-                        .child("card_images/" + singleCardViewModel.cardPrinting.value?.printing?.id + ".png")
+                        .child("card_images/" + singleCardViewModel.cardPrinting.value?.id + ".png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(object : CustomTarget<Bitmap>() {
@@ -225,7 +225,7 @@ class SingleCardFragment : Fragment() {
                     if (it.baseCard.subTypes.isNotEmpty()) "- " + it.baseCard.getSubTypesAsEnum().joinToString(" ")
                         .replace(SubTypeEnum.ALL.toString(), "NA") else ""
                 }"
-            rarityTextView.text = it.printing.rarity.toString()
+            rarityTextView.text = it.rarity.toString()
 
             if (it.baseCard.pitch.isNotEmpty()) {
                 versionsChipGroup.visibility = View.VISIBLE
@@ -238,7 +238,7 @@ class SingleCardFragment : Fragment() {
                 }
 
                 versionsChipGroup.setOnCheckedChangeListener(null)
-                when (it.baseCard.pitch[it.printing.version]) {
+                when (it.baseCard.pitch[it.version]) {
                     1 -> redVersionChip.isChecked = true
                     2 -> yellowVersionChip.isChecked = true
                     3 -> blueVersionChip.isChecked = true
@@ -404,7 +404,7 @@ class SingleCardFragment : Fragment() {
         )
     }
 
-    private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, CardPrinting>): Boolean {
+    private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, Printing>): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.baseCard.subTypes.isEmpty()) {
                 return false
@@ -413,10 +413,10 @@ class SingleCardFragment : Fragment() {
         return true
     }
 
-    private fun containsVersion(selectedVersions: MutableMap<Int, CardPrinting>, versionToMatch: Int): Boolean {
+    private fun containsVersion(selectedVersions: MutableMap<Int, Printing>, versionToMatch: Int): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
-            if (cardPrinting.printing.version < cardPrinting.baseCard.pitch.size) {
-                if (cardPrinting.baseCard.pitch[cardPrinting.printing.version] == versionToMatch)
+            if (cardPrinting.version < cardPrinting.baseCard.pitch.size) {
+                if (cardPrinting.baseCard.pitch[cardPrinting.version] == versionToMatch)
                     return true
             }
         }

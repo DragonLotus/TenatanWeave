@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
 import com.phi.tenatanweave.data.Deck
 
 class DeckDisplayRecyclerAdapter(

@@ -14,20 +14,20 @@ class Printing(
     val setCode: String = "",
     var set: ExpansionSet? = null,
     val collectorNumber: Int = 0,
-    val finish: MutableList<FinishEnum> = mutableListOf()
+    val finishList: List<FinishEnum> = listOf(),
+    var finishVersion: Int = 0,
+    var baseCard: BaseCard = BaseCard()
 ) {
-
-
     fun getFinishSafe(finishVersion: Int): FinishEnum {
-        return if (finish.isNullOrEmpty())
+        return if (finishList.isNullOrEmpty())
             FinishEnum.REGULAR
         else
             try {
-                finish[finishVersion]
+                finishList[finishVersion]
             } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Finish version $finishVersion is out of bounds. Cannot get finish value of $name.")
                 Log.d("BaseCard", e.toString())
-                finish[0]
+                finishList[0]
             }
     }
 }
