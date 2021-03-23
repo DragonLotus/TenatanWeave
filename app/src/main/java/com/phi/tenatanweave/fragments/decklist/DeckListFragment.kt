@@ -41,7 +41,6 @@ class DeckListFragment : Fragment() {
         val toolbar: Toolbar = root.findViewById(R.id.toolbar)
         requireActivity().setActionBar(toolbar)
         requireActivity().actionBar?.title = deckListViewModel.deck.value?.deckName
-
         val deckListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListCardSearchLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListRecyclerAdapter = DeckListRecyclerAdapter(deckListViewModel, requireContext(), {

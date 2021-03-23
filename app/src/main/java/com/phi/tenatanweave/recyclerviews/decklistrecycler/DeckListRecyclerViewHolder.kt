@@ -145,8 +145,6 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.defense_layout.visibility = View.GONE
 
         itemView.setOnClickListener(heroOnClickListener)
-
-
         with(heroPrinting.cardPrinting) {
 
             if(this?.let { deckListViewModel.checkIfLegal(it) } == false)

@@ -1,7 +1,6 @@
 package com.phi.tenatanweave.data
 
 import android.util.Log
-import com.google.gson.Gson
 import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.data.enums.RarityEnum
 
@@ -30,9 +29,5 @@ class Printing(
                 Log.d("BaseCard", e.toString())
                 finishList[0]
             }
-    }
-
-    fun deepCopy() : Printing{
-        return Printing()
     }
 }
