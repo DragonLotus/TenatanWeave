@@ -12,10 +12,10 @@ class SingleCardViewModel : ViewModel() {
     }
     val currentPosition: LiveData<Int> = mCurrentPosition
 
-    private val mCardPrinting = MutableLiveData<CardPrinting>().apply {
+    private val mCardPrinting = MutableLiveData<Printing>().apply {
         value = null
     }
-    val cardPrinting: LiveData<CardPrinting> = mCardPrinting
+    val cardPrinting: LiveData<Printing> = mCardPrinting
 
     private val mRulingMap = MutableLiveData<MutableMap<String, Ruling>>().apply {
         value = mutableMapOf()
@@ -35,17 +35,17 @@ class SingleCardViewModel : ViewModel() {
     }
     val sectionedPrintings: LiveData<MutableList<RecyclerItem>> = mSectionedPrintingList
 
-    private val mSelectedVersions = MutableLiveData<MutableMap<Int, CardPrinting>>().apply {
+    private val mSelectedVersions = MutableLiveData<MutableMap<Int, Printing>>().apply {
         value = mutableMapOf()
     }
-    val selectedVersions: LiveData<MutableMap<Int, CardPrinting>> = mSelectedVersions
+    val selectedVersions: LiveData<MutableMap<Int, Printing>> = mSelectedVersions
 
     init {
 
     }
 
     fun setCardPrinting(
-        cardPrinting: CardPrinting,
+        cardPrinting: Printing,
         printingMap: MutableMap<String, Printing>,
         cardMap: MutableMap<String, BaseCard>,
         setMap: MutableMap<String, ExpansionSet>,
@@ -60,7 +60,7 @@ class SingleCardViewModel : ViewModel() {
         mCardPrinting.notifyObserver()
     }
 
-    private fun setRuling(cardPrinting: CardPrinting) {
+    private fun setRuling(cardPrinting: Printing) {
         mSelectedRuling.value?.clear()
         if (mRulingMap.value?.get(cardPrinting.baseCard.name.replace(".", "")) != null) {
             mSelectedRuling.value?.addAll(mRulingMap.value?.get(cardPrinting.baseCard.name.replace(".", ""))?.rulings!!)
@@ -68,14 +68,14 @@ class SingleCardViewModel : ViewModel() {
     }
 
     private fun setPrintings(
-        cardPrinting: CardPrinting,
+        cardPrinting: Printing,
         printingMap: MutableMap<String, Printing>,
         setMap: MutableMap<String, ExpansionSet>
     ) {
         mSelectedPrintingList.value?.clear()
         for (printing in cardPrinting.baseCard.printings) {
             printingMap[printing]?.let {
-                if (it.version == cardPrinting.printing.version)
+                if (it.version == cardPrinting.version)
                     mSelectedPrintingList.value?.add(it)
             }
         }
@@ -89,7 +89,7 @@ class SingleCardViewModel : ViewModel() {
     }
 
     private fun setVersions(
-        cardPrinting: CardPrinting,
+        cardPrinting: Printing,
         printingMap: MutableMap<String, Printing>,
         cardMap: MutableMap<String, BaseCard>
     ) {
@@ -97,9 +97,7 @@ class SingleCardViewModel : ViewModel() {
         for (version in cardPrinting.baseCard.printings) {
             printingMap[version]?.let { printing ->
                 if (mSelectedVersions.value?.get(printing.version) == null)
-                    cardMap[printing.name.replace(".", "")]?.let { baseCard ->
-                        mSelectedVersions.value?.set(printing.version, CardPrinting(baseCard, printing))
-                    }
+                    mSelectedVersions.value?.set(printing.version, printing)
             }
         }
     }

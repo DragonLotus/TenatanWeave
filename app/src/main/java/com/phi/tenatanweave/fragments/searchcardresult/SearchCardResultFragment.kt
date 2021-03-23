@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.recyclerviews.cardrecycler.CardRecyclerAdapter
 
 class SearchCardResultFragment : Fragment() {
@@ -34,7 +34,7 @@ class SearchCardResultFragment : Fragment() {
 
         val navController = findNavController()
 
-        searchCardResultViewModel.cardPrintingList.observe(viewLifecycleOwner, Observer<List<CardPrinting>> {
+        searchCardResultViewModel.cardPrintingList.observe(viewLifecycleOwner, Observer<List<Printing>> {
             cardResultRecyclerView.adapter?.notifyDataSetChanged()
         })
 

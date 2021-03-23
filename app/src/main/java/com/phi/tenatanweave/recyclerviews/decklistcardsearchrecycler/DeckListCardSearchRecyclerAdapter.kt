@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 
 class DeckListCardSearchRecyclerAdapter(
@@ -17,7 +17,7 @@ class DeckListCardSearchRecyclerAdapter(
     val heroOnClickListener: View.OnClickListener
 ) :
     RecyclerView.Adapter<DeckListCardSearchRecyclerViewHolder>() {
-    var cardPrintingList: MutableList<CardPrinting> = mutableListOf()
+    var cardPrintingList: MutableList<Printing> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeckListCardSearchRecyclerViewHolder {
         val view: View =
@@ -48,13 +48,13 @@ class DeckListCardSearchRecyclerAdapter(
         return cardPrintingList.size
     }
 
-    fun setList(newList: MutableList<CardPrinting>) {
+    fun setList(newList: MutableList<Printing>) {
         cardPrintingList.clear()
         cardPrintingList.addAll(newList)
         notifyDataSetChanged()
     }
 
-    fun getList(): List<CardPrinting> {
+    fun getList(): List<Printing> {
         return cardPrintingList
     }
 

@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.data.CardPrinting
+import com.phi.tenatanweave.data.Printing
 
 class CardRecyclerAdapter(
-    var cardPrintingList: MutableList<CardPrinting>,
+    var cardPrintingList: MutableList<Printing>,
     val context: Context,
     var grid: Boolean,
     val onClickListener: View.OnClickListener
@@ -26,14 +26,14 @@ class CardRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: CardRecyclerViewHolder, position: Int) {
-        holder.bindCard(cardPrintingList[position].baseCard, cardPrintingList[position].printing, context)
+        holder.bindCard(cardPrintingList[position].baseCard, cardPrintingList[position], context)
     }
 
     override fun getItemCount(): Int {
         return cardPrintingList.size
     }
 
-    fun getList(): MutableList<CardPrinting> {
+    fun getList(): MutableList<Printing> {
         return cardPrintingList
     }
 }

@@ -9,7 +9,7 @@ import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.enums.FinishEnum
 
 class FinishRecyclerAdapter(
-    var finishList: MutableList<FinishEnum>,
+    var finishList: List<FinishEnum>,
     val context: Context
 ) :
     RecyclerView.Adapter<FinishRecyclerViewHolder>() {
@@ -27,7 +27,7 @@ class FinishRecyclerAdapter(
         return finishList.size
     }
 
-    fun getList(): MutableList<FinishEnum> {
+    fun getList(): List<FinishEnum> {
         return finishList
     }
 }

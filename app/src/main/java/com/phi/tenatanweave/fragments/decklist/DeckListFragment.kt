@@ -48,9 +48,9 @@ class DeckListFragment : Fragment() {
             //Increase
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
-            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+            val item = adapter.getList()[position] as RecyclerItem.Printing
 
-            val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.cardPrinting, requireContext())
+            val indicesToUpdateList = deckListViewModel.increaseQuantity(position, item.printing, requireContext())
             for (index in indicesToUpdateList) {
                 when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)
@@ -62,9 +62,9 @@ class DeckListFragment : Fragment() {
             //Decrease
             val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
             val position = deckListRecyclerView.getChildLayoutPosition(it.parent as View)
-            val item = adapter.getList()[position] as RecyclerItem.CardPrinting
+            val item = adapter.getList()[position] as RecyclerItem.Printing
 
-            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.cardPrinting, requireContext())
+            val indicesToUpdateList = deckListViewModel.decreaseQuantity(position, item.printing, requireContext())
             for (index in indicesToUpdateList) {
                 when (index) {
                     is AdapterUpdate.Changed -> adapter.notifyItemChanged(index.index)

@@ -25,7 +25,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
     RecyclerView.ViewHolder(itemView) {
 
     fun bindCard(
-        printing: RecyclerItem.CardPrinting,
+        printing: RecyclerItem.Printing,
         position: Int,
         removeBottomMargin: Boolean,
         increaseOnClickListener: View.OnClickListener,
@@ -33,7 +33,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         showCardOptionsOnClickListener: View.OnClickListener,
         context: Context
     ) {
-        with(printing.cardPrinting) {
+        with(printing.printing) {
             itemView.setOnClickListener(showCardOptionsOnClickListener)
 
             if(!deckListViewModel.checkIfLegal(this))
@@ -46,7 +46,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             }
 
             itemView.deck_list_card_quantity.text =
-                deckListViewModel.unsectionedCardPrintingDeckList.count { it.printing.id == this.printing.id && it.finish == this.finish }
+                deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
             itemView.deck_list_card_type.text =
@@ -63,13 +63,13 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.printing.version).toString()
+                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.printing.version).toString()
+                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
@@ -79,7 +79,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.printing.version)
+            val pitch = this.baseCard.getPitchSafe(this.version)
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -93,7 +93,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             itemView.decrease_card_quantity_button.setOnClickListener(decreaseOnClickListener)
 
             itemView.finish_image.visibility = View.VISIBLE
-            when (this.printing.getFinishSafe(this.finish)) {
+            when (this.getFinishSafe(this.finishVersion)) {
                 FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
                 FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
                 FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
@@ -112,7 +112,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
-                        .child("card_images/${this.printing.id}.png")
+                        .child("card_images/${this.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.horizontal_placeholder)
@@ -155,7 +155,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 itemView.not_legal_button.visibility = View.GONE
 
             itemView.deck_list_card_name.text =
-                if (this?.printing?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.printing?.name
+                if (this?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.name
 
             itemView.deck_list_card_type.text =
                 "${this?.baseCard?.getHeroClassAsEnum()} ${this?.baseCard?.getTypeAsEnum()?.toFullString()} ${
@@ -178,7 +178,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 itemView.health_layout.visibility = View.GONE
 
             itemView.finish_image.visibility = View.VISIBLE
-            when (this?.finish?.let { this.printing.getFinishSafe(it) }) {
+            when (this?.finishVersion?.let { this.getFinishSafe(it) }) {
                 FinishEnum.RAINBOW -> itemView.finish_image.setImageResource(R.drawable.rainbow_finish)
                 FinishEnum.COLD -> itemView.finish_image.setImageResource(R.drawable.cold_finish)
                 FinishEnum.GOLD -> itemView.finish_image.setImageResource(R.drawable.gold_finish)
@@ -189,7 +189,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
-                        .child("card_images/${this?.printing?.id}.png")
+                        .child("card_images/${this?.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.horizontal_placeholder)

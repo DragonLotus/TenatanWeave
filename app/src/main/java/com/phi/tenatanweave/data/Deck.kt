@@ -10,8 +10,8 @@ class Deck(
     var heroId: PrintingWithFinish = PrintingWithFinish(),
     val equipmentList: MutableList<PrintingWithFinish> = mutableListOf(),
     val coreDeckList: MutableList<PrintingWithFinish> = mutableListOf(),
-    val sideBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    val maybeBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
+    val sideBoardMap: Map<String, MutableList<String>> = mutableMapOf(),
+    val maybeBoardMap: Map<String, MutableList<String>> = mutableMapOf(),
     val foilMap: MutableMap<String, Int> = mutableMapOf(),
     var format: String = "",
     var lastModifiedDate: String = ""
