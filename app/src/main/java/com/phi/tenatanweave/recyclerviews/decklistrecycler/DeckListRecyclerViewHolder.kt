@@ -30,9 +30,11 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         removeBottomMargin: Boolean,
         increaseOnClickListener: View.OnClickListener,
         decreaseOnClickListener: View.OnClickListener,
+        showCardOptionsOnClickListener: View.OnClickListener,
         context: Context
     ) {
         with(printing.cardPrinting) {
+            itemView.setOnClickListener(showCardOptionsOnClickListener)
 
             if(!deckListViewModel.checkIfLegal(this))
                 itemView.not_legal_button.visibility = View.VISIBLE
@@ -141,7 +143,9 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.cost_layout.visibility = View.GONE
         itemView.power_layout.visibility = View.GONE
         itemView.defense_layout.visibility = View.GONE
+
         itemView.setOnClickListener(heroOnClickListener)
+
 
         with(heroPrinting.cardPrinting) {
 

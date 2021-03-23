@@ -83,4 +83,7 @@
     <string name="deck_options_delete">Delete</string>
     <string name="deck_options_copy">Copy</string>
     <string name="deck_index">deckIndex</string>
+    <string name="card_index">cardIndex</string>
+    <string name="card_options_printings">Printings</string>
+    <string name="card_options_details">Details</string>
 </resources>

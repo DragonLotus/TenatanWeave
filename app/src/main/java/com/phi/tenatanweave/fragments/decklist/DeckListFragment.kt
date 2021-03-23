@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toolbar
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,6 +18,7 @@ import com.phi.tenatanweave.customviews.EmptySearchView
 import com.phi.tenatanweave.data.AdapterUpdate
 import com.phi.tenatanweave.data.RecyclerItem
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
+import com.phi.tenatanweave.fragments.dialogfragments.CardOptionsBottomSheetFragment
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler.DeckListCardSearchRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.decklistrecycler.DeckListRecyclerAdapter
@@ -35,6 +37,10 @@ class DeckListFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_deck_list, container, false)
         val deckListRecyclerView: RecyclerView = root.findViewById(R.id.deck_list_recycler_view)
         val deckListCardSearchRecyclerView: RecyclerView = root.findViewById(R.id.deck_list_card_search_recycler_view)
+
+        val toolbar: Toolbar = root.findViewById(R.id.toolbar)
+        requireActivity().setActionBar(toolbar)
+        requireActivity().actionBar?.title = deckListViewModel.deck.value?.deckName
 
         val deckListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val deckListCardSearchLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -68,13 +74,21 @@ class DeckListFragment : Fragment() {
             deckListViewModel.deck.value?.let { deckToUpdate -> deckViewModel.updateOrAddDeck(deckToUpdate, resources) }
         }, {
             //Hero onClick
-            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
-            val position = deckListRecyclerView.getChildLayoutPosition(it as View)
+//            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+//            val position = deckListRecyclerView.getChildLayoutPosition(it as View)
 
             deckListViewModel.isHeroSearchMode = true
             deckListViewModel.setupHeroSearch(searchCardResultViewModel.masterCardPrintingList)
             deckListRecyclerView.visibility = View.INVISIBLE
             deckListCardSearchRecyclerView.visibility = View.VISIBLE
+        }, {
+            //Show Card Options onClick
+            val adapter = deckListRecyclerView.adapter as DeckListRecyclerAdapter
+            val position = deckListRecyclerView.getChildLayoutPosition(it as View)
+
+            val bundle = Bundle()
+            bundle.putInt(getString(R.string.card_index), position)
+            CardOptionsBottomSheetFragment.newInstance(bundle).show(requireActivity().supportFragmentManager, this.tag)
         })
         val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
             //Increase from search
@@ -157,7 +171,7 @@ class DeckListFragment : Fragment() {
                         deckListCardSearchRecyclerView.visibility = View.VISIBLE
                     }
                 } else {
-                    if(!newText.isNullOrEmpty())
+                    if (!newText.isNullOrEmpty())
                         deckListViewModel.filterHeroCards(newText)
                 }
 
