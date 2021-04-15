@@ -36,7 +36,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         with(printing.printing) {
             itemView.setOnClickListener(showCardOptionsOnClickListener)
 
-            if(!deckListViewModel.checkIfLegal(this))
+            if (!deckListViewModel.checkIfLegal(this))
                 itemView.not_legal_button.visibility = View.VISIBLE
             else
                 itemView.not_legal_button.visibility = View.GONE
@@ -55,21 +55,21 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .replace(SubTypeEnum.ALL.toString(), "NA") else ""
                 }"
 
-            if (this.baseCard.cost >= 0) {
+            if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
-                itemView.cost_textview.text = this.baseCard.cost.toString()
+                itemView.cost_textview.text = this.baseCard.cost
             } else
                 itemView.cost_layout.visibility = View.GONE
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
+                itemView.power_textview.text = this.getPowerStringSafe()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
+                itemView.defense_textview.text = this.getDefenseStringSafe()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
@@ -79,7 +79,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.version)
+            val pitch = this.getPitchSafe()
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -147,7 +147,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.setOnClickListener(heroOnClickListener)
         with(heroPrinting.cardPrinting) {
 
-            if(this?.let { deckListViewModel.checkIfLegal(it) } == false)
+            if (this?.let { deckListViewModel.checkIfLegal(it) } == false)
                 itemView.not_legal_button.visibility = View.VISIBLE
             else
                 itemView.not_legal_button.visibility = View.GONE
@@ -163,15 +163,15 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 }"
             itemView.deck_list_card_type.visibility = View.VISIBLE
 
-            if (this?.baseCard?.intellect != null && this.baseCard.intellect >= 0) {
+            if (this?.baseCard?.intellect != null && this.getIntellectSafe() >= 0) {
                 itemView.intelligence_layout.visibility = View.VISIBLE
-                itemView.intelligence_textview.text = this.baseCard.intellect.toString()
+                itemView.intelligence_textview.text = this.baseCard.intellect
             } else
                 itemView.intelligence_layout.visibility = View.GONE
 
-            if (this?.baseCard?.health != null && this.baseCard.health >= 0) {
+            if (this?.baseCard?.health != null && this.getHealthSafe() >= 0) {
                 itemView.health_layout.visibility = View.VISIBLE
-                itemView.health_textview.text = this.baseCard.health.toString()
+                itemView.health_textview.text = this.baseCard.health
             } else
                 itemView.health_layout.visibility = View.GONE
 

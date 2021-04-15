@@ -142,7 +142,7 @@ class SingleCardFragment : Fragment() {
             if (it.baseCard.pitch.isNotEmpty()) {
                 pitchImageView.visibility = View.VISIBLE
                 if (it.baseCard.pitch.size > version) {
-                    it.baseCard.pitch[version].let { pitch ->
+                    it.getPitchSafe().let { pitch ->
                         when (pitch) {
                             0 -> pitchImageView.setImageResource(R.drawable.pitch_0)
                             1 -> pitchImageView.setImageResource(R.drawable.pitch_1)
@@ -160,16 +160,16 @@ class SingleCardFragment : Fragment() {
                 pitchImageView.visibility = View.GONE
             }
 
-            if (it.baseCard.cost >= 0) {
+            if (it.getCostSafe() >= 0) {
                 costTextView.visibility = View.VISIBLE
                 costImageView.visibility = View.VISIBLE
-                costTextView.text = it.baseCard.cost.toString()
+                costTextView.text = it.baseCard.cost
             } else {
                 costTextView.visibility = View.GONE
                 costImageView.visibility = View.GONE
             }
 
-            if (it.baseCard.intellect > 0) {
+            if (it.getIntellectSafe() > 0) {
                 intelligenceTextView.visibility = View.VISIBLE
                 intelligenceImageView.visibility = View.VISIBLE
                 intelligenceTextView.text = it.baseCard.intellect.toString()
@@ -177,7 +177,7 @@ class SingleCardFragment : Fragment() {
                 intelligenceTextView.visibility = View.GONE
                 intelligenceImageView.visibility = View.GONE
             }
-            if (it.baseCard.health > 0) {
+            if (it.getHealthSafe() > 0) {
                 healthTextView.visibility = View.VISIBLE
                 healthImageView.visibility = View.VISIBLE
                 healthTextView.text = it.baseCard.health.toString()
@@ -238,7 +238,7 @@ class SingleCardFragment : Fragment() {
                 }
 
                 versionsChipGroup.setOnCheckedChangeListener(null)
-                when (it.baseCard.pitch[it.version]) {
+                when (it.getPitchSafe()) {
                     1 -> redVersionChip.isChecked = true
                     2 -> yellowVersionChip.isChecked = true
                     3 -> blueVersionChip.isChecked = true
@@ -416,7 +416,7 @@ class SingleCardFragment : Fragment() {
     private fun containsVersion(selectedVersions: MutableMap<Int, Printing>, versionToMatch: Int): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.version < cardPrinting.baseCard.pitch.size) {
-                if (cardPrinting.baseCard.pitch[cardPrinting.version] == versionToMatch)
+                if (cardPrinting.getPitchSafe() == versionToMatch)
                     return true
             }
         }

@@ -49,40 +49,40 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                         .replace(SubTypeEnum.ALL.toString(), "NA") else ""
                 }"
 
-            if (this.baseCard.cost >= 0) {
+            if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
-                itemView.cost_textview.text = this.baseCard.cost.toString()
+                itemView.cost_textview.text = this.baseCard.cost
             } else
                 itemView.cost_layout.visibility = View.GONE
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
+                itemView.power_textview.text = this.getPowerStringSafe()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
+                itemView.defense_textview.text = this.getDefenseStringSafe()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
-            if (this.baseCard.intellect >= 0) {
+            if (this.getIntellectSafe() >= 0) {
                 itemView.intelligence_layout.visibility = View.VISIBLE
-                itemView.intelligence_textview.text = this.baseCard.intellect.toString()
+                itemView.intelligence_textview.text = this.baseCard.intellect
             } else
                 itemView.intelligence_layout.visibility = View.GONE
 
-            if (this.baseCard.health >= 0) {
+            if (this.getHealthSafe() >= 0) {
                 itemView.health_layout.visibility = View.VISIBLE
-                itemView.health_textview.text = this.baseCard.health.toString()
+                itemView.health_textview.text = this.baseCard.health
             } else
                 itemView.health_layout.visibility = View.GONE
 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.version)
+            val pitch = this.getPitchSafe()
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -98,6 +98,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 itemView.increase_card_quantity_button.visibility = View.VISIBLE
                 itemView.decrease_card_quantity_button.visibility = View.VISIBLE
                 itemView.deck_list_card_quantity.visibility = View.VISIBLE
+                itemView.setOnClickListener(null)
             } else {
                 itemView.setOnClickListener(heroOnClickListener)
                 itemView.increase_card_quantity_button.visibility = View.GONE

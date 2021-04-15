@@ -3,31 +3,41 @@ package com.phi.tenatanweave.data
 import android.util.Log
 import com.phi.tenatanweave.data.enums.ClassEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
+import com.phi.tenatanweave.data.enums.TalentEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
 
 class BaseCard(
     val id: String = "",
     val name: String = "",
     val text: String = "",
+    val talent: String = "",
     val heroClass: String = "",
     val type: String = "",
     val subTypes: List<String> = listOf(),
     val weaponSlots: Int = -1,
-    val intellect: Int = -1,
-    val health: Int = -1,
+    val intellect: String = "",
+    val health: String = "",
     val variableHealth: List<Int> = listOf(),
     val variablePower: List<Int> = listOf(),
     val variableDefense: List<Int> = listOf(),
     val variableValue: List<Int> = listOf(),
-    val power: List<Int> = listOf(),
-    val defense: List<Int> = listOf(),
-    val pitch: List<Int> = listOf(),
-    val cost: Int = -1,
+    val power: List<String> = listOf(),
+    val defense: List<String> = listOf(),
+    val pitch: List<String> = listOf(),
+    val cost: String = "",
     val deckLimit: Int = -1,
     val specialization: List<String> = listOf(),
     val legalFormats: List<String> = listOf(),
     val printings: List<String> = listOf()
 ) {
+
+    fun getTalentAsEnum(): TalentEnum {
+        return try {
+            TalentEnum.valueOf(talent)
+        } catch (e: IllegalArgumentException) {
+            TalentEnum.ALL
+        }
+    }
 
     fun getHeroClassAsEnum(): ClassEnum {
         return try {
@@ -62,11 +72,28 @@ class BaseCard(
             0
         else
             try {
-                power[version]
+                Integer.parseInt(power[version])
             } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get power value of $name.")
                 Log.d("BaseCard", e.toString())
                 0
+            } catch (e: NumberFormatException) {
+                Log.d("BaseCard", "Unable to parse $version of power as an integer. Cannot get power value of $name.")
+                Log.d("BaseCard", e.toString())
+                0
+            }
+    }
+
+    fun getPowerStringSafe(version: Int): String {
+        return if (power.isNullOrEmpty())
+            ""
+        else
+            try {
+                power[version]
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get power value of $name.")
+                Log.d("BaseCard", e.toString())
+                ""
             }
     }
 
@@ -75,11 +102,31 @@ class BaseCard(
             0
         else
             try {
-                defense[version]
+                Integer.parseInt(defense[version])
             } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get defense value of $name.")
                 Log.d("BaseCard", e.toString())
                 0
+            } catch (e: NumberFormatException) {
+                Log.d(
+                    "BaseCard",
+                    "Unable to parse $version of defense as an integer. Cannot get defense value of $name."
+                )
+                Log.d("BaseCard", e.toString())
+                0
+            }
+    }
+
+    fun getDefenseStringSafe(version: Int): String {
+        return if (defense.isNullOrEmpty())
+            ""
+        else
+            try {
+                defense[version]
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get defense value of $name.")
+                Log.d("BaseCard", e.toString())
+                ""
             }
     }
 
@@ -88,12 +135,62 @@ class BaseCard(
             0
         else
             try {
-                pitch[version]
+                Integer.parseInt(pitch[version])
             } catch (e: ArrayIndexOutOfBoundsException) {
                 Log.d("BaseCard", "Version $version is out of bounds. Cannot get pitch value of $name.")
                 Log.d("BaseCard", e.toString())
                 0
+            } catch (e: NumberFormatException) {
+                Log.d("BaseCard", "Unable to parse $version of pitch as an integer. Cannot get pitch value of $name.")
+                Log.d("BaseCard", e.toString())
+                -1
             }
+    }
+
+    fun getPitchStringSafe(version: Int): String {
+        return if (pitch.isNullOrEmpty())
+            ""
+        else
+            try {
+                pitch[version]
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                Log.d("BaseCard", "Version $version is out of bounds. Cannot get pitch value of $name.")
+                Log.d("BaseCard", e.toString())
+                ""
+            }
+    }
+
+    fun getIntellectSafe(): Int {
+        return try {
+            Integer.parseInt(intellect)
+        } catch (e: NumberFormatException) {
+            Log.d("BaseCard", "Unable to parse $intellect as an integer. Cannot get intellect value of $name.")
+            Log.d("BaseCard", e.toString())
+            -1
+        }
+    }
+
+    fun getHealthSafe(): Int {
+        return try {
+            Integer.parseInt(health)
+        } catch (e: NumberFormatException) {
+            Log.d("BaseCard", "Unable to parse $health as an integer. Cannot get health value of $name.")
+            Log.d("BaseCard", e.toString())
+            -1
+        }
+    }
+
+    fun getCostSafe(): Int {
+        return try {
+            Integer.parseInt(cost)
+        } catch (e: NumberFormatException) {
+            Log.d("BaseCard", "Unable to parse $cost as an integer. Cannot get cost value of $name.")
+            Log.d("BaseCard", e.toString())
+            if (cost.isNotEmpty())
+                0
+            else
+                -1
+        }
     }
 
 //    companion object Factory {

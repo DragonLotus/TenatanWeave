@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.customviews.EmptySearchView
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 
 class CardPrintingsBottomSheetFragment : BottomSheetDialogFragment() {
@@ -18,7 +21,21 @@ class CardPrintingsBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.bottom_sheet_card_printing, container, false)
+        val root = inflater.inflate(R.layout.bottom_sheet_card_printing, container, false)
+        val cardPrintingRecyclerVew: RecyclerView = root.findViewById(R.id.card_printing_recycler_view)
+        val cardPrintingSearchView = root.findViewById<EmptySearchView>(R.id.card_printing_search)
+
+        val cardPrintingRecyclerViewLayoutManager = object: LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false){
+            override fun checkLayoutParams(lp: RecyclerView.LayoutParams?): Boolean {
+                if (lp != null) {
+                    lp.height = height / 3
+                }
+                return super.checkLayoutParams(lp)
+            }
+        }
+        cardPrintingRecyclerVew.layoutManager = cardPrintingRecyclerViewLayoutManager
+
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
