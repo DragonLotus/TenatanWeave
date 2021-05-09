@@ -49,11 +49,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
-            itemView.deck_list_card_type.text =
-                "${this.baseCard.getHeroClassAsEnum()} ${this.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (this.baseCard.subTypes.isNotEmpty()) "- " + this.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this.baseCard.getFullTypeAsString()
 
             if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
@@ -155,12 +151,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             itemView.deck_list_card_name.text =
                 if (this?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.name
 
-            itemView.deck_list_card_type.text =
-                "${this?.baseCard?.getHeroClassAsEnum()} ${this?.baseCard?.getTypeAsEnum()?.toFullString()} ${
-                    if (this?.baseCard?.subTypes?.isNotEmpty() == true) "- " + this.baseCard.getSubTypesAsEnum()
-                        .joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this?.baseCard?.getFullTypeAsString()
             itemView.deck_list_card_type.visibility = View.VISIBLE
 
             if (this?.baseCard?.intellect != null && this.getIntellectSafe() >= 0) {

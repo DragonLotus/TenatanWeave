@@ -29,6 +29,7 @@ class CardRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
                     TypeEnum.RESOURCE -> "Pitch: ${getPitchSafe(printing.version)}"
                     TypeEnum.INSTANT -> "Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
                     TypeEnum.TOKEN -> ""
+                    TypeEnum.MENTOR -> ""
                     TypeEnum.ALL -> ""
             }
 

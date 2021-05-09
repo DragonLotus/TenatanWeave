@@ -364,7 +364,7 @@ class SearchCardResultViewModel : ViewModel() {
 
         if (selectedPitchList.contains(0) && cardPrinting.baseCard.pitch.isEmpty())
             return true
-        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.baseCard.pitch[cardPrinting.version]))
+        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.getPitchSafe()))
             return true
 
         return false

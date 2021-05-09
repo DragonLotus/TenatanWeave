@@ -89,7 +89,7 @@ class DeckListFragment : Fragment() {
             bundle.putInt(getString(R.string.card_index), position)
             CardOptionsBottomSheetFragment.newInstance(bundle).show(requireActivity().supportFragmentManager, this.tag)
         })
-        val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, requireContext(), {
+        val deckListCardSearchRecyclerAdapter = DeckListCardSearchRecyclerAdapter(deckListViewModel, {
             //Increase from search
             val adapter = deckListCardSearchRecyclerView.adapter as DeckListCardSearchRecyclerAdapter
             val position = deckListCardSearchRecyclerView.getChildLayoutPosition(it.parent as View)

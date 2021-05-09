@@ -172,7 +172,7 @@ class SingleCardFragment : Fragment() {
             if (it.getIntellectSafe() > 0) {
                 intelligenceTextView.visibility = View.VISIBLE
                 intelligenceImageView.visibility = View.VISIBLE
-                intelligenceTextView.text = it.baseCard.intellect.toString()
+                intelligenceTextView.text = it.baseCard.intellect
             } else {
                 intelligenceTextView.visibility = View.GONE
                 intelligenceImageView.visibility = View.GONE
@@ -214,17 +214,15 @@ class SingleCardFragment : Fragment() {
                     cardText = cardText.replace("VARIABLE_HEALTH", it.baseCard.variableHealth[version].toString())
                 if (it.baseCard.variableValue.isNotEmpty() && it.baseCard.variableValue.size > version)
                     cardText = cardText.replace("VARIABLE_VALUE", it.baseCard.variableValue[version].toString())
+                if (it.baseCard.name.isNotEmpty())
+                    cardText = cardText.replace("CARD_NAME", it.baseCard.name)
 
                 val textViewHeight = cardTextView.lineHeight
 
                 cardTextView.text = insertIconsIntoCardText(cardText, textViewHeight)
             }
 
-            cardTypeTextView.text =
-                "${it.baseCard.getHeroClassAsEnum()} ${it.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (it.baseCard.subTypes.isNotEmpty()) "- " + it.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            cardTypeTextView.text = it.baseCard.getFullTypeAsString()
             rarityTextView.text = it.rarity.toString()
 
             if (it.baseCard.pitch.isNotEmpty()) {

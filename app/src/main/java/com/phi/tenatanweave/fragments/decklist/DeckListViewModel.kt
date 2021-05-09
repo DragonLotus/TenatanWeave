@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.data.enums.ClassEnum
+import com.phi.tenatanweave.data.enums.TalentEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
 import java.util.*
 
@@ -311,29 +312,40 @@ class DeckListViewModel : ViewModel() {
     }
 
     private fun checkIfLegalWithHero(cardPrinting: Printing, heroCardPrinting: Printing?): Boolean {
+        var legal = true
         heroCardPrinting?.let {
-            if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
-                return true
-            else if (cardPrinting.baseCard.specialization.isNotEmpty())
-                return false
+//            if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
+//                return true
+//            else if (cardPrinting.baseCard.specialization.isNotEmpty())
+//                return false
+
+            if (cardPrinting.baseCard.specialization.isNotEmpty() && !cardPrinting.baseCard.specialization.contains(
+                    heroCardPrinting.baseCard.name
+                )
+            )
+                legal = false
+
 
             if (mDeck.value?.format != "None") {
                 if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
                     || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
                     || !cardPrinting.baseCard.legalFormats.contains(mDeck.value?.format)
                 )
-                    return false
+                    legal = false
             } else {
                 if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
                     || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
                 )
-                    return false
+                    legal = false
             }
 
-            if (ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.valueOf(it.baseCard.heroClass)
-                || ClassEnum.valueOf(cardPrinting.baseCard.heroClass) == ClassEnum.GENERIC
-            )
-                return true
+            if (cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.ALL && cardPrinting.baseCard.getHeroClassAsEnum() != it.baseCard.getHeroClassAsEnum() && cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.GENERIC)
+                legal = false
+
+            if (cardPrinting.baseCard.getTalentAsEnum() != TalentEnum.ALL && cardPrinting.baseCard.getTalentAsEnum() != it.baseCard.getTalentAsEnum())
+                legal = false
+
+            return legal
         }
         return false
     }

@@ -12,6 +12,7 @@ enum class ClassEnum {
     WIZARD,
     SHAPESHIFTER,
     MERCHANT,
+    ILLUSIONIST,
     GENERIC;
 
     override fun toString(): String {
@@ -27,6 +28,7 @@ enum class ClassEnum {
             WIZARD -> "Wizard"
             SHAPESHIFTER -> "Shapeshifter"
             MERCHANT -> "Merchant"
+            ILLUSIONIST -> "Illusionist"
             GENERIC -> "Generic"
         }
     }

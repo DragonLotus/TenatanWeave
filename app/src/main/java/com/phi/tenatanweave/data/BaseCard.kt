@@ -31,6 +31,13 @@ class BaseCard(
     val printings: List<String> = listOf()
 ) {
 
+    fun getFullTypeAsString(): String {
+        return "${if (talent.isNotEmpty()) getTalentAsEnum().toString() + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()} ${
+            if (subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(" ")
+                .replace("\\b" + SubTypeEnum.ALL.toString() +"\\b", "UNKNOWN") else ""
+        }${if (weaponSlots == 2) " (2H)" else if (weaponSlots == 1) " (1H)" else ""}"
+    }
+
     fun getTalentAsEnum(): TalentEnum {
         return try {
             TalentEnum.valueOf(talent)
@@ -161,36 +168,41 @@ class BaseCard(
     }
 
     fun getIntellectSafe(): Int {
-        return try {
-            Integer.parseInt(intellect)
-        } catch (e: NumberFormatException) {
-            Log.d("BaseCard", "Unable to parse $intellect as an integer. Cannot get intellect value of $name.")
-            Log.d("BaseCard", e.toString())
+        return if (intellect.isEmpty())
             -1
-        }
+        else
+            try {
+                Integer.parseInt(intellect)
+            } catch (e: NumberFormatException) {
+                Log.d("BaseCard", "Unable to parse $intellect as an integer. Cannot get intellect value of $name.")
+                Log.d("BaseCard", e.toString())
+                -1
+            }
     }
 
     fun getHealthSafe(): Int {
-        return try {
-            Integer.parseInt(health)
-        } catch (e: NumberFormatException) {
-            Log.d("BaseCard", "Unable to parse $health as an integer. Cannot get health value of $name.")
-            Log.d("BaseCard", e.toString())
+        return if (health.isEmpty())
             -1
-        }
+        else
+            try {
+                Integer.parseInt(health)
+            } catch (e: NumberFormatException) {
+                Log.d("BaseCard", "Unable to parse $health as an integer. Cannot get health value of $name.")
+                Log.d("BaseCard", e.toString())
+                -1
+            }
     }
 
     fun getCostSafe(): Int {
-        return try {
-            Integer.parseInt(cost)
-        } catch (e: NumberFormatException) {
-            Log.d("BaseCard", "Unable to parse $cost as an integer. Cannot get cost value of $name.")
-            Log.d("BaseCard", e.toString())
-            if (cost.isNotEmpty())
-                0
-            else
-                -1
-        }
+        return if (cost.isEmpty())
+            -1
+        else
+            try {
+                Integer.parseInt(cost)
+            } catch (e: NumberFormatException) {
+                Log.d("BaseCard", "Unable to parse $cost as an integer. Cannot get cost value of $name.")
+                Log.d("BaseCard", e.toString())
+            }
     }
 
 //    companion object Factory {

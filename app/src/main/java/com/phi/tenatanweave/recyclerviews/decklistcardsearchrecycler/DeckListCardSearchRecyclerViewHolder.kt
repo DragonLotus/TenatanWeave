@@ -1,6 +1,5 @@
 package com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler
 
-import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -31,7 +30,6 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
         increaseOnClickListener: View.OnClickListener,
         decreaseOnClickListener: View.OnClickListener,
         heroOnClickListener: View.OnClickListener,
-        context: Context
     ) {
         with(cardPrinting) {
 
@@ -43,11 +41,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
-            itemView.deck_list_card_type.text =
-                "${this.baseCard.getHeroClassAsEnum()} ${this.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (this.baseCard.subTypes.isNotEmpty()) "- " + this.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this.baseCard.getFullTypeAsString()
 
             if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
@@ -79,7 +73,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
             } else
                 itemView.health_layout.visibility = View.GONE
 
-            val scale: Float = context.resources.displayMetrics.density
+            val scale: Float = itemView.context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
             val pitch = this.getPitchSafe()
@@ -90,11 +84,12 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 3 -> pitchColor = R.color.colorBlueVersion
             }
 
-            if(this.baseCard.getTypeAsEnum() != TypeEnum.HERO){
+            if (this.baseCard.getTypeAsEnum() != TypeEnum.HERO) {
                 itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfNotMax(this)
-                itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
-                itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
-                itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+                itemView.decrease_card_quantity_button.isEnabled =
+                    itemView.deck_list_card_quantity.text.toString() != "0"
+                itemView.increase_card_quantity_button.setOnClickListener(increaseOnClickListener)
+                itemView.decrease_card_quantity_button.setOnClickListener(decreaseOnClickListener)
                 itemView.increase_card_quantity_button.visibility = View.VISIBLE
                 itemView.decrease_card_quantity_button.visibility = View.VISIBLE
                 itemView.deck_list_card_quantity.visibility = View.VISIBLE
@@ -114,7 +109,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 else -> itemView.finish_image.visibility = View.GONE
             }
 
-            itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
+            itemView.deck_list_card_view.strokeColor = itemView.context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp
 
             if (removeBottomMargin) {
@@ -122,7 +117,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin, layoutParams.rightMargin, 0)
             }
 
-            GlideApp.with(context)
+            GlideApp.with(itemView.context)
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
@@ -133,7 +128,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 .fallback(R.drawable.horizontal_placeholder)
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
+                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, itemView.context.resources))
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {
