@@ -21,7 +21,15 @@ enum class SubTypeEnum {
     ATTACK,
     ITEM,
     GEM,
-    AURA;
+    AURA,
+    DEMON,
+    ALLY,
+    LANDMARK,
+    SCEPTER,
+    ORB,
+    AXE,
+    FLAIL,
+    SCYTHE;
 
     override fun toString(): String {
         return when (this) {
@@ -46,6 +54,14 @@ enum class SubTypeEnum {
             ITEM -> "Item"
             GEM -> "Gem"
             AURA -> "Aura"
+            DEMON -> "Demon"
+            ALLY -> "Ally"
+            LANDMARK -> "Landmark"
+            SCEPTER -> "Scepter"
+            ORB -> "Orb"
+            AXE -> "Axe"
+            FLAIL -> "Flail"
+            SCYTHE -> "Scythe"
         }
     }
 

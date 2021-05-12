@@ -7,6 +7,7 @@
 
     <dimen name="single_card_icon_size">32dp</dimen>
     <dimen name="single_card_icon_start_margin">8dp</dimen>
+    <dimen name="single_card_horizontal_margin">8dp</dimen>
 
     <dimen name="heading_1">20sp</dimen>
     <dimen name="body_1">16sp</dimen>

@@ -1,24 +1,18 @@
 package com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler
 
-import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
-import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
+import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 
 class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListViewModel: DeckListViewModel) :
@@ -31,7 +25,6 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
         increaseOnClickListener: View.OnClickListener,
         decreaseOnClickListener: View.OnClickListener,
         heroOnClickListener: View.OnClickListener,
-        context: Context
     ) {
         with(cardPrinting) {
 
@@ -43,46 +36,42 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
-            itemView.deck_list_card_type.text =
-                "${this.baseCard.getHeroClassAsEnum()} ${this.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (this.baseCard.subTypes.isNotEmpty()) "- " + this.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this.baseCard.getFullTypeAsString()
 
-            if (this.baseCard.cost >= 0) {
+            if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
-                itemView.cost_textview.text = this.baseCard.cost.toString()
+                itemView.cost_textview.text = this.baseCard.cost
             } else
                 itemView.cost_layout.visibility = View.GONE
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
+                itemView.power_textview.text = this.getPowerStringSafe()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
+                itemView.defense_textview.text = this.getDefenseStringSafe()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
-            if (this.baseCard.intellect >= 0) {
+            if (this.getIntellectSafe() >= 0) {
                 itemView.intelligence_layout.visibility = View.VISIBLE
-                itemView.intelligence_textview.text = this.baseCard.intellect.toString()
+                itemView.intelligence_textview.text = this.baseCard.intellect
             } else
                 itemView.intelligence_layout.visibility = View.GONE
 
-            if (this.baseCard.health >= 0) {
+            if (this.getHealthSafe() >= 0) {
                 itemView.health_layout.visibility = View.VISIBLE
-                itemView.health_textview.text = this.baseCard.health.toString()
+                itemView.health_textview.text = this.baseCard.health
             } else
                 itemView.health_layout.visibility = View.GONE
 
-            val scale: Float = context.resources.displayMetrics.density
+            val scale: Float = itemView.context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.version)
+            val pitch = this.getPitchSafe()
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -90,14 +79,16 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 3 -> pitchColor = R.color.colorBlueVersion
             }
 
-            if(this.baseCard.getTypeAsEnum() != TypeEnum.HERO){
+            if (this.baseCard.getTypeAsEnum() != TypeEnum.HERO) {
                 itemView.increase_card_quantity_button.isEnabled = deckListViewModel.checkIfNotMax(this)
-                itemView.decrease_card_quantity_button.isEnabled = itemView.deck_list_card_quantity.text.toString() != "0"
-                itemView.increase_card_quantity_button.setOnClickListener (increaseOnClickListener)
-                itemView.decrease_card_quantity_button.setOnClickListener (decreaseOnClickListener)
+                itemView.decrease_card_quantity_button.isEnabled =
+                    itemView.deck_list_card_quantity.text.toString() != "0"
+                itemView.increase_card_quantity_button.setOnClickListener(increaseOnClickListener)
+                itemView.decrease_card_quantity_button.setOnClickListener(decreaseOnClickListener)
                 itemView.increase_card_quantity_button.visibility = View.VISIBLE
                 itemView.decrease_card_quantity_button.visibility = View.VISIBLE
                 itemView.deck_list_card_quantity.visibility = View.VISIBLE
+                itemView.setOnClickListener(null)
             } else {
                 itemView.setOnClickListener(heroOnClickListener)
                 itemView.increase_card_quantity_button.visibility = View.GONE
@@ -113,7 +104,7 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 else -> itemView.finish_image.visibility = View.GONE
             }
 
-            itemView.deck_list_card_view.strokeColor = context.getColor(pitchColor)
+            itemView.deck_list_card_view.strokeColor = itemView.context.getColor(pitchColor)
             itemView.deck_list_card_view.strokeWidth = strokeDp
 
             if (removeBottomMargin) {
@@ -121,36 +112,18 @@ class DeckListCardSearchRecyclerViewHolder(itemView: View, private val deckListV
                 layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin, layoutParams.rightMargin, 0)
             }
 
-            GlideApp.with(context)
+            GlideApp.with(itemView.context)
                 .asBitmap()
                 .load(
                     Firebase.storage.reference
                         .child("card_images/${this.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(CropVerticalCardArt())
                 .placeholder(R.drawable.horizontal_placeholder)
                 .fallback(R.drawable.horizontal_placeholder)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                .into(itemView.deck_list_card_image)
         }
 
-    }
-
-    private fun adjustImage(cardBitmap: Bitmap, resources: Resources): Bitmap {
-        return Bitmap.createBitmap(
-            cardBitmap,
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_start_x)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_start_y)).toInt(),
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_width)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_height)).toInt()
-        )
     }
 }

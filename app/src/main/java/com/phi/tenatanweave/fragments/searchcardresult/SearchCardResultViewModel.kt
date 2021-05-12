@@ -1,6 +1,5 @@
 package com.phi.tenatanweave.fragments.searchcardresult
 
-import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
@@ -130,7 +129,7 @@ class SearchCardResultViewModel : ViewModel() {
                     } else if (setMap.value?.get("ZZZ") != null) {
                         printing.set = setMap.value?.get("ZZZ")
                     }
-                    printing.baseCard = mCardMap.value?.get(printing.name.replace(".","")) ?: BaseCard()
+                    printing.baseCard = mCardMap.value?.get(printing.name.replace(".", "")) ?: BaseCard()
                     masterCardPrintingList.add(
                         printing
                     )
@@ -365,7 +364,7 @@ class SearchCardResultViewModel : ViewModel() {
 
         if (selectedPitchList.contains(0) && cardPrinting.baseCard.pitch.isEmpty())
             return true
-        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.baseCard.pitch[cardPrinting.version]))
+        else if (cardPrinting.baseCard.pitch.isNotEmpty() && selectedPitchList.contains(cardPrinting.getPitchSafe()))
             return true
 
         return false
@@ -398,15 +397,15 @@ class SearchCardResultViewModel : ViewModel() {
         for (comparison in mCompareCostList.value!!) {
             when (comparison.compare) {
                 CompareEnum.EQUAL -> {
-                    if (card.baseCard.cost != comparison.value)
+                    if (card.getCostSafe() != comparison.value)
                         return false
                 }
                 CompareEnum.LESS_THAN -> {
-                    if (card.baseCard.cost >= comparison.value)
+                    if (card.getCostSafe() >= comparison.value)
                         return false
                 }
                 CompareEnum.GREATER_THAN -> {
-                    if (card.baseCard.cost <= comparison.value)
+                    if (card.getCostSafe() <= comparison.value)
                         return false
                 }
             }
@@ -416,7 +415,7 @@ class SearchCardResultViewModel : ViewModel() {
 
     private fun passPowerFilter(card: Printing): Boolean {
         if (card.baseCard.power.isNotEmpty()) {
-            val power = card.baseCard.power[card.version]
+            val power = card.getPowerSafe()
             for (comparison in mComparePowerList.value!!) {
                 when (comparison.compare) {
                     CompareEnum.EQUAL -> {
@@ -440,7 +439,7 @@ class SearchCardResultViewModel : ViewModel() {
 
     private fun passDefenseFilter(card: Printing): Boolean {
         if (card.baseCard.defense.isNotEmpty()) {
-            val defense = card.baseCard.defense[card.version]
+            val defense = card.getDefenseSafe()
             for (comparison in mCompareDefenseList.value!!) {
                 when (comparison.compare) {
                     CompareEnum.EQUAL -> {

@@ -124,7 +124,11 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             deckViewModel.userDeckList.value?.clear()
             if (snapshot.exists()) {
-                deckViewModel.setUserDeckList(snapshot.getValue(object : GenericTypeIndicator<List<Deck>>() {})!!)
+                snapshot.getValue(object : GenericTypeIndicator<List<Deck>>() {})?.let {
+                    deckViewModel.setUserDeckList(
+                        it
+                    )
+                }
             }
         }
 

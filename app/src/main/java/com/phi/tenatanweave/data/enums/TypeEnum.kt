@@ -10,7 +10,8 @@ enum class TypeEnum {
     DEFENSE_REACTION,
     RESOURCE,
     INSTANT,
-    TOKEN;
+    TOKEN,
+    MENTOR;
 
     override fun toString(): String {
         return when (this) {
@@ -24,6 +25,7 @@ enum class TypeEnum {
             RESOURCE -> "Resource"
             INSTANT -> "Instant"
             TOKEN -> "Token"
+            MENTOR -> "Mentor"
         }
     }
     fun toFullString(): String {

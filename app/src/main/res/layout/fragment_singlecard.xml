@@ -45,7 +45,8 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/deck_list_card_image">
+                app:layout_constraintTop_toBottomOf="@id/deck_list_card_image"
+                android:layout_marginHorizontal="@dimen/single_card_horizontal_margin">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/resources_layout"
@@ -298,6 +299,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/hero_versions_chip_group"
+                android:layout_marginHorizontal="@dimen/single_card_horizontal_margin"
         />
 
         <com.google.android.material.chip.ChipGroup

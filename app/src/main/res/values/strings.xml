@@ -60,8 +60,10 @@
     <string name="variable_defense">VARIABLE_DEFENSE</string>
     <string name="variable_health">VARIABLE_HEALTH</string>
     <string name="variable_value">VARIABLE_VALUE</string>
+    <string name="card_name">CARD_NAME</string>
 
-    <string name="card_count">Cards: %s</string>
+    <string name="cards_in_set_count">Cards: %s</string>
+    <string name="printing_count">Count: %s</string>
 
     <string name="no_hero_selected">No Hero Selected</string>
     <string name="format_none">None</string>

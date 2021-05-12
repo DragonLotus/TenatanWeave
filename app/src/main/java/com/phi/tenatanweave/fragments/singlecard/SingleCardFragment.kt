@@ -36,6 +36,8 @@ import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapt
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.rulingrecycler.RulingRecyclerAdapter
 import com.phi.tenatanweave.thirdparty.GlideApp
+import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
+import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 
 
 class SingleCardFragment : Fragment() {
@@ -127,22 +129,15 @@ class SingleCardFragment : Fragment() {
                         .child("card_images/" + singleCardViewModel.cardPrinting.value?.id + ".png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        if (isAdded)
-                            cardImage.setImageBitmap(adjustImage(resource, resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                .transform(CropVerticalCardArt())
+                .placeholder(R.drawable.horizontal_placeholder)
+                .fallback(R.drawable.horizontal_placeholder)
+                .into(cardImage)
 
             if (it.baseCard.pitch.isNotEmpty()) {
                 pitchImageView.visibility = View.VISIBLE
                 if (it.baseCard.pitch.size > version) {
-                    it.baseCard.pitch[version].let { pitch ->
+                    it.getPitchSafe().let { pitch ->
                         when (pitch) {
                             0 -> pitchImageView.setImageResource(R.drawable.pitch_0)
                             1 -> pitchImageView.setImageResource(R.drawable.pitch_1)
@@ -160,24 +155,24 @@ class SingleCardFragment : Fragment() {
                 pitchImageView.visibility = View.GONE
             }
 
-            if (it.baseCard.cost >= 0) {
+            if (it.getCostSafe() >= 0) {
                 costTextView.visibility = View.VISIBLE
                 costImageView.visibility = View.VISIBLE
-                costTextView.text = it.baseCard.cost.toString()
+                costTextView.text = it.baseCard.cost
             } else {
                 costTextView.visibility = View.GONE
                 costImageView.visibility = View.GONE
             }
 
-            if (it.baseCard.intellect > 0) {
+            if (it.getIntellectSafe() > 0) {
                 intelligenceTextView.visibility = View.VISIBLE
                 intelligenceImageView.visibility = View.VISIBLE
-                intelligenceTextView.text = it.baseCard.intellect.toString()
+                intelligenceTextView.text = it.baseCard.intellect
             } else {
                 intelligenceTextView.visibility = View.GONE
                 intelligenceImageView.visibility = View.GONE
             }
-            if (it.baseCard.health > 0) {
+            if (it.getHealthSafe() > 0) {
                 healthTextView.visibility = View.VISIBLE
                 healthImageView.visibility = View.VISIBLE
                 healthTextView.text = it.baseCard.health.toString()
@@ -214,17 +209,15 @@ class SingleCardFragment : Fragment() {
                     cardText = cardText.replace("VARIABLE_HEALTH", it.baseCard.variableHealth[version].toString())
                 if (it.baseCard.variableValue.isNotEmpty() && it.baseCard.variableValue.size > version)
                     cardText = cardText.replace("VARIABLE_VALUE", it.baseCard.variableValue[version].toString())
+                if (it.baseCard.name.isNotEmpty())
+                    cardText = cardText.replace("CARD_NAME", it.baseCard.name)
 
                 val textViewHeight = cardTextView.lineHeight
 
                 cardTextView.text = insertIconsIntoCardText(cardText, textViewHeight)
             }
-
-            cardTypeTextView.text =
-                "${it.baseCard.getHeroClassAsEnum()} ${it.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (it.baseCard.subTypes.isNotEmpty()) "- " + it.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+                                                                      
+            cardTypeTextView.text = it.baseCard.getFullTypeAsString()
             rarityTextView.text = it.rarity.toString()
 
             if (it.baseCard.pitch.isNotEmpty()) {
@@ -238,7 +231,7 @@ class SingleCardFragment : Fragment() {
                 }
 
                 versionsChipGroup.setOnCheckedChangeListener(null)
-                when (it.baseCard.pitch[it.version]) {
+                when (it.getPitchSafe()) {
                     1 -> redVersionChip.isChecked = true
                     2 -> yellowVersionChip.isChecked = true
                     3 -> blueVersionChip.isChecked = true
@@ -393,17 +386,6 @@ class SingleCardFragment : Fragment() {
                 }
             }
         }
-
-    private fun adjustImage(cardBitmap: Bitmap, resources: Resources): Bitmap {
-        return Bitmap.createBitmap(
-            cardBitmap,
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_start_x)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_start_y)).toInt(),
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_width)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_height)).toInt()
-        )
-    }
-
     private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, Printing>): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.baseCard.subTypes.isEmpty()) {
@@ -416,7 +398,7 @@ class SingleCardFragment : Fragment() {
     private fun containsVersion(selectedVersions: MutableMap<Int, Printing>, versionToMatch: Int): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.version < cardPrinting.baseCard.pitch.size) {
-                if (cardPrinting.baseCard.pitch[cardPrinting.version] == versionToMatch)
+                if (cardPrinting.getPitchSafe() == versionToMatch)
                     return true
             }
         }

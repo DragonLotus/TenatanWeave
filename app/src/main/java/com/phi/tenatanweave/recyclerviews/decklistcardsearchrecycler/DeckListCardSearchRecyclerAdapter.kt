@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.thirdparty.GlideApp
+import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 
 class DeckListCardSearchRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,
-    val context: Context,
     val increaseOnClickListener: View.OnClickListener,
     val decreaseOnClickListener: View.OnClickListener,
     val heroOnClickListener: View.OnClickListener
@@ -32,9 +33,13 @@ class DeckListCardSearchRecyclerAdapter(
             removeBottomMargin(position),
             increaseOnClickListener,
             decreaseOnClickListener,
-            heroOnClickListener,
-            context
+            heroOnClickListener
         )
+    }
+
+    override fun onViewRecycled(holder: DeckListCardSearchRecyclerViewHolder) {
+        super.onViewRecycled(holder)
+        GlideApp.with(holder.itemView.context).clear(holder.itemView.deck_list_card_image)
     }
 
     fun removeItem(index: Int) {

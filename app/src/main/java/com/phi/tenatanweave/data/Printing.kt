@@ -30,4 +30,40 @@ class Printing(
                 finishList[0]
             }
     }
+
+    fun getPowerSafe(): Int {
+        return baseCard.getPowerSafe(version)
+    }
+
+    fun getPowerStringSafe(): String {
+        return baseCard.getPowerStringSafe(version)
+    }
+
+    fun getDefenseSafe(): Int {
+        return baseCard.getDefenseSafe(version)
+    }
+
+    fun getDefenseStringSafe(): String {
+        return baseCard.getDefenseStringSafe(version)
+    }
+
+    fun getPitchSafe(): Int {
+        return baseCard.getPitchSafe(version)
+    }
+
+    fun getPitchStringSafe(): String {
+        return baseCard.getPitchStringSafe(version)
+    }
+
+    fun getIntellectSafe(): Int {
+        return baseCard.getIntellectSafe()
+    }
+
+    fun getHealthSafe(): Int {
+        return baseCard.getHealthSafe()
+    }
+
+    fun getCostSafe(): Int {
+        return baseCard.getCostSafe()
+    }
 }

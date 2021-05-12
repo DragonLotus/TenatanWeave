@@ -27,7 +27,7 @@ class SetRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
             itemView.minimize_arrow.visibility = View.GONE
             itemView.set_card_count.visibility = View.VISIBLE
             itemView.set_release_date.visibility = View.VISIBLE
-            itemView.set_card_count.text = context.getString(R.string.card_count, expansionSet.cardCount)
+            itemView.set_card_count.text = context.getString(R.string.cards_in_set_count, expansionSet.cardCount)
             itemView.set_release_date.text = expansionSet.getReleaseDateAsDateToDisplay()
             itemView.setOnClickListener(parentOnClickListener)
         } else {

@@ -1,23 +1,18 @@
 package com.phi.tenatanweave.recyclerviews.decklistrecycler
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.RecyclerItem
 import com.phi.tenatanweave.data.enums.FinishEnum
-import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
+import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 import kotlinx.android.synthetic.main.section_row.view.*
 
@@ -36,7 +31,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         with(printing.printing) {
             itemView.setOnClickListener(showCardOptionsOnClickListener)
 
-            if(!deckListViewModel.checkIfLegal(this))
+            if (!deckListViewModel.checkIfLegal(this))
                 itemView.not_legal_button.visibility = View.VISIBLE
             else
                 itemView.not_legal_button.visibility = View.GONE
@@ -49,27 +44,23 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                 deckListViewModel.unsectionedCardPrintingDeckList.count { it.id == this.id && it.finishVersion == this.finishVersion }
                     .toString()
 
-            itemView.deck_list_card_type.text =
-                "${this.baseCard.getHeroClassAsEnum()} ${this.baseCard.getTypeAsEnum().toFullString()} ${
-                    if (this.baseCard.subTypes.isNotEmpty()) "- " + this.baseCard.getSubTypesAsEnum().joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this.baseCard.getFullTypeAsString()
 
-            if (this.baseCard.cost >= 0) {
+            if (this.getCostSafe() >= 0) {
                 itemView.cost_layout.visibility = View.VISIBLE
-                itemView.cost_textview.text = this.baseCard.cost.toString()
+                itemView.cost_textview.text = this.baseCard.cost
             } else
                 itemView.cost_layout.visibility = View.GONE
 
             if (this.baseCard.power.isNotEmpty()) {
                 itemView.power_layout.visibility = View.VISIBLE
-                itemView.power_textview.text = this.baseCard.getPowerSafe(this.version).toString()
+                itemView.power_textview.text = this.getPowerStringSafe()
             } else
                 itemView.power_layout.visibility = View.GONE
 
             if (this.baseCard.defense.isNotEmpty()) {
                 itemView.defense_layout.visibility = View.VISIBLE
-                itemView.defense_textview.text = this.baseCard.getDefenseSafe(this.version).toString()
+                itemView.defense_textview.text = this.getDefenseStringSafe()
             } else
                 itemView.defense_layout.visibility = View.GONE
 
@@ -79,7 +70,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             val scale: Float = context.resources.displayMetrics.density
             val strokeDp = (1.5 * scale + 0.5f).toInt()
 
-            val pitch = this.baseCard.getPitchSafe(this.version)
+            val pitch = this.getPitchSafe()
             var pitchColor = R.color.grey
             when (pitch) {
                 1 -> pitchColor = R.color.colorRedVersion
@@ -115,18 +106,10 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .child("card_images/${this.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(CropVerticalCardArt())
                 .placeholder(R.drawable.horizontal_placeholder)
                 .fallback(R.drawable.horizontal_placeholder)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-//                        TODO("Not yet implemented")
-                    }
-
-                })
+                .into(itemView.deck_list_card_image)
         }
 
     }
@@ -147,7 +130,7 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
         itemView.setOnClickListener(heroOnClickListener)
         with(heroPrinting.cardPrinting) {
 
-            if(this?.let { deckListViewModel.checkIfLegal(it) } == false)
+            if (this?.let { deckListViewModel.checkIfLegal(it) } == false)
                 itemView.not_legal_button.visibility = View.VISIBLE
             else
                 itemView.not_legal_button.visibility = View.GONE
@@ -155,23 +138,18 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
             itemView.deck_list_card_name.text =
                 if (this?.name.isNullOrEmpty()) context.getString(R.string.no_hero_selected) else this?.name
 
-            itemView.deck_list_card_type.text =
-                "${this?.baseCard?.getHeroClassAsEnum()} ${this?.baseCard?.getTypeAsEnum()?.toFullString()} ${
-                    if (this?.baseCard?.subTypes?.isNotEmpty() == true) "- " + this.baseCard.getSubTypesAsEnum()
-                        .joinToString(" ")
-                        .replace(SubTypeEnum.ALL.toString(), "NA") else ""
-                }"
+            itemView.deck_list_card_type.text = this?.baseCard?.getFullTypeAsString()
             itemView.deck_list_card_type.visibility = View.VISIBLE
 
-            if (this?.baseCard?.intellect != null && this.baseCard.intellect >= 0) {
+            if (this?.baseCard?.intellect != null && this.getIntellectSafe() >= 0) {
                 itemView.intelligence_layout.visibility = View.VISIBLE
-                itemView.intelligence_textview.text = this.baseCard.intellect.toString()
+                itemView.intelligence_textview.text = this.baseCard.intellect
             } else
                 itemView.intelligence_layout.visibility = View.GONE
 
-            if (this?.baseCard?.health != null && this.baseCard.health >= 0) {
+            if (this?.baseCard?.health != null && this.getHealthSafe() >= 0) {
                 itemView.health_layout.visibility = View.VISIBLE
-                itemView.health_textview.text = this.baseCard.health.toString()
+                itemView.health_textview.text = this.baseCard.health
             } else
                 itemView.health_layout.visibility = View.GONE
 
@@ -190,28 +168,10 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .child("card_images/${this?.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(CropVerticalCardArt())
                 .placeholder(R.drawable.horizontal_placeholder)
                 .fallback(R.drawable.horizontal_placeholder)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                .into(itemView.deck_list_card_image)
         }
-    }
-
-    private fun adjustImage(cardBitmap: Bitmap, resources: Resources): Bitmap {
-        return Bitmap.createBitmap(
-            cardBitmap,
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_start_x)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_start_y)).toInt(),
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_width)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_height)).toInt()
-        )
     }
 }
