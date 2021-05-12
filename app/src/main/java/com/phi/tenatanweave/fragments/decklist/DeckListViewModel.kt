@@ -314,11 +314,6 @@ class DeckListViewModel : ViewModel() {
     private fun checkIfLegalWithHero(cardPrinting: Printing, heroCardPrinting: Printing?): Boolean {
         var legal = true
         heroCardPrinting?.let {
-//            if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
-//                return true
-//            else if (cardPrinting.baseCard.specialization.isNotEmpty())
-//                return false
-
             if (cardPrinting.baseCard.specialization.isNotEmpty() && !cardPrinting.baseCard.specialization.contains(
                     heroCardPrinting.baseCard.name
                 )

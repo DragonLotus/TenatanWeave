@@ -1,23 +1,18 @@
 package com.phi.tenatanweave.recyclerviews.decklistrecycler
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.RecyclerItem
 import com.phi.tenatanweave.data.enums.FinishEnum
-import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
+import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 import kotlinx.android.synthetic.main.section_row.view.*
 
@@ -111,18 +106,10 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .child("card_images/${this.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(CropVerticalCardArt())
                 .placeholder(R.drawable.horizontal_placeholder)
                 .fallback(R.drawable.horizontal_placeholder)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-//                        TODO("Not yet implemented")
-                    }
-
-                })
+                .into(itemView.deck_list_card_image)
         }
 
     }
@@ -181,28 +168,10 @@ class DeckListRecyclerViewHolder(itemView: View, private val deckListViewModel: 
                         .child("card_images/${this?.id}.png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform(CropVerticalCardArt())
                 .placeholder(R.drawable.horizontal_placeholder)
                 .fallback(R.drawable.horizontal_placeholder)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        itemView.deck_list_card_image.setImageBitmap(adjustImage(resource, context.resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                .into(itemView.deck_list_card_image)
         }
-    }
-
-    private fun adjustImage(cardBitmap: Bitmap, resources: Resources): Bitmap {
-        return Bitmap.createBitmap(
-            cardBitmap,
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_start_x)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_start_y)).toInt(),
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_width)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_height)).toInt()
-        )
     }
 }

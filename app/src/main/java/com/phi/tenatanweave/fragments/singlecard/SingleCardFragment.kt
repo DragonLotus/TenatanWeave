@@ -36,6 +36,8 @@ import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapt
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.rulingrecycler.RulingRecyclerAdapter
 import com.phi.tenatanweave.thirdparty.GlideApp
+import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
+import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 
 
 class SingleCardFragment : Fragment() {
@@ -127,17 +129,10 @@ class SingleCardFragment : Fragment() {
                         .child("card_images/" + singleCardViewModel.cardPrinting.value?.id + ".png")
                 )
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        if (isAdded)
-                            cardImage.setImageBitmap(adjustImage(resource, resources))
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                .transform(CropVerticalCardArt())
+                .placeholder(R.drawable.horizontal_placeholder)
+                .fallback(R.drawable.horizontal_placeholder)
+                .into(cardImage)
 
             if (it.baseCard.pitch.isNotEmpty()) {
                 pitchImageView.visibility = View.VISIBLE
@@ -391,16 +386,6 @@ class SingleCardFragment : Fragment() {
                 }
             }
         }
-
-    private fun adjustImage(cardBitmap: Bitmap, resources: Resources): Bitmap {
-        return Bitmap.createBitmap(
-            cardBitmap,
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_start_x)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_start_y)).toInt(),
-            (cardBitmap.width * resources.getFloat(R.dimen.single_card_width)).toInt(),
-            (cardBitmap.height * resources.getFloat(R.dimen.single_card_height)).toInt()
-        )
-    }
 
     private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, Printing>): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
