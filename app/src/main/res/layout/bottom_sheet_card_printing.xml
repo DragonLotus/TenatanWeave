@@ -30,7 +30,6 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <com.phi.tenatanweave.customviews.EmptySearchView
             android:id="@+id/card_printing_search"
             android:icon="@android:drawable/ic_menu_search"

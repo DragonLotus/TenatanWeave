@@ -216,7 +216,7 @@ class SingleCardFragment : Fragment() {
 
                 cardTextView.text = insertIconsIntoCardText(cardText, textViewHeight)
             }
-
+                                                                      
             cardTypeTextView.text = it.baseCard.getFullTypeAsString()
             rarityTextView.text = it.rarity.toString()
 
@@ -386,7 +386,6 @@ class SingleCardFragment : Fragment() {
                 }
             }
         }
-
     private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, Printing>): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.baseCard.subTypes.isEmpty()) {
