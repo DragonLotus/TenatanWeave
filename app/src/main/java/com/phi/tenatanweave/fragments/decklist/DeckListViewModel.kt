@@ -297,7 +297,7 @@ class DeckListViewModel : ViewModel() {
                 val cardNameKey = cardPrinting.baseCard.name
                     .replace("[^a-zA-Z0-9]", "")
                     .toLowerCase(Locale.ROOT)
-                if (checkIfLegalWithHero(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText)) {
+                if (checkIfLegalWithHero(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText.toLowerCase())) {
                     addCardPrintingToMap(cardPrinting, cardNameCardPrintingMap)
                 }
             }
