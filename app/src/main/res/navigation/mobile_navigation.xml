@@ -78,7 +78,7 @@
         <argument android:name="clickedPosition" app:argType="integer"/>
     </fragment>
     <fragment android:id="@+id/deckListFragment" android:name="com.phi.tenatanweave.fragments.decklist.DeckListFragment"
-              android:label="fragment_deck_list" tools:layout="@layout/fragment_deck_list">
+              android:label="fragment_deck_list_container" tools:layout="@layout/fragment_deck_list_container">
         <argument android:name="clickedPosition" app:argType="integer"/>
     </fragment>
 </navigation>

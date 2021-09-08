@@ -1,4 +1,4 @@
-package com.phi.tenatanweave.fragments.decklist
+package com.phi.tenatanweave.viewpagers.decklistviewpager
 
 import android.content.Context
 import android.util.Log
@@ -297,7 +297,11 @@ class DeckListViewModel : ViewModel() {
                 val cardNameKey = cardPrinting.baseCard.name
                     .replace("[^a-zA-Z0-9]", "")
                     .toLowerCase(Locale.ROOT)
-                if (checkIfLegalWithHero(cardPrinting, heroCardPrinting) && cardNameKey.contains(searchText.toLowerCase())) {
+                if (checkIfLegalWithHero(
+                        cardPrinting,
+                        heroCardPrinting
+                    ) && cardNameKey.contains(searchText.toLowerCase())
+                ) {
                     addCardPrintingToMap(cardPrinting, cardNameCardPrintingMap)
                 }
             }
@@ -337,7 +341,7 @@ class DeckListViewModel : ViewModel() {
             if (cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.ALL && cardPrinting.baseCard.getHeroClassAsEnum() != it.baseCard.getHeroClassAsEnum() && cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.GENERIC)
                 legal = false
 
-            if (cardPrinting.baseCard.getTalentAsEnum() != TalentEnum.ALL && cardPrinting.baseCard.getTalentAsEnum() != it.baseCard.getTalentAsEnum())
+            if (cardPrinting.baseCard.getTalentsAsEnum().isNotEmpty() && !it.baseCard.containsTalents(cardPrinting.baseCard.talents))
                 legal = false
 
             return legal

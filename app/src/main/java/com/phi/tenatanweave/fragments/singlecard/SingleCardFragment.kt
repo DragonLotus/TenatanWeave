@@ -1,7 +1,5 @@
 package com.phi.tenatanweave.fragments.singlecard
 
-import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -21,23 +19,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Printing
-import com.phi.tenatanweave.data.enums.SubTypeEnum
-import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.rulingrecycler.RulingRecyclerAdapter
 import com.phi.tenatanweave.thirdparty.GlideApp
 import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
-import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 
 
 class SingleCardFragment : Fragment() {

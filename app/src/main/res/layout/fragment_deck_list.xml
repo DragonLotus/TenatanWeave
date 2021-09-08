@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/deck_list_constraint_layout"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.decklist.DeckListFragment">
+        tools:context=".viewpagers.decklistviewpager.DeckListViewPagerFragment">
 
     <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -35,7 +36,8 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/deck_list_card_search_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
             android:visibility="invisible"
             app:layout_constraintTop_toBottomOf="@id/app_bar"
             app:layout_constraintBottom_toTopOf="@id/deck_list_card_search"
