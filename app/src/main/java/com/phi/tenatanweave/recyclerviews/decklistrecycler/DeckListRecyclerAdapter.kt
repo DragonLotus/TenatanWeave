@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.RecyclerItem
-import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 
 class DeckListRecyclerAdapter(
     val deckListViewModel: DeckListViewModel,

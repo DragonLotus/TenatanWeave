@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
-import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.dialogfragments.*
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel

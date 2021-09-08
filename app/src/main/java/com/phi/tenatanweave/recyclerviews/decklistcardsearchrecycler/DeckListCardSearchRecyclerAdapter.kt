@@ -1,13 +1,12 @@
 package com.phi.tenatanweave.recyclerviews.decklistcardsearchrecycler
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Printing
-import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.thirdparty.GlideApp
 import kotlinx.android.synthetic.main.deck_list_detail_linear_row.view.*
 

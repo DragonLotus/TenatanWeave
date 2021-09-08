@@ -221,7 +221,8 @@
             app:srcCompat="@drawable/baseline_add_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="@dimen/button_padding"/>
 
     <TextView
             android:id="@+id/deck_list_card_quantity"
@@ -244,7 +245,8 @@
             app:layout_constraintEnd_toStartOf="@id/increase_card_quantity_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="24dp"/>
+            android:padding="@dimen/button_padding"
+            android:layout_marginEnd="@dimen/button_end_margin"/>
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/not_legal_button"

@@ -18,7 +18,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.fragments.dialogfragments.DeckOptionsBottomSheetFragment
-import com.phi.tenatanweave.fragments.decklist.DeckListViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
 import com.phi.tenatanweave.recyclerviews.deckdisplayrecycler.DeckDisplayRecyclerAdapter
 

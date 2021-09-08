@@ -10,7 +10,8 @@ class BaseCard(
     val id: String = "",
     val name: String = "",
     val text: String = "",
-    val talent: String = "",
+    val talents: List<String> = listOf(),
+    val allowedTalents: List<String> = listOf(),
     val heroClass: String = "",
     val type: String = "",
     val subTypes: List<String> = listOf(),
@@ -32,18 +33,31 @@ class BaseCard(
 ) {
 
     fun getFullTypeAsString(): String {
-        return "${if (talent.isNotEmpty()) getTalentAsEnum().toString() + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()} ${
+        return "${if (talents.isNotEmpty()) getTalentsAsEnum().joinToString(" ") + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()} ${
             if (subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(" ")
-                .replace("\\b" + SubTypeEnum.ALL.toString() +"\\b", "UNKNOWN") else ""
+                .replace("\\b" + SubTypeEnum.ALL.toString() + "\\b", "UNKNOWN") else ""
         }${if (weaponSlots == 2) " (2H)" else if (weaponSlots == 1) " (1H)" else ""}"
     }
 
-    fun getTalentAsEnum(): TalentEnum {
-        return try {
-            TalentEnum.valueOf(talent)
-        } catch (e: IllegalArgumentException) {
-            TalentEnum.ALL
+    fun getTalentsAsEnum(): List<TalentEnum> {
+        val talentSet = mutableSetOf<TalentEnum>()
+        for (talent in talents) {
+            try {
+                talentSet.add(TalentEnum.valueOf(talent))
+            } catch (e: IllegalArgumentException) {
+                talentSet.add(TalentEnum.ALL)
+            }
         }
+        return talentSet.toList()
+    }
+
+    fun containsTalents(talentsToCompare: List<String>): Boolean {
+        for (talent in talentsToCompare){
+            if(allowedTalents.contains(talent)){
+                return true
+            }
+        }
+        return false
     }
 
     fun getHeroClassAsEnum(): ClassEnum {
