@@ -29,7 +29,8 @@ enum class SubTypeEnum {
     ORB,
     AXE,
     FLAIL,
-    SCYTHE;
+    SCYTHE,
+    OFF_HAND;
 
     override fun toString(): String {
         return when (this) {
@@ -62,6 +63,7 @@ enum class SubTypeEnum {
             AXE -> "Axe"
             FLAIL -> "Flail"
             SCYTHE -> "Scythe"
+            OFF_HAND -> "Off-Hand"
         }
     }
 

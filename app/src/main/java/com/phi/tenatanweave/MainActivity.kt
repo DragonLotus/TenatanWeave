@@ -1,6 +1,7 @@
 package com.phi.tenatanweave
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -17,13 +18,15 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
-import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.dialogfragments.*
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.fragments.singlecard.SingleCardViewModel
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 
-class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOptionsItemClickListener, CardOptionsBottomSheetFragment.CardOptionsItemClickListener, CardPrintingsBottomSheetFragment.CardPrintingItemClickListener {
+class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOptionsItemClickListener,
+    CardOptionsBottomSheetFragment.CardOptionsItemClickListener,
+    CardPrintingsBottomSheetFragment.CardPrintingItemClickListener {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val searchCardResultViewModel: SearchCardResultViewModel by viewModels()
     private val singleCardViewModel: SingleCardViewModel by viewModels()
@@ -32,11 +35,18 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
 
     private val cardValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
+
             searchCardResultViewModel.cardMap.value?.clear()
             for (data: DataSnapshot in snapshot.children) {
-                searchCardResultViewModel.cardMap.value?.set(data.key!!, data.getValue(BaseCard::class.java)!!)
+                try {
+                    searchCardResultViewModel.cardMap.value?.set(data.key!!, data.getValue(BaseCard::class.java)!!)
+                } catch (e: Exception) {
+                    data.key?.let { Log.d("Data key is: ", it) }
+                    Log.d("Exception", e.stackTraceToString())
+                }
             }
             searchCardResultViewModel.updateCardPrintingList()
+
 
         }
 

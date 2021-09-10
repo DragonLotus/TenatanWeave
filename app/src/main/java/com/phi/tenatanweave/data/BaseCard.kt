@@ -52,9 +52,17 @@ class BaseCard(
     }
 
     fun containsTalents(talentsToCompare: List<String>): Boolean {
-        for (talent in talentsToCompare){
-            if(allowedTalents.contains(talent)){
-                return true
+        if (allowedTalents.isEmpty() && talents.isNotEmpty()) {
+            for (talent in talentsToCompare) {
+                if (talents.contains(talent)) {
+                    return true
+                }
+            }
+        } else if (allowedTalents.isNotEmpty()) {
+            for (talent in talentsToCompare) {
+                if (allowedTalents.contains(talent)) {
+                    return true
+                }
             }
         }
         return false
