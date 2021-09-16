@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toolbar
 import androidx.appcompat.widget.SearchView
@@ -203,5 +204,9 @@ class DeckListViewPagerFragment : Fragment() {
         })
 
         return root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
