@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.*
 import com.phi.tenatanweave.data.enums.ClassEnum
-import com.phi.tenatanweave.data.enums.TalentEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
 import java.util.*
 
@@ -341,7 +340,9 @@ class DeckListViewModel : ViewModel() {
             if (cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.ALL && cardPrinting.baseCard.getHeroClassAsEnum() != it.baseCard.getHeroClassAsEnum() && cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.GENERIC)
                 legal = false
 
-            if (cardPrinting.baseCard.getTalentsAsEnum().isNotEmpty() && !it.baseCard.containsTalents(cardPrinting.baseCard.talents))
+            if (cardPrinting.baseCard.getTalentsAsEnum()
+                    .isNotEmpty() && !it.baseCard.containsTalents(cardPrinting.baseCard.talents)
+            )
                 legal = false
 
             return legal

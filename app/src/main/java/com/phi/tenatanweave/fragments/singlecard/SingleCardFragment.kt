@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -108,6 +109,9 @@ class SingleCardFragment : Fragment() {
         val rulingRecyclerView = root.findViewById<RecyclerView>(R.id.ruling_recyclerview)
         val printingsLayout = root.findViewById<ConstraintLayout>(R.id.printings_layout)
         val printingsRecyclerView = root.findViewById<RecyclerView>(R.id.printings_recyclerview)
+        val flavorLayout = root.findViewById<ConstraintLayout>(R.id.flavor_layout)
+        val flavorTextView = root.findViewById<TextView>(R.id.flavor_textview)
+        val artistTextView = root.findViewById<TextView>(R.id.artist_textview)
 
         singleCardViewModel.cardPrinting.observe(viewLifecycleOwner, { it ->
             val version = it.version
@@ -195,6 +199,7 @@ class SingleCardFragment : Fragment() {
             var cardText = it.baseCard.text
 
             if (cardText.isNotEmpty()) {
+                cardTextView.visibility = View.VISIBLE
                 if (it.baseCard.variablePower.isNotEmpty() && it.baseCard.variablePower.size > version)
                     cardText = cardText.replace("VARIABLE_POWER", it.baseCard.variablePower[version].toString())
                 if (it.baseCard.variableDefense.isNotEmpty() && it.baseCard.variableDefense.size > version)
@@ -209,6 +214,8 @@ class SingleCardFragment : Fragment() {
                 val textViewHeight = cardTextView.lineHeight
 
                 cardTextView.text = insertIconsIntoCardText(cardText, textViewHeight)
+            } else {
+                cardTextView.visibility = View.GONE
             }
                                                                       
             cardTypeTextView.text = it.baseCard.getFullTypeAsString()
@@ -257,18 +264,39 @@ class SingleCardFragment : Fragment() {
                 leftArrowImageView.visibility = View.VISIBLE
             else
                 leftArrowImageView.visibility = View.GONE
+
+            if(it.flavorText.isNotEmpty()){
+                flavorTextView.visibility = View.VISIBLE
+                flavorTextView.text = it.flavorText
+            } else {
+                flavorTextView.visibility = View.GONE
+            }
+
+            if(it.artist.isNotEmpty()){
+                artistTextView.visibility = View.VISIBLE
+                artistTextView.text = "Illustrated by " + it.artist
+            } else {
+                artistTextView.visibility = View.GONE
+            }
         })
 
         printingsRulingsChipGroup.setOnCheckedChangeListener { chipGroup: ChipGroup, checkedId: Int ->
+
+            val flavorConstraintSet = ConstraintSet()
+            flavorConstraintSet.clone(flavorLayout)
 
             when (chipGroup.checkedChipId) {
                 R.id.printings_chip -> {
                     printingsLayout.visibility = View.VISIBLE
                     rulingsLayout.visibility = View.GONE
+                    flavorConstraintSet.connect(flavorLayout.id, ConstraintSet.TOP, printingsLayout.id, ConstraintSet.BOTTOM)
+                    flavorConstraintSet.applyTo(flavorLayout)
                 }
                 R.id.rulings_chip -> {
                     printingsLayout.visibility = View.GONE
                     rulingsLayout.visibility = View.VISIBLE
+                    flavorConstraintSet.connect(flavorLayout.id, ConstraintSet.TOP, rulingsLayout.id, ConstraintSet.BOTTOM)
+                    flavorConstraintSet.applyTo(flavorLayout)
                 }
             }
         }

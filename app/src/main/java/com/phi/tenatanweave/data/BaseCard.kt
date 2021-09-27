@@ -33,8 +33,8 @@ class BaseCard(
 ) {
 
     fun getFullTypeAsString(): String {
-        return "${if (talents.isNotEmpty()) getTalentsAsEnum().joinToString(" ") + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()} ${
-            if (subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(" ")
+        return "${if (talents.isNotEmpty()) getTalentsAsEnum().joinToString(" ") + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()}${
+            if (subTypes.isNotEmpty()) " - " + getSubTypesAsEnum().joinToString(" ")
                 .replace("\\b" + SubTypeEnum.ALL.toString() + "\\b", "UNKNOWN") else ""
         }${if (weaponSlots == 2) " (2H)" else if (weaponSlots == 1) " (1H)" else ""}"
     }
@@ -52,9 +52,17 @@ class BaseCard(
     }
 
     fun containsTalents(talentsToCompare: List<String>): Boolean {
-        for (talent in talentsToCompare){
-            if(allowedTalents.contains(talent)){
-                return true
+        if (allowedTalents.isEmpty() && talents.isNotEmpty()) {
+            for (talent in talentsToCompare) {
+                if (talents.contains(talent)) {
+                    return true
+                }
+            }
+        } else if (allowedTalents.isNotEmpty()) {
+            for (talent in talentsToCompare) {
+                if (allowedTalents.contains(talent)) {
+                    return true
+                }
             }
         }
         return false
