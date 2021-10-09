@@ -12,6 +12,11 @@
             android:title="@string/title_search"/>
 
     <item
+            android:id="@+id/navigation_collection"
+            android:icon="@drawable/baseline_auto_stories_24"
+            android:title="@string/title_collection"/>
+
+    <item
             android:id="@+id/navigation_deck"
             android:icon="@android:drawable/ic_menu_delete"
             android:title="@string/title_decks"/>

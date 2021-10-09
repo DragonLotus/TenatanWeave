@@ -22,7 +22,6 @@ class CompareDefenseRecyclerAdapter(
 
     override fun onBindViewHolder(holder: CompareDefenseViewHolder, position: Int) {
         holder.bindSet(context, position, defenseList[position], onClickListener)
-
     }
 
     override fun getItemCount(): Int {

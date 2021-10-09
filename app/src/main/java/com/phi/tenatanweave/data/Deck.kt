@@ -12,7 +12,6 @@ class Deck(
     val coreDeckList: MutableList<PrintingWithFinish> = mutableListOf(),
     val sideBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val maybeBoardMap: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    val foilMap: MutableMap<String, Int> = mutableMapOf(),
     var format: String = "",
     var lastModifiedDate: String = ""
 ) {

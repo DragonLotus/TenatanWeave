@@ -59,6 +59,24 @@
 
     </fragment>
 
+    <fragment android:id="@+id/navigation_collection"
+              android:name="com.phi.tenatanweave.fragments.collection.CollectionFragment"
+              android:label="@string/title_collection"
+              tools:layout="@layout/fragment_collection">
+        <action android:id="@+id/action_navigation_collection_to_navigation_collection_single_set"
+                app:destination="@id/navigation_collection_single_set"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment android:id="@+id/navigation_collection_single_set"
+              android:name="com.phi.tenatanweave.fragments.collection.CollectionSingleSetFragment"
+              android:label="CollectionSingleSetFragment"
+              tools:layout="@layout/fragment_collection_single_set">
+        <argument android:name="query" app:argType="string"/>
+    </fragment>
+
     <fragment
             android:id="@+id/navigation_deck"
             android:name="com.phi.tenatanweave.fragments.decks.DeckFragment"

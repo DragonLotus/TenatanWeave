@@ -467,7 +467,7 @@ class SearchCardResultViewModel : ViewModel() {
         return false
     }
 
-    fun filterCardsBySet(searchSet: String) {
+    fun filterCardsBySet(searchSet: String) : MutableList<Printing>? {
         displayCardPrintingList.clear()
         setNameQuery.clear()
         setNameQuery.append(searchSet)
@@ -485,6 +485,7 @@ class SearchCardResultViewModel : ViewModel() {
         mCardPrintingList.value?.clear()
         mCardPrintingList.value?.addAll(displayCardPrintingList)
         mCardPrintingList.notifyObserver()
+        return mCardPrintingList.value
     }
 
     fun setCardPrintingList() {
