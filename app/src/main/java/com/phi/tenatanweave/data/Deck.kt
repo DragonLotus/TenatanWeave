@@ -1,8 +1,11 @@
 package com.phi.tenatanweave.data
 
+import com.google.firebase.database.Exclude
+import com.google.firebase.database.IgnoreExtraProperties
 import java.text.SimpleDateFormat
 import java.util.*
 
+@IgnoreExtraProperties
 class Deck(
     val id: String = "",
     var deckName: String = "",
@@ -23,6 +26,7 @@ class Deck(
         }
     }
 
+    @Exclude
     fun setNewLastModifiedDate(time: Date = Calendar.getInstance().time) {
         lastModifiedDate = lastModifiedDateFormat.format(time)
     }

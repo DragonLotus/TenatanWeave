@@ -1,6 +1,7 @@
 package com.phi.tenatanweave.recyclerviews.collectioncardlistrecycler
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +9,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.data.CollectionEntry
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.recyclerviews.collectionquantityrecycler.CollectionQuantityRecyclerAdapter
@@ -20,9 +22,10 @@ class CollectionCardListRecyclerViewHolder(itemView: View) :
 
     fun bindCard(
         printing: Printing,
+        currentSetCollectionEntryMap: MutableMap<String, CollectionEntry>,
         position: Int,
 //        removeBottomMargin: Boolean,
-        updateOrAddCollectionEntry : (Int, Printing, FinishEnum) -> Unit,
+        updateOrAddCollectionEntry : (Int, Printing, FinishEnum, Resources) -> Unit,
         context: Context
     ) {
         with(printing) {
@@ -50,7 +53,7 @@ class CollectionCardListRecyclerViewHolder(itemView: View) :
 
             val collectionQuantityRecycler = itemView.collection_quantity_recycler
             val collectionQuantityLayoutManager = GridLayoutManager(context, this.finishList.size)
-            val collectionQuantityAdapter = CollectionQuantityRecyclerAdapter(this, updateOrAddCollectionEntry, context)
+            val collectionQuantityAdapter = CollectionQuantityRecyclerAdapter(this, currentSetCollectionEntryMap, updateOrAddCollectionEntry, context)
 
             collectionQuantityRecycler.layoutManager = collectionQuantityLayoutManager
             collectionQuantityRecycler.adapter = collectionQuantityAdapter

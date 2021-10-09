@@ -2,6 +2,7 @@ package com.phi.tenatanweave.recyclerviews.collectionquantityrecycler
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.data.CollectionEntry
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
 import kotlinx.android.synthetic.main.collection_quantity_detail_grid_row.view.*
@@ -20,8 +22,9 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
 
     fun bindCard(
         finish: FinishEnum,
+        currentSetCollectionEntryMap: MutableMap<String, CollectionEntry>,
         printing: Printing,
-        updateOrAddCollectionEntry: (Int, Printing, FinishEnum) -> Unit,
+        updateOrAddCollectionEntry: (Int, Printing, FinishEnum, Resources) -> Unit,
         context: Context
     ) {
 
@@ -37,6 +40,13 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
         val decreaseCardQuantityButton = itemView.findViewById<ImageView>(R.id.collection_decrease_card_quantity_button)
         val increaseCardQuantityButton = itemView.findViewById<ImageView>(R.id.collection_increase_card_quantity_button)
 
+        val finishIndex = printing.finishList.indexOfFirst{it == finish}
+        val collectionEntry = currentSetCollectionEntryMap[printing.id]
+        collectionEntry?.let {
+            val quantity = if(finishIndex > it.quantityList.size) 0 else it.quantityList[finishIndex]
+            quantityEditText.setText(quantity.toString())
+        }
+
         quantityEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 Log.d("CollectionQuantityRecyclerViewHolder", "beforeTextChanged quantityEditText")
@@ -49,7 +59,12 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
             override fun afterTextChanged(s: Editable?) {
                 Log.d("CollectionQuantityRecyclerViewHolder", "afterTextChanged quantityEditText")
                 if (quantityEditText.hasFocus() && s.toString() != "") {
-                    updateOrAddCollectionEntry.invoke(Integer.parseInt(s.toString()), printing, finish)
+                    updateOrAddCollectionEntry.invoke(
+                        Integer.parseInt(s.toString()),
+                        printing,
+                        finish,
+                        context.resources
+                    )
                 }
             }
         })
@@ -69,7 +84,8 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
                     updateOrAddCollectionEntry.invoke(
                         Integer.parseInt(quantityEditText.text.toString()),
                         printing,
-                        finish
+                        finish,
+                        context.resources
                     )
                 }
             }
@@ -83,10 +99,20 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
             val quantity = Integer.parseInt(quantityEditText.text.toString())
             if (quantity > 0) {
                 quantityEditText.setText((quantity - 1).toString())
-                updateOrAddCollectionEntry.invoke(Integer.parseInt(quantityEditText.text.toString()), printing, finish)
+                updateOrAddCollectionEntry.invoke(
+                    Integer.parseInt(quantityEditText.text.toString()),
+                    printing,
+                    finish,
+                    context.resources
+                )
             } else if (quantity < 0) {
                 quantityEditText.setText("0")
-                updateOrAddCollectionEntry.invoke(Integer.parseInt(quantityEditText.text.toString()), printing, finish)
+                updateOrAddCollectionEntry.invoke(
+                    Integer.parseInt(quantityEditText.text.toString()),
+                    printing,
+                    finish,
+                    context.resources
+                )
             }
         }
 
@@ -96,12 +122,22 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
                 hideKeyboard(it, context)
             }
             val quantity = Integer.parseInt(quantityEditText.text.toString())
-            if (quantity in 1..99998) {
+            if (quantity in 0..99998) {
                 quantityEditText.setText((quantity + 1).toString())
-                updateOrAddCollectionEntry.invoke(Integer.parseInt(quantityEditText.text.toString()), printing, finish)
+                updateOrAddCollectionEntry.invoke(
+                    Integer.parseInt(quantityEditText.text.toString()),
+                    printing,
+                    finish,
+                    context.resources
+                )
             } else if (quantity < 0) {
                 quantityEditText.setText("0")
-                updateOrAddCollectionEntry.invoke(Integer.parseInt(quantityEditText.text.toString()), printing, finish)
+                updateOrAddCollectionEntry.invoke(
+                    Integer.parseInt(quantityEditText.text.toString()),
+                    printing,
+                    finish,
+                    context.resources
+                )
             }
         }
 

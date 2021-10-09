@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -18,6 +17,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.data.*
+import com.phi.tenatanweave.fragments.collection.CollectionViewModel
 import com.phi.tenatanweave.fragments.decks.DeckViewModel
 import com.phi.tenatanweave.fragments.dialogfragments.*
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
     private val singleCardViewModel: SingleCardViewModel by viewModels()
     private val deckViewModel: DeckViewModel by viewModels()
     private val deckListViewModel: DeckListViewModel by viewModels()
+    private val collectionViewModel: CollectionViewModel by viewModels()
 
     private val cardValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -41,13 +42,11 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
                 try {
                     searchCardResultViewModel.cardMap.value?.set(data.key!!, data.getValue(BaseCard::class.java)!!)
                 } catch (e: Exception) {
-                    data.key?.let { Log.d("Data key is: ", it) }
+                    data.key?.let { Log.d("MainActivity", "Card Data key is: $it") }
                     Log.d("Exception", e.stackTraceToString())
                 }
             }
             searchCardResultViewModel.updateCardPrintingList()
-
-
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -59,7 +58,12 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             searchCardResultViewModel.printingMap.value?.clear()
             for (data: DataSnapshot in snapshot.children) {
-                searchCardResultViewModel.printingMap.value?.set(data.key!!, data.getValue(Printing::class.java)!!)
+                try {
+                    searchCardResultViewModel.printingMap.value?.set(data.key!!, data.getValue(Printing::class.java)!!)
+                } catch (e: Exception) {
+                    data.key?.let { Log.d("MainActivity", "Printing Data key is: $it") }
+                    Log.d("Exception", e.stackTraceToString())
+                }
             }
             searchCardResultViewModel.updateCardPrintingList()
         }
@@ -73,11 +77,16 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             singleCardViewModel.rulingMap.value?.clear()
             for (data: DataSnapshot in snapshot.children) {
-                val ruling = data.getValue(Ruling::class.java)!!
-                singleCardViewModel.rulingMap.value?.set(
-                    ruling.card.replace(".", ""),
-                    data.getValue(Ruling::class.java)!!
-                )
+                try {
+                    val ruling = data.getValue(Ruling::class.java)!!
+                    singleCardViewModel.rulingMap.value?.set(
+                        ruling.card.replace(".", ""),
+                        data.getValue(Ruling::class.java)!!
+                    )
+                } catch (e: Exception) {
+                    data.key?.let { Log.d("MainActivity", "Ruling Data key is: $it") }
+                    Log.d("Exception", e.stackTraceToString())
+                }
             }
         }
 
@@ -90,10 +99,15 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             searchCardResultViewModel.setMap.value?.clear()
             for (data: DataSnapshot in snapshot.children) {
-                searchCardResultViewModel.setMap.value?.set(
-                    data.key!!,
-                    data.getValue(ExpansionSet::class.java)!!
-                )
+                try {
+                    searchCardResultViewModel.setMap.value?.set(
+                        data.key!!,
+                        data.getValue(ExpansionSet::class.java)!!
+                    )
+                } catch (e: Exception) {
+                    data.key?.let { Log.d("MainActivity", "ExpansionSet Data key is: $it") }
+                    Log.d("Exception", e.stackTraceToString())
+                }
             }
             searchCardResultViewModel.updateSets()
             searchCardResultViewModel.updateCardPrintingList()
@@ -108,9 +122,30 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             deckListViewModel.formatList.value?.clear()
             for (data: DataSnapshot in snapshot.children) {
-                data.getValue(Format::class.java)?.let { deckListViewModel.formatList.value?.add(it) }
+                try {
+                    data.getValue(Format::class.java)?.let { deckListViewModel.formatList.value?.add(it) }
+                } catch (e: Exception) {
+                    data.key?.let { Log.d("MainActivity", "Format Data key is: $it") }
+                    Log.d("Exception", e.stackTraceToString())
+                }
             }
             deckListViewModel.formatList.value?.let { deckViewModel.populateFormatList(it) }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    }
+
+    private val collectionValueListener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            try {
+                collectionViewModel.fullCollection = snapshot.getValue(FullUserCollection::class.java)!!
+            } catch (e: Exception) {
+                snapshot.key?.let { Log.d("MainActivity", "Collection Data key is: $it") }
+                Log.d("Exception", e.stackTraceToString())
+            }
+
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -191,6 +226,8 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
             .removeEventListener(expansionSetValueListener)
         Firebase.database.reference.child(resources.getString(R.string.db_collection_formats))
             .removeEventListener(formatValueListener)
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_collection))
+            .removeEventListener(collectionValueListener)
         Firebase.auth.currentUser?.let {
             Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(it.uid)
                 .removeEventListener(userValueListener)
@@ -207,6 +244,9 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
             .child(resources.getString(R.string.db_collection_decks))
             .addValueEventListener(deckValueEventListener)
+        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+            .child(resources.getString(R.string.db_collection_collection))
+            .addValueEventListener(collectionValueListener)
         return true
     }
 

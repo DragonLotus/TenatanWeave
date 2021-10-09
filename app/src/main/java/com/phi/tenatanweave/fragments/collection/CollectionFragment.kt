@@ -9,7 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.setchildrecyclerview.SetChildRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.setrecycler.SetRecyclerAdapter
@@ -35,6 +39,14 @@ class CollectionFragment : Fragment() {
 
         val navController = findNavController()
 
+        Firebase.auth.currentUser?.let {
+            collectionViewModel.setDatabaseDirectory(
+                Firebase.database.reference
+                    .child(resources.getString(R.string.db_collection_users))
+                    .child(it.uid)
+            )
+        }
+
         val setRecyclerView: RecyclerView = view.findViewById(R.id.collection_set_list_recycler_view)
 
         searchCardResultViewModel.expansionSetMap.observe(viewLifecycleOwner, {
@@ -52,6 +64,7 @@ class CollectionFragment : Fragment() {
                     (setRecyclerView.adapter as SetRecyclerAdapter).getList()[setRecyclerView.getChildLayoutPosition(it)]
                 searchCardResultViewModel.filterCardsBySet(expansionSet.setCode)?.let { printingList ->
                     collectionViewModel.setPrintingList(printingList)
+                    collectionViewModel.setCurrentSetCollectionEntryMap(expansionSet.setCode)
                 }
 
                 val action =
@@ -65,6 +78,7 @@ class CollectionFragment : Fragment() {
                     )]
                 searchCardResultViewModel.filterCardsBySet(expansionSet.setCode)?.let { printingList ->
                     collectionViewModel.setPrintingList(printingList)
+                    collectionViewModel.setCurrentSetCollectionEntryMap(expansionSet.setCode)
                 }
 
                 val action =

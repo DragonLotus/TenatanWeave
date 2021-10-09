@@ -1,17 +1,20 @@
 package com.phi.tenatanweave.recyclerviews.collectioncardlistrecycler
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.data.CollectionEntry
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
 
 class CollectionCardListRecyclerAdapter(
     val context: Context,
-    val updateOrAddCollectionEntry : (Int, Printing, FinishEnum) -> Unit
+    val currentSetCollectionEntryMap: MutableMap<String, CollectionEntry>,
+    val updateOrAddCollectionEntry : (Int, Printing, FinishEnum, Resources) -> Unit
 ) :
     RecyclerView.Adapter<CollectionCardListRecyclerViewHolder>() {
     var printingsList: MutableList<Printing> = mutableListOf()
@@ -23,7 +26,7 @@ class CollectionCardListRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: CollectionCardListRecyclerViewHolder, position: Int) {
-        holder.bindCard(printingsList[position], position, updateOrAddCollectionEntry, context)
+        holder.bindCard(printingsList[position], currentSetCollectionEntryMap, position, updateOrAddCollectionEntry, context)
     }
 
     override fun getItemCount(): Int {

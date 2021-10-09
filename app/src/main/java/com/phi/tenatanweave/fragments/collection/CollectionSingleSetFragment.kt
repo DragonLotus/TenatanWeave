@@ -39,7 +39,7 @@ class CollectionSingleSetFragment : Fragment() {
 
         val collectionCardListRecyclerView: RecyclerView = view.findViewById(R.id.collection_card_list_recycler_view)
         val collectionCardListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        val collectionCardListRecyclerAdapter = CollectionCardListRecyclerAdapter(requireContext(), collectionViewModel::updateOrAddCollectionEntry)
+        val collectionCardListRecyclerAdapter = CollectionCardListRecyclerAdapter(requireContext(), collectionViewModel.currentSetCollectionEntryMap, collectionViewModel::updateOrAddCollectionEntry)
 
         collectionCardListRecyclerView.layoutManager = collectionCardListLayoutManager
         collectionCardListRecyclerView.adapter = collectionCardListRecyclerAdapter

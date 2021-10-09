@@ -1,17 +1,20 @@
 package com.phi.tenatanweave.recyclerviews.collectionquantityrecycler
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.data.CollectionEntry
 import com.phi.tenatanweave.data.Printing
 import com.phi.tenatanweave.data.enums.FinishEnum
 
 class CollectionQuantityRecyclerAdapter(
     var printing: Printing,
-    val updateOrAddCollectionEntry : (Int, Printing, FinishEnum) -> Unit,
+    val currentSetCollectionEntryMap: MutableMap<String, CollectionEntry>,
+    val updateOrAddCollectionEntry : (Int, Printing, FinishEnum, Resources) -> Unit,
     val context: Context
 ) :
     RecyclerView.Adapter<CollectionQuantityRecyclerViewHolder>() {
@@ -22,7 +25,7 @@ class CollectionQuantityRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: CollectionQuantityRecyclerViewHolder, position: Int) {
-        holder.bindCard(printing.finishList[position], printing, updateOrAddCollectionEntry, context)
+        holder.bindCard(printing.finishList[position], currentSetCollectionEntryMap, printing, updateOrAddCollectionEntry, context)
     }
 
     override fun getItemCount(): Int {

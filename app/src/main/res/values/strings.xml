@@ -80,6 +80,8 @@
     <string name="db_collection_decks">decks</string>
     <string name="db_collection_formats">formats</string>
     <string name="db_collection_deckIdSequence">deckIdSequence</string>
+    <string name="db_collection_collection">collection</string>
+    <string name="db_collection_collection_map">collectionMap</string>
     <string name="web_client_id">315101567709-5h6mobcajdcphhu3obd1kls9pjdd7hv2.apps.googleusercontent.com</string>
 
     <string name="deck_options_edit">Edit</string>
