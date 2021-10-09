@@ -35,7 +35,7 @@ class CollectionViewModel : ViewModel() {
     }
     val databaseDirectory: LiveData<DatabaseReference> = mDatabaseDirectory
 
-    var currentSetCollectionEntryMap: MutableMap<String, CollectionEntry> = mutableMapOf()
+    val currentSetCollectionEntryMap: MutableMap<String, CollectionEntry> = mutableMapOf()
     lateinit var fullCollection: FullUserCollection
 
     val setNameQuery: StringBuilder = StringBuilder()
@@ -46,7 +46,7 @@ class CollectionViewModel : ViewModel() {
     fun setCurrentSetCollectionEntryMap(setCode: String) {
         currentSetCollectionEntryMap.clear()
         fullCollection.collectionMap[setCode]?.let {
-            currentSetCollectionEntryMap = it
+            currentSetCollectionEntryMap.putAll(it)
         }
     }
 
