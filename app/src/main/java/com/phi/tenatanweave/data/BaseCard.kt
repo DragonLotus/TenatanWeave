@@ -29,7 +29,8 @@ class BaseCard(
     val deckLimit: Int = -1,
     val specialization: List<String> = listOf(),
     val legalFormats: List<String> = listOf(),
-    val printings: List<String> = listOf()
+    val printings: List<String> = listOf(),
+    val youngOnly: Boolean = false
 ) {
 
     fun getFullTypeAsString(): String {

@@ -68,7 +68,7 @@ class CollectionFragment : Fragment() {
                 }
 
                 val action =
-                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name)
+                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name, expansionSet.setCode)
                 navController.navigate(action)
             }, {
                 //This is so hacky. I can't believe this worked.
@@ -82,7 +82,7 @@ class CollectionFragment : Fragment() {
                 }
 
                 val action =
-                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name)
+                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name, expansionSet.setCode)
                 navController.navigate(action)
 
             }, {

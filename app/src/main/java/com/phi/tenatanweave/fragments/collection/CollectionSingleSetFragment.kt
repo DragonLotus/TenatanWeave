@@ -10,6 +10,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.collectioncardlistrecycler.CollectionCardListRecyclerAdapter
@@ -35,14 +38,26 @@ class CollectionSingleSetFragment : Fragment() {
 
         val toolbar: Toolbar = view.findViewById(R.id.toolbar)
         activity?.setActionBar(toolbar)
-        activity?.actionBar?.title = args.query
+        activity?.actionBar?.title = args.setName
+
+        collectionViewModel.currentSetCode = args.setCode
 
         val collectionCardListRecyclerView: RecyclerView = view.findViewById(R.id.collection_card_list_recycler_view)
         val collectionCardListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        val collectionCardListRecyclerAdapter = CollectionCardListRecyclerAdapter(requireContext(), collectionViewModel.currentSetCollectionEntryMap, collectionViewModel::updateOrAddCollectionEntry)
+        val collectionCardListRecyclerAdapter = CollectionCardListRecyclerAdapter(
+            requireContext(),
+            collectionViewModel.currentSetCollectionEntryMap,
+            collectionViewModel::updateOrAddCollectionEntry
+        )
 
         collectionCardListRecyclerView.layoutManager = collectionCardListLayoutManager
         collectionCardListRecyclerView.adapter = collectionCardListRecyclerAdapter
+
+        collectionViewModel.refreshFullUserCollection(resources).observe(viewLifecycleOwner, {
+            if(collectionViewModel.currentSetCollectionEntryMap.isEmpty())
+                collectionViewModel.setCurrentSetCollectionEntryMap(collectionViewModel.currentSetCode)
+//            (collectionCardListRecyclerView.adapter as CollectionCardListRecyclerAdapter).notifyDataSetChanged()
+        })
 
         collectionViewModel.printingList.observe(viewLifecycleOwner, {
             collectionCardListRecyclerAdapter.setList(it)

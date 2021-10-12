@@ -40,10 +40,10 @@ class CollectionQuantityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHo
         val decreaseCardQuantityButton = itemView.findViewById<ImageView>(R.id.collection_decrease_card_quantity_button)
         val increaseCardQuantityButton = itemView.findViewById<ImageView>(R.id.collection_increase_card_quantity_button)
 
-        val finishIndex = printing.finishList.indexOfFirst{it == finish}
+        val finishIndex = printing.finishList.indexOfFirst { it == finish }
         val collectionEntry = currentSetCollectionEntryMap[printing.id]
         collectionEntry?.let {
-            val quantity = if(finishIndex > it.quantityList.size) 0 else it.quantityList[finishIndex]
+            val quantity = if (finishIndex > it.quantityList.size) 0 else it.quantityList[finishIndex]
             quantityEditText.setText(quantity.toString())
         }
 

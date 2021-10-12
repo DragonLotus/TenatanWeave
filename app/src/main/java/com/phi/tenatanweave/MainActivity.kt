@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
     private val collectionValueListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             try {
-                collectionViewModel.fullCollection = snapshot.getValue(FullUserCollection::class.java)!!
+                collectionViewModel.setFullUserCollection(snapshot.getValue(FullUserCollection::class.java)!!)
             } catch (e: Exception) {
                 snapshot.key?.let { Log.d("MainActivity", "Collection Data key is: $it") }
                 Log.d("Exception", e.stackTraceToString())
@@ -169,10 +169,15 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
         override fun onDataChange(snapshot: DataSnapshot) {
             deckViewModel.userDeckList.value?.clear()
             if (snapshot.exists()) {
-                snapshot.getValue(object : GenericTypeIndicator<List<Deck>>() {})?.let {
-                    deckViewModel.setUserDeckList(
-                        it
-                    )
+                try {
+                    snapshot.getValue(object : GenericTypeIndicator<List<Deck>>() {})?.let {
+                        deckViewModel.setUserDeckList(
+                            it
+                        )
+                    }
+                } catch (e: Exception) {
+                    snapshot.key?.let { Log.d("MainActivity", "Deck Data key is: $it") }
+                    Log.d("Exception", e.stackTraceToString())
                 }
             }
         }
@@ -239,12 +244,14 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
     }
 
     fun setFirebaseUserListener(uid: String): Boolean {
-        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+        val firebaseUserDirectory =
+            Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+        firebaseUserDirectory
             .addValueEventListener(userValueListener)
-        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+        firebaseUserDirectory
             .child(resources.getString(R.string.db_collection_decks))
             .addValueEventListener(deckValueEventListener)
-        Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(uid)
+        firebaseUserDirectory
             .child(resources.getString(R.string.db_collection_collection))
             .addValueEventListener(collectionValueListener)
         return true

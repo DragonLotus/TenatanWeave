@@ -76,7 +76,7 @@ class DeckFragment : Fragment() {
         })
         deckDisplayRecyclerView.layoutManager = deckDisplayLayoutManager
         deckDisplayRecyclerView.adapter = deckDisplayRecyclerAdapter
-        deckViewModel.userDeckList.observe(viewLifecycleOwner, Observer {
+        deckViewModel.refreshDeckList(resources).observe(viewLifecycleOwner, Observer {
             deckDisplayRecyclerAdapter.setList(it)
         })
         return root

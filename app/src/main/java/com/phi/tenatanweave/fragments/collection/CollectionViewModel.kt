@@ -5,7 +5,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.CollectionEntry
 import com.phi.tenatanweave.data.ExpansionSet
@@ -35,8 +41,13 @@ class CollectionViewModel : ViewModel() {
     }
     val databaseDirectory: LiveData<DatabaseReference> = mDatabaseDirectory
 
+    private val mFullUserCollection = MutableLiveData<FullUserCollection>().apply {
+        value = null
+    }
+    val fullUserCollection: LiveData<FullUserCollection> = mFullUserCollection
+
     val currentSetCollectionEntryMap: MutableMap<String, CollectionEntry> = mutableMapOf()
-    lateinit var fullCollection: FullUserCollection
+    var currentSetCode: String = ""
 
     val setNameQuery: StringBuilder = StringBuilder()
 
@@ -45,9 +56,14 @@ class CollectionViewModel : ViewModel() {
 
     fun setCurrentSetCollectionEntryMap(setCode: String) {
         currentSetCollectionEntryMap.clear()
-        fullCollection.collectionMap[setCode]?.let {
+        fullUserCollection.value?.collectionMap?.get(setCode)?.let {
             currentSetCollectionEntryMap.putAll(it)
         }
+    }
+
+    fun setFullUserCollection(fullUserCollection: FullUserCollection) {
+        mFullUserCollection.value = fullUserCollection
+        mFullUserCollection.notifyObserver()
     }
 
     fun setPrintingList(printingList: MutableList<Printing>) {
@@ -57,21 +73,49 @@ class CollectionViewModel : ViewModel() {
 
     fun setDatabaseDirectory(db: DatabaseReference) {
         mDatabaseDirectory.value = db
+        mDatabaseDirectory.notifyObserver()
+    }
+
+    fun refreshFullUserCollection(resources: Resources): MutableLiveData<FullUserCollection> {
+        if(mFullUserCollection.value == null){
+            val user = Firebase.auth.currentUser
+            user?.uid?.let {
+                Firebase.database.reference.child(resources.getString(R.string.db_collection_users)).child(it)
+                    .child(resources.getString(R.string.db_collection_collection))
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            try {
+                                setFullUserCollection(snapshot.getValue(FullUserCollection::class.java)!!)
+                            } catch (e: Exception) {
+                                snapshot.key?.let { key -> Log.d("CollectionViewModel", "Collection Data key is: $key") }
+                                Log.d("Exception", e.stackTraceToString())
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                        }
+
+                    })
+            }
+        }
+        return mFullUserCollection
     }
 
     fun updateOrAddCollectionEntry(quantity: Int, printing: Printing, finishEnum: FinishEnum, resources: Resources) {
-
         val collectionDatabase = databaseDirectory.value?.child(resources.getString(R.string.db_collection_collection))
-        fullCollection.setNewLastModifiedDate()
+        fullUserCollection.value?.setNewLastModifiedDate()
         if (currentSetCollectionEntryMap.keys.contains(printing.id)) {
             val existingEntry = currentSetCollectionEntryMap[printing.id]
-            existingEntry?.let{
+            existingEntry?.let {
                 updateQuantityList(it, printing, finishEnum, quantity)
 
                 val childUpdates = hashMapOf<String, Any>(
                     "/${resources.getString(R.string.db_collection_collection_map)}/${printing.setCode}/${printing.id}" to existingEntry,
-                    "/lastModifiedDate" to fullCollection.lastModifiedDate
                 )
+
+                fullUserCollection.value?.let { fullUserCollection ->
+                    childUpdates.put("/lastModifiedDate", fullUserCollection.lastModifiedDate)
+                }
 
                 collectionDatabase?.updateChildren(childUpdates)
             }
@@ -87,8 +131,11 @@ class CollectionViewModel : ViewModel() {
 
             val childUpdates = hashMapOf<String, Any>(
                 "/${resources.getString(R.string.db_collection_collection_map)}/${printing.setCode}/${printing.id}" to newEntry,
-                "/lastModifiedDate" to fullCollection.lastModifiedDate
             )
+
+            fullUserCollection.value?.let { fullUserCollection ->
+                childUpdates.put("/lastModifiedDate", fullUserCollection.lastModifiedDate)
+            }
 
             collectionDatabase?.updateChildren(childUpdates)
             Log.d("CollectionViewModel", "updateOrAddCollectionEntry adding new entry: $newEntry")

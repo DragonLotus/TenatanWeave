@@ -74,7 +74,8 @@
               android:name="com.phi.tenatanweave.fragments.collection.CollectionSingleSetFragment"
               android:label="CollectionSingleSetFragment"
               tools:layout="@layout/fragment_collection_single_set">
-        <argument android:name="query" app:argType="string"/>
+        <argument android:name="setName" app:argType="string"/>
+        <argument android:name="setCode" app:argType="string"/>
     </fragment>
 
     <fragment
