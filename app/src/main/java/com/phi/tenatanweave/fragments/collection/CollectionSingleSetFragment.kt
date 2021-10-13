@@ -10,12 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
+import com.phi.tenatanweave.customviews.EmptySearchView
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.collectioncardlistrecycler.CollectionCardListRecyclerAdapter
+import com.phi.tenatanweave.recyclerviews.setrecycler.SetRecyclerAdapter
 
 
 class CollectionSingleSetFragment : Fragment() {
@@ -42,6 +41,7 @@ class CollectionSingleSetFragment : Fragment() {
 
         collectionViewModel.currentSetCode = args.setCode
 
+        val searchView = view.findViewById<EmptySearchView>(R.id.collection_card_search)
         val collectionCardListRecyclerView: RecyclerView = view.findViewById(R.id.collection_card_list_recycler_view)
         val collectionCardListLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val collectionCardListRecyclerAdapter = CollectionCardListRecyclerAdapter(
@@ -54,13 +54,29 @@ class CollectionSingleSetFragment : Fragment() {
         collectionCardListRecyclerView.adapter = collectionCardListRecyclerAdapter
 
         collectionViewModel.refreshFullUserCollection(resources).observe(viewLifecycleOwner, {
-            if(collectionViewModel.currentSetCollectionEntryMap.isEmpty())
+            if (collectionViewModel.currentSetCollectionEntryMap.isEmpty())
                 collectionViewModel.setCurrentSetCollectionEntryMap(collectionViewModel.currentSetCode)
 //            (collectionCardListRecyclerView.adapter as CollectionCardListRecyclerAdapter).notifyDataSetChanged()
         })
 
         collectionViewModel.printingList.observe(viewLifecycleOwner, {
             collectionCardListRecyclerAdapter.setList(it)
+        })
+
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrEmpty()) {
+//                    collectionViewModel.reset()
+                } else if (newText.isNotEmpty()) {
+//                    collectionViewModel.filterSetByName(newText)
+                }
+                return true
+            }
+
         })
     }
 }

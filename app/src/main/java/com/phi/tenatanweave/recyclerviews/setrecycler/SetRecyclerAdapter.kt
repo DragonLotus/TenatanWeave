@@ -1,15 +1,12 @@
 package com.phi.tenatanweave.recyclerviews.setrecycler
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.ExpansionSet
-import com.phi.tenatanweave.recyclerviews.setchildrecyclerview.SetChildRecyclerAdapter
 
 class SetRecyclerAdapter(
     val context: Context,
@@ -20,7 +17,8 @@ class SetRecyclerAdapter(
 ) :
     RecyclerView.Adapter<SetRecyclerViewHolder>() {
 
-    private var sortedKeyList = expansionSetMap.keys.toList().sortedWith(compareByDescending { it.getReleaseDateAsDateToSort() })
+    private var sortedKeyList =
+        expansionSetMap.keys.toList().sortedWith(compareByDescending { it.getReleaseDateAsDateToSort() })
     private var expandedPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetRecyclerViewHolder {
@@ -52,25 +50,29 @@ class SetRecyclerAdapter(
     }
 
     fun setExpandedPosition(position: Int) {
-        val tempPosition = expandedPosition
-        val expandable = expansionSetMap[sortedKeyList[position]]!!.size > 0
-        if (expandable) {
-            if (expandedPosition == position) {
-                expandedPosition = -1
-                notifyItemChanged(position)
-            } else if (expandedPosition >= 0) {
-                expandedPosition = position
-                notifyItemChanged(tempPosition)
-                notifyItemChanged(position)
-            } else {
-                expandedPosition = position
-                notifyItemChanged(position)
+        if (position != -1) {
+            val tempPosition = expandedPosition
+            val expandable = expansionSetMap[sortedKeyList[position]]!!.size > 0
+            if (expandable) {
+                if (expandedPosition == position) {
+                    expandedPosition = -1
+                    notifyItemChanged(position)
+                } else if (expandedPosition >= 0) {
+                    expandedPosition = position
+                    notifyItemChanged(tempPosition)
+                    notifyItemChanged(position)
+                } else {
+                    expandedPosition = position
+                    notifyItemChanged(position)
+                }
             }
-        }
+        } else
+            expandedPosition = -1
     }
 
-    fun notifyDataSetChangedAndUpdate(){
-        sortedKeyList = expansionSetMap.keys.toList().sortedWith(compareByDescending { it.getReleaseDateAsDateToSort() })
+    fun notifyDataSetChangedAndUpdate() {
+        sortedKeyList =
+            expansionSetMap.keys.toList().sortedWith(compareByDescending { it.getReleaseDateAsDateToSort() })
         notifyDataSetChanged()
     }
 

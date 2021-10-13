@@ -46,7 +46,7 @@ class SearchCardResultFragment : Fragment() {
             val position = cardResultRecyclerView.getChildLayoutPosition(it as View)
             val card = (cardResultRecyclerView.adapter as CardRecyclerAdapter).getList()[position]
 
-            navController.navigate(SearchCardResultFragmentDirections.actionNavigationSearchCardResultToNavigationSingleCard(position))
+            navController.navigate(SearchCardResultFragmentDirections.actionNavigationSearchCardResultToNavigationSingleCard(position, card))
         }
 
         return root

@@ -26,13 +26,13 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.phi.tenatanweave.R
 import com.phi.tenatanweave.data.Printing
-import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.legalityrecycler.LegalityRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.printingsrecycler.PrintingsRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.rulingrecycler.RulingRecyclerAdapter
 import com.phi.tenatanweave.thirdparty.GlideApp
 import com.phi.tenatanweave.thirdparty.glide.CropVerticalCardArt
+import com.phi.tenatanweave.viewpagers.decklistviewpager.DeckListViewModel
 
 
 class SingleCardFragment : Fragment() {
@@ -58,16 +58,13 @@ class SingleCardFragment : Fragment() {
 
         singleCardViewModel.setCurrentPosition(args.clickedPosition)
         //On Resume list is empty
-        searchCardResultViewModel.cardPrintingList.value?.get(args.clickedPosition)
-            ?.let {
-                singleCardViewModel.setCardPrinting(
-                    it,
-                    searchCardResultViewModel.printingMap.value!!,
-                    searchCardResultViewModel.cardMap.value!!,
-                    searchCardResultViewModel.setMap.value!!,
-                    false
-                )
-            }
+        singleCardViewModel.setCardPrinting(
+            args.selectedCard,
+            searchCardResultViewModel.printingMap.value!!,
+            searchCardResultViewModel.cardMap.value!!,
+            searchCardResultViewModel.setMap.value!!,
+            false
+        )
 
         val toolbar: Toolbar = root.findViewById(R.id.toolbar)
 
@@ -217,7 +214,7 @@ class SingleCardFragment : Fragment() {
             } else {
                 cardTextView.visibility = View.GONE
             }
-                                                                      
+
             cardTypeTextView.text = it.baseCard.getFullTypeAsString()
             rarityTextView.text = it.rarity.toString()
 
@@ -265,14 +262,14 @@ class SingleCardFragment : Fragment() {
             else
                 leftArrowImageView.visibility = View.GONE
 
-            if(it.flavorText.isNotEmpty()){
+            if (it.flavorText.isNotEmpty()) {
                 flavorTextView.visibility = View.VISIBLE
                 flavorTextView.text = it.flavorText
             } else {
                 flavorTextView.visibility = View.GONE
             }
 
-            if(it.artist.isNotEmpty()){
+            if (it.artist.isNotEmpty()) {
                 artistTextView.visibility = View.VISIBLE
                 artistTextView.text = "Illustrated by " + it.artist
             } else {
@@ -289,13 +286,23 @@ class SingleCardFragment : Fragment() {
                 R.id.printings_chip -> {
                     printingsLayout.visibility = View.VISIBLE
                     rulingsLayout.visibility = View.GONE
-                    flavorConstraintSet.connect(flavorLayout.id, ConstraintSet.TOP, printingsLayout.id, ConstraintSet.BOTTOM)
+                    flavorConstraintSet.connect(
+                        flavorLayout.id,
+                        ConstraintSet.TOP,
+                        printingsLayout.id,
+                        ConstraintSet.BOTTOM
+                    )
                     flavorConstraintSet.applyTo(flavorLayout)
                 }
                 R.id.rulings_chip -> {
                     printingsLayout.visibility = View.GONE
                     rulingsLayout.visibility = View.VISIBLE
-                    flavorConstraintSet.connect(flavorLayout.id, ConstraintSet.TOP, rulingsLayout.id, ConstraintSet.BOTTOM)
+                    flavorConstraintSet.connect(
+                        flavorLayout.id,
+                        ConstraintSet.TOP,
+                        rulingsLayout.id,
+                        ConstraintSet.BOTTOM
+                    )
                     flavorConstraintSet.applyTo(flavorLayout)
                 }
             }
@@ -408,6 +415,7 @@ class SingleCardFragment : Fragment() {
                 }
             }
         }
+
     private fun containsOnlyYoungHero(selectedVersions: MutableMap<Int, Printing>): Boolean {
         for ((index, cardPrinting) in selectedVersions) {
             if (cardPrinting.baseCard.subTypes.isEmpty()) {

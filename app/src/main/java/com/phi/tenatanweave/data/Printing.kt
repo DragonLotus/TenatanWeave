@@ -1,9 +1,13 @@
 package com.phi.tenatanweave.data
 
+import android.os.Parcelable
 import android.util.Log
 import com.phi.tenatanweave.data.enums.FinishEnum
 import com.phi.tenatanweave.data.enums.RarityEnum
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 
+@Parcelize
 class Printing(
     val id: String = "",
     val name: String = "",
@@ -12,12 +16,12 @@ class Printing(
     val rarity: RarityEnum = RarityEnum.P,
     val artist: String = "",
     val setCode: String = "",
-    var set: ExpansionSet? = null,
+    var set: @RawValue ExpansionSet? = null,
     val collectorNumber: Int = 0,
     val finishList: List<FinishEnum> = listOf(),
     var finishVersion: Int = 0,
     var baseCard: BaseCard = BaseCard()
-) {
+) : Parcelable {
     fun getFinishSafe(finishVersion: Int): FinishEnum {
         return if (finishList.isNullOrEmpty())
             FinishEnum.REGULAR

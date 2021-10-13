@@ -1,11 +1,14 @@
 package com.phi.tenatanweave.data
 
+import android.os.Parcelable
 import android.util.Log
 import com.phi.tenatanweave.data.enums.ClassEnum
 import com.phi.tenatanweave.data.enums.SubTypeEnum
 import com.phi.tenatanweave.data.enums.TalentEnum
 import com.phi.tenatanweave.data.enums.TypeEnum
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 class BaseCard(
     val id: String = "",
     val name: String = "",
@@ -31,7 +34,7 @@ class BaseCard(
     val legalFormats: List<String> = listOf(),
     val printings: List<String> = listOf(),
     val youngOnly: Boolean = false
-) {
+) : Parcelable {
 
     fun getFullTypeAsString(): String {
         return "${if (talents.isNotEmpty()) getTalentsAsEnum().joinToString(" ") + " " else ""}${if (heroClass.isNotEmpty()) getHeroClassAsEnum().toString() + " " else ""}${getTypeAsEnum().toFullString()}${

@@ -13,7 +13,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.phi.tenatanweave.R
-import com.phi.tenatanweave.fragments.dialogfragments.DeckDetailsDialogFragment
+import com.phi.tenatanweave.customviews.EmptySearchView
 import com.phi.tenatanweave.fragments.searchcardresult.SearchCardResultViewModel
 import com.phi.tenatanweave.recyclerviews.setchildrecyclerview.SetChildRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.setrecycler.SetRecyclerAdapter
@@ -48,6 +48,7 @@ class CollectionFragment : Fragment() {
         }
 
         val setRecyclerView: RecyclerView = view.findViewById(R.id.collection_set_list_recycler_view)
+        val searchView = view.findViewById<EmptySearchView>(R.id.collection_search)
 
         searchCardResultViewModel.expansionSetMap.observe(viewLifecycleOwner, {
             collectionViewModel.setExpansionSetMap(it)
@@ -68,7 +69,10 @@ class CollectionFragment : Fragment() {
                 }
 
                 val action =
-                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name, expansionSet.setCode)
+                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(
+                        expansionSet.name,
+                        expansionSet.setCode
+                    )
                 navController.navigate(action)
             }, {
                 //This is so hacky. I can't believe this worked.
@@ -82,7 +86,10 @@ class CollectionFragment : Fragment() {
                 }
 
                 val action =
-                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(expansionSet.name, expansionSet.setCode)
+                    CollectionFragmentDirections.actionNavigationCollectionToNavigationCollectionSingleSet(
+                        expansionSet.name,
+                        expansionSet.setCode
+                    )
                 navController.navigate(action)
 
             }, {
@@ -90,5 +97,28 @@ class CollectionFragment : Fragment() {
                 (setRecyclerView.adapter as SetRecyclerAdapter).setExpandedPosition(position)
             })
         setRecyclerView.layoutManager = linearLayoutManager
+
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                (setRecyclerView.adapter as SetRecyclerAdapter).setExpandedPosition(-1)
+                if (query.isNullOrEmpty()) {
+                    collectionViewModel.reset()
+                } else if (query.isNotEmpty()) {
+                    collectionViewModel.filterSetByName(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                (setRecyclerView.adapter as SetRecyclerAdapter).setExpandedPosition(-1)
+                if (newText.isNullOrEmpty()) {
+                    collectionViewModel.reset()
+                } else if (newText.isNotEmpty()) {
+                    collectionViewModel.filterSetByName(newText)
+                }
+                return true
+            }
+
+        })
     }
 }

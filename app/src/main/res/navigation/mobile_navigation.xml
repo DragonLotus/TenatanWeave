@@ -95,6 +95,7 @@
               android:name="com.phi.tenatanweave.fragments.singlecard.SingleCardFragment"
               android:label="SingleCardFragment">
         <argument android:name="clickedPosition" app:argType="integer"/>
+        <argument android:name="selectedCard" app:argType="com.phi.tenatanweave.data.Printing"/>
     </fragment>
     <fragment android:id="@+id/deckListFragment" android:name="com.phi.tenatanweave.fragments.decklist.DeckListFragment"
               android:label="fragment_deck_list_container" tools:layout="@layout/fragment_deck_list_container">

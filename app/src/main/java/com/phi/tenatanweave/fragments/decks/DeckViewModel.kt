@@ -47,7 +47,7 @@ class DeckViewModel : ViewModel() {
     fun setUserDeckList(value: List<Deck>) {
         userDeckList.value?.clear()
         userDeckList.value?.addAll(value)
-        userDeckList.value?.removeAll(listOf(null))
+//        userDeckList.value?.removeAll { it == null }
         mUserDeckList.notifyObserver()
     }
 
