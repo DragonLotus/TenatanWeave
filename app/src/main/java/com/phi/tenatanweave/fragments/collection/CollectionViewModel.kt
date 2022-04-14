@@ -44,7 +44,7 @@ class CollectionViewModel : ViewModel() {
     private val mFullUserCollection = MutableLiveData<FullUserCollection>().apply {
         value = null
     }
-    val fullUserCollection: LiveData<FullUserCollection> = mFullUserCollection
+    private val fullUserCollection: LiveData<FullUserCollection> = mFullUserCollection
 
     val currentSetCollectionEntryMap: MutableMap<String, CollectionEntry> = mutableMapOf()
     var currentSetCode: String = ""

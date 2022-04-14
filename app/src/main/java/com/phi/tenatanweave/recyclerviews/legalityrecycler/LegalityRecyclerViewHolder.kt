@@ -8,11 +8,11 @@ import kotlinx.android.synthetic.main.legality_row.view.*
 
 class LegalityRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bindCard(format: String, legalFormatList: List<String>, context: Context) {
+    fun bindCard(format: String, illegalFormatList: List<String>, context: Context) {
         with(format) {
             itemView.format_name.text = this
 
-            if(legalFormatList.contains(format)){
+            if(!illegalFormatList.contains(format)){
                 itemView.legality_chip.text = context.getString(R.string.label_legal)
                 itemView.legality_chip.setChipBackgroundColorResource(R.color.colorIs)
             } else {

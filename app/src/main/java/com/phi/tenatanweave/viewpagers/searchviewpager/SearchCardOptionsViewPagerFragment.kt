@@ -358,7 +358,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
         }
 
         addCompareButton.setOnClickListener {
-            activity!!.runOnUiThread {
+            activity?.runOnUiThread {
                 clearEditTextFocus()
                 when (searchCardResultViewModel.compareType.get()) {
                     CompareTypeEnum.COST -> {
@@ -384,7 +384,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
                 searchCardResultViewModel.rarityList.value!!
             ) {
                 clearEditTextFocus()
-                rarityRecyclerView.suppressLayout(false)
+//                rarityRecyclerView.suppressLayout(false)
                 val position = rarityRecyclerView.getChildLayoutPosition(it.parent as View)
                 val selectedFilterState =
                     searchCardResultViewModel.rarityList.value!![position]
@@ -422,13 +422,13 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
                             )
                         }
                 }
-                rarityRecyclerView.suppressLayout(true)
+//                rarityRecyclerView.suppressLayout(true)
                 scrollView.disableScroll = true
             }
 
         rarityRecyclerView.layoutManager = rarityLayoutManager
         rarityRecyclerView.adapter = rarityRecyclerAdapter
-        rarityRecyclerView.suppressLayout(true)
+//        rarityRecyclerView.suppressLayout(true)
 
         return root
     }

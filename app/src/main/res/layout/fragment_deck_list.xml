@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
         android:id="@+id/deck_list_constraint_layout"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,6 +12,7 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +28,9 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/deck_list_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/app_bar"
+            android:layout_above="@id/deck_list_card_search"
             app:layout_constraintTop_toBottomOf="@id/app_bar"
             app:layout_constraintBottom_toTopOf="@id/deck_list_card_search"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +39,9 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/deck_list_card_search_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/app_bar"
+            android:layout_above="@id/deck_list_card_search"
             app:layout_constrainedHeight="true"
             android:visibility="invisible"
             app:layout_constraintTop_toBottomOf="@id/app_bar"
@@ -47,6 +52,7 @@
     <com.phi.tenatanweave.customviews.EmptySearchView
             android:id="@+id/deck_list_card_search"
             android:icon="@android:drawable/ic_menu_search"
+            android:layout_alignParentBottom="true"
             app:showAsAction="ifRoom"
             android:background="?android:attr/windowBackground"
             app:defaultQueryHint="@string/title_search"
@@ -60,4 +66,4 @@
             app:layout_constraintBottom_toBottomOf="parent"
     />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

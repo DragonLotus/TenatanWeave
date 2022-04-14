@@ -81,7 +81,7 @@ class DeckListViewModel : ViewModel() {
 
         heroCardPrinting.let {
             if (it != null) {
-                if (mDeck.value?.format != "None" && !it.baseCard.legalFormats.contains(mDeck.value?.format))
+                if (mDeck.value?.format != "None" && it.baseCard.illegalFormats.contains(mDeck.value?.format))
                     notLegalCardSet.add(it.baseCard.name)
             }
         }
@@ -260,7 +260,7 @@ class DeckListViewModel : ViewModel() {
         heroList.clear()
         heroList.addAll(masterCardPrintingList.filter {
             if (mDeck.value?.format != "None") {
-                it.baseCard.getTypeAsEnum() == TypeEnum.HERO && it.baseCard.legalFormats.contains(
+                it.baseCard.getTypeAsEnum() == TypeEnum.HERO && !it.baseCard.illegalFormats.contains(
                     mDeck.value?.format
                 )
             } else
@@ -316,18 +316,20 @@ class DeckListViewModel : ViewModel() {
 
     private fun checkIfLegalWithHero(cardPrinting: Printing, heroCardPrinting: Printing?): Boolean {
         var legal = true
-        heroCardPrinting?.let {
+        heroCardPrinting?.let { heroCard ->
             if (cardPrinting.baseCard.specialization.isNotEmpty() && !cardPrinting.baseCard.specialization.contains(
                     heroCardPrinting.baseCard.name
                 )
             )
                 legal = false
+            else if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
+                return legal
 
 
             if (mDeck.value?.format != "None") {
                 if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
                     || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
-                    || !cardPrinting.baseCard.legalFormats.contains(mDeck.value?.format)
+                    || cardPrinting.baseCard.illegalFormats.contains(mDeck.value?.format)
                 )
                     legal = false
             } else {
@@ -337,11 +339,11 @@ class DeckListViewModel : ViewModel() {
                     legal = false
             }
 
-            if (cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.ALL && cardPrinting.baseCard.getHeroClassAsEnum() != it.baseCard.getHeroClassAsEnum() && cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.GENERIC)
+            if (cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.ALL && cardPrinting.baseCard.getHeroClassAsEnum() != heroCard.baseCard.getHeroClassAsEnum() && cardPrinting.baseCard.getHeroClassAsEnum() != ClassEnum.GENERIC)
                 legal = false
 
             if (cardPrinting.baseCard.getTalentsAsEnum()
-                    .isNotEmpty() && !it.baseCard.containsTalents(cardPrinting.baseCard.talents)
+                    .isNotEmpty() && !heroCard.baseCard.legalWithTalents(cardPrinting.baseCard.talents)
             )
                 legal = false
 

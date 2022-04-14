@@ -205,6 +205,8 @@ class SingleCardFragment : Fragment() {
                     cardText = cardText.replace("VARIABLE_HEALTH", it.baseCard.variableHealth[version].toString())
                 if (it.baseCard.variableValue.isNotEmpty() && it.baseCard.variableValue.size > version)
                     cardText = cardText.replace("VARIABLE_VALUE", it.baseCard.variableValue[version].toString())
+                if (it.baseCard.variableString.isNotEmpty() && it.baseCard.variableString.size > version)
+                    cardText = cardText.replace("VARIABLE_STRING", it.baseCard.variableString[version])
                 if (it.baseCard.name.isNotEmpty())
                     cardText = cardText.replace("CARD_NAME", it.baseCard.name)
 
@@ -316,8 +318,8 @@ class SingleCardFragment : Fragment() {
             formatList,
             requireContext()
         )
-        if (singleCardViewModel.cardPrinting.value!!.baseCard.legalFormats.isNotEmpty()) {
-            legalityRecyclerAdapter.setList(singleCardViewModel.cardPrinting.value!!.baseCard.legalFormats)
+        if (singleCardViewModel.cardPrinting.value!!.baseCard.illegalFormats.isNotEmpty()) {
+            legalityRecyclerAdapter.setList(singleCardViewModel.cardPrinting.value!!.baseCard.illegalFormats)
             legalityRecyclerView.adapter = legalityRecyclerAdapter
             legalityRecyclerView.layoutManager = legalityRecyclerLayoutManager
             legalityRecyclerView.suppressLayout(true)
@@ -451,11 +453,11 @@ class SingleCardFragment : Fragment() {
         matchResult.forEach { match ->
             spannableStringBuilder.append(cardText.substring(endIndex, match.range.first))
             when {
-                match.value.contains("p") -> spannableStringBuilder.append(" ", ImageSpan(powerDrawable, 0), 0)
-                match.value.contains("d") -> spannableStringBuilder.append(" ", ImageSpan(defenseDrawable, 0), 0)
-                match.value.contains("h") -> spannableStringBuilder.append(" ", ImageSpan(healthDrawable, 0), 0)
-                match.value.contains("i") -> spannableStringBuilder.append(" ", ImageSpan(intelligenceDrawable, 0), 0)
-                match.value.contains("r") -> spannableStringBuilder.append(" ", ImageSpan(resourceDrawable, 0), 0)
+                match.value.contains("p") -> spannableStringBuilder.append("a", ImageSpan(powerDrawable, 0), 0)
+                match.value.contains("d") -> spannableStringBuilder.append("a", ImageSpan(defenseDrawable, 0), 0)
+                match.value.contains("h") -> spannableStringBuilder.append("a", ImageSpan(healthDrawable, 0), 0)
+                match.value.contains("i") -> spannableStringBuilder.append("a", ImageSpan(intelligenceDrawable, 0), 0)
+                match.value.contains("r") -> spannableStringBuilder.append("a", ImageSpan(resourceDrawable, 0), 0)
             }
             endIndex = match.range.last + 1
         }

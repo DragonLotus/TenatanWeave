@@ -25,13 +25,14 @@ class BaseCard(
     val variablePower: List<Int> = listOf(),
     val variableDefense: List<Int> = listOf(),
     val variableValue: List<Int> = listOf(),
+    val variableString: List<String> = listOf(),
     val power: List<String> = listOf(),
     val defense: List<String> = listOf(),
     val pitch: List<String> = listOf(),
     val cost: String = "",
     val deckLimit: Int = -1,
     val specialization: List<String> = listOf(),
-    val legalFormats: List<String> = listOf(),
+    val illegalFormats: List<String> = listOf(),
     val printings: List<String> = listOf(),
     val youngOnly: Boolean = false
 ) : Parcelable {
@@ -55,17 +56,22 @@ class BaseCard(
         return talentSet.toList()
     }
 
-    fun containsTalents(talentsToCompare: List<String>): Boolean {
+    fun legalWithTalents(talentsToCompare: List<String>): Boolean {
+        var match = 0
         if (allowedTalents.isEmpty() && talents.isNotEmpty()) {
             for (talent in talentsToCompare) {
                 if (talents.contains(talent)) {
-                    return true
+                    match++
+                    if (match == talentsToCompare.size)
+                        return true
                 }
             }
         } else if (allowedTalents.isNotEmpty()) {
             for (talent in talentsToCompare) {
                 if (allowedTalents.contains(talent)) {
-                    return true
+                    match++
+                    if (match == talentsToCompare.size)
+                        return true
                 }
             }
         }

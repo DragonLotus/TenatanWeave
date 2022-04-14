@@ -38,7 +38,7 @@ class DeckListViewPagerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_deck_list, container, false)
-        val deckListConstraintLayout = root.findViewById<ConstraintLayout>(R.id.deck_list_constraint_layout)
+        val deckListConstraintLayout = root.findViewById<ViewGroup>(R.id.deck_list_constraint_layout)
         val deckListAppBar = root.findViewById<AppBarLayout>(R.id.app_bar)
         val deckListRecyclerView: RecyclerView = root.findViewById(R.id.deck_list_recycler_view)
         val deckListCardSearchRecyclerView: RecyclerView = root.findViewById(R.id.deck_list_card_search_recycler_view)
@@ -198,9 +198,9 @@ class DeckListViewPagerFragment : Fragment() {
         }
 
         root?.post(Runnable {
-            val deckListRecyclerViewHeight = deckListConstraintLayout.height - deckListAppBar.height - deckListCardSearchView.height
-            deckListRecyclerView.layoutParams.height = deckListRecyclerViewHeight
-            deckListCardSearchRecyclerView.layoutParams.height = deckListRecyclerViewHeight
+//            val deckListRecyclerViewHeight = deckListConstraintLayout.height - deckListAppBar.height - deckListCardSearchView.height
+//            deckListRecyclerView.layoutParams.height = deckListRecyclerViewHeight
+//            deckListCardSearchRecyclerView.layoutParams.height = deckListRecyclerViewHeight
         })
 
         return root

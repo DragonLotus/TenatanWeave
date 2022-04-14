@@ -41,10 +41,10 @@ class DeckListRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: DeckListRecyclerViewHolder, position: Int) {
-        when (val item = printingsList[holder.adapterPosition]) {
+        when (val item = printingsList[position]) {
             is RecyclerItem.Printing -> holder.bindCard(
                 item,
-                holder.adapterPosition,
+                position,
                 removeBottomMargin(position),
                 increaseOnClickListener,
                 decreaseOnClickListener,

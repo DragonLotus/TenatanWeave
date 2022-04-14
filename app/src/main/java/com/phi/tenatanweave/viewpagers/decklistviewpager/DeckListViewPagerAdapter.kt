@@ -16,21 +16,21 @@ class DeckListViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapte
         when(position){
             0 -> {
                 val fragment = DeckListViewPagerFragment()
-                fragment.arguments = Bundle().apply {
+                fragment.arguments = Bundle(1).apply {
                     putInt("object", position + 1)
                 }
                 return fragment
             }
             1 -> {
                 val fragment = DeckListStatsViewPagerFragment()
-                fragment.arguments = Bundle().apply {
+                fragment.arguments = Bundle(1).apply {
                     putInt("object", position + 1)
                 }
                 return fragment
             }
             else -> {
                 val fragment = DeckListViewPagerFragment()
-                fragment.arguments = Bundle().apply {
+                fragment.arguments = Bundle(1).apply {
                     putInt("object", position + 1)
                 }
                 return fragment
