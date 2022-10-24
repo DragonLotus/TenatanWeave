@@ -30,6 +30,11 @@ class SearchCardResultViewModel : ViewModel() {
     }
     val cardTextList: LiveData<MutableList<String>> = mCardTextList
 
+    private val mArtistList = MutableLiveData<MutableList<String>>().apply {
+        value = mutableListOf()
+    }
+    val artistList: LiveData<MutableList<String>> = mArtistList
+
     private val mPitchList = MutableLiveData<MutableList<Boolean>>().apply {
         value = mutableListOf(false, false, false, false)
     }
@@ -306,6 +311,9 @@ class SearchCardResultViewModel : ViewModel() {
             if (!passCardTextFilter(card))
                 continue
 
+            if (!passArtistFilter(card))
+                continue
+
             if (selectedClass != ClassEnum.ALL)
                 if (card.baseCard.getHeroClassAsEnum() != selectedClass && !(includeGenerics.value!! && card.baseCard.getHeroClassAsEnum() == ClassEnum.GENERIC))
                     continue
@@ -369,6 +377,14 @@ class SearchCardResultViewModel : ViewModel() {
     private fun passCardTextFilter(card: Printing): Boolean {
         for (text in mCardTextList.value!!) {
             if (!card.baseCard.text.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))
+                return false
+        }
+        return true
+    }
+
+    private fun passArtistFilter(card: Printing): Boolean {
+        for (text in artistList.value!!) {
+            if (!card.artist.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))
                 return false
         }
         return true
@@ -628,6 +644,20 @@ class SearchCardResultViewModel : ViewModel() {
         mCardTextList.value?.removeAt(position)
         recyclerView.adapter?.notifyItemRemoved(position)
         mCardTextList.notifyObserver()
+    }
+
+    fun addArtist(text: String, recyclerView: RecyclerView) {
+        if (!mArtistList.value?.contains(text)!!) {
+            mArtistList.value?.add(text)
+            recyclerView.adapter?.notifyItemInserted(recyclerView.adapter?.itemCount!!)
+            mArtistList.notifyObserver()
+        }
+    }
+
+    fun removeArtist(position: Int, recyclerView: RecyclerView) {
+        mArtistList.value?.removeAt(position)
+        recyclerView.adapter?.notifyItemRemoved(position)
+        mArtistList.notifyObserver()
     }
 
     private fun <T> MutableLiveData<T>.notifyObserver() {

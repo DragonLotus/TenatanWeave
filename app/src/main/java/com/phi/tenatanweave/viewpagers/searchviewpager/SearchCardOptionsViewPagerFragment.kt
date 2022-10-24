@@ -45,6 +45,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
     private val searchCardResultViewModel: SearchCardResultViewModel by activityViewModels()
     lateinit var compareValueEditText: EditText
     lateinit var cardTextEditText: TextInputEditText
+    lateinit var artistEditText: TextInputEditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -86,6 +87,9 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
         val cardTextInputLayout = root.findViewById<TextInputLayout>(R.id.card_text_input_layout)
         cardTextEditText = root.findViewById<TextInputEditText>(R.id.card_text_edit_text)
         val cardTextRecyclerView = root.findViewById<RecyclerView>(R.id.card_text_recyclerview)
+        val artistInputLayout = root.findViewById<TextInputLayout>(R.id.artist_input_layout)
+        artistEditText = root.findViewById<TextInputEditText>(R.id.artist_edit_text)
+        val artistRecyclerView = root.findViewById<RecyclerView>(R.id.artist_recyclerview)
         val typeLabelTextView = root.findViewById<TextView>(R.id.type_label)
 
 //        searchCardResultViewModel.typeList.observe(viewLifecycleOwner, Observer {
@@ -371,13 +375,18 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
                 hideKeyboard()
         }
 
+        artistEditText.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus)
+                hideKeyboard()
+        }
+
         cardTextEditText.setOnEditorActionListener { textView: TextView, i: Int, keyEvent: KeyEvent? ->
             if (i == EditorInfo.IME_ACTION_GO) {
                 val text = cardTextEditText.text.toString().replace(";", "")
                 if(text.isNotEmpty()){
                     searchCardResultViewModel.addCardText(text, cardTextRecyclerView)
                     cardTextRecyclerView.visibility = View.VISIBLE
-                    realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, typeLabelTextView)
+                    realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, artistInputLayout)
                 }
                 cardTextEditText.setText("")
             }
@@ -397,7 +406,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
                 searchCardResultViewModel.removeCardText(position, cardTextRecyclerView)
                 if (searchCardResultViewModel.cardTextList.value!!.size == 0) {
                     cardTextRecyclerView.visibility = View.GONE
-                    realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, typeLabelTextView)
+                    realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, artistInputLayout)
                 }
 
                 cardTextRecyclerView.suppressLayout(true)
@@ -409,7 +418,48 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
         cardTextRecyclerView.suppressLayout(true)
         if (searchCardResultViewModel.cardTextList.value!!.size > 0) {
             cardTextRecyclerView.visibility = View.VISIBLE
-            realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, typeLabelTextView)
+            realignViews(constraintLayout, cardTextInputLayout, cardTextRecyclerView, artistInputLayout)
+        }
+
+        artistEditText.setOnEditorActionListener { textView: TextView, i: Int, keyEvent: KeyEvent? ->
+            if (i == EditorInfo.IME_ACTION_GO) {
+                val text = artistEditText.text.toString().replace(";", "")
+                if(text.isNotEmpty()){
+                    searchCardResultViewModel.addArtist(text, artistRecyclerView)
+                    artistRecyclerView.visibility = View.VISIBLE
+                    realignViews(constraintLayout, artistInputLayout, artistRecyclerView, typeLabelTextView)
+                }
+                artistEditText.setText("")
+            }
+
+            false
+        }
+
+        val artistLayoutManager = GridLayoutManager(context, 3)
+        val artistRecyclerAdapter =
+            CardTextRecyclerAdapter(
+                requireContext(),
+                searchCardResultViewModel.artistList.value!!
+            ) {
+                clearEditTextFocus()
+                artistRecyclerView.suppressLayout(false)
+                val position = artistRecyclerView.getChildLayoutPosition(it.parent as View)
+                searchCardResultViewModel.removeArtist(position, artistRecyclerView)
+                if (searchCardResultViewModel.artistList.value!!.size == 0) {
+                    artistRecyclerView.visibility = View.GONE
+                    realignViews(constraintLayout, artistInputLayout, artistRecyclerView, typeLabelTextView)
+                }
+
+                artistRecyclerView.suppressLayout(true)
+                scrollView.disableScroll = true
+            }
+
+        artistRecyclerView.layoutManager = artistLayoutManager
+        artistRecyclerView.adapter = artistRecyclerAdapter
+        artistRecyclerView.suppressLayout(true)
+        if (searchCardResultViewModel.artistList.value!!.size > 0) {
+            artistRecyclerView.visibility = View.VISIBLE
+            realignViews(constraintLayout, artistInputLayout, artistRecyclerView, typeLabelTextView)
         }
 
         addCompareButton.setOnClickListener {
@@ -508,6 +558,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
     private fun clearEditTextFocus() {
         compareValueEditText.clearFocus()
         cardTextEditText.clearFocus()
+        artistEditText.clearFocus()
     }
 
     private fun hideKeyboard() {

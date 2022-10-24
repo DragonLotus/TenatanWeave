@@ -71,6 +71,7 @@
     <string name="format_none">None</string>
 
     <string name="card_text">Search Card Text</string>
+    <string name="artist">Search by Artist</string>
     <string name="deck_name_text">Deck Name</string>
     <string name="compare_hint">#</string>
     <string name="db_collection_cards">cards</string>
