@@ -271,7 +271,7 @@ class SearchCardResultViewModel : ViewModel() {
                 if (!passRarityFilter(card, includedBaseCardRarityMap))
                     continue
 
-            if (!filterCardsByName(card, cardNameQuery.toString()))
+            if (!filterCardsByName(card, cardNameQuery.toString().trim()))
                 continue
 
             if (!passCardTextFilter(card))

@@ -20,6 +20,8 @@ class Printing(
     val collectorNumber: Int = 0,
     val finishList: List<FinishEnum> = listOf(),
     var finishVersion: Int = 0,
+    var parentSide: String = "",
+    var isMarvel: Boolean = false,
     var baseCard: BaseCard = BaseCard()
 ) : Parcelable {
     fun getFinishSafe(finishVersion: Int): FinishEnum {

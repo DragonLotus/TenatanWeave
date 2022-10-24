@@ -7,7 +7,8 @@ enum class TalentEnum {
     ELEMENTAL,
     EARTH,
     ICE,
-    LIGHTNING;
+    LIGHTNING,
+    DRACONIC;
 
     override fun toString(): String {
         return when (this) {
@@ -18,6 +19,7 @@ enum class TalentEnum {
             EARTH -> "Earth"
             ICE -> "Ice"
             LIGHTNING -> "Lightning"
+            DRACONIC -> "Draconic"
         }
     }
 }

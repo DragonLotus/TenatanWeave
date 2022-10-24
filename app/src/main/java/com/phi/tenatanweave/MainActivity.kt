@@ -199,6 +199,9 @@ class MainActivity : AppCompatActivity(), DeckOptionsBottomSheetFragment.DeckOpt
             .addValueEventListener(expansionSetValueListener)
         Firebase.database.reference.child(resources.getString(R.string.db_collection_formats))
             .addValueEventListener(formatValueListener)
+        Firebase.auth.currentUser?.let {
+            setFirebaseUserListener(it.uid)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -12,7 +12,9 @@ import kotlinx.android.parcel.Parcelize
 class BaseCard(
     val id: String = "",
     val name: String = "",
+    val shorthandName: String = "",
     val text: String = "",
+    val marvelText: String = "",
     val talents: List<String> = listOf(),
     val allowedTalents: List<String> = listOf(),
     val heroClass: String = "",
@@ -26,6 +28,7 @@ class BaseCard(
     val variableDefense: List<Int> = listOf(),
     val variableValue: List<Int> = listOf(),
     val variableString: List<String> = listOf(),
+    val variableString2: List<String> = listOf(),
     val power: List<String> = listOf(),
     val defense: List<String> = listOf(),
     val pitch: List<String> = listOf(),

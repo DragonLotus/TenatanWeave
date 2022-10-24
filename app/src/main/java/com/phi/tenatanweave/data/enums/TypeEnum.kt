@@ -32,6 +32,7 @@ enum class TypeEnum {
         return when (this) {
             ATTACK_REACTION -> "Attack Reaction"
             DEFENSE_REACTION -> "Defense Reaction"
+            ALL -> ""
             else -> this.toString()
         }
     }

@@ -67,7 +67,7 @@ class SearchFragment : Fragment() {
                             navController.navigate(action)
                         }
                         1 -> {
-                            searchSetViewPagerViewModel.filterSetByName(query)
+                            searchSetViewPagerViewModel.filterSetByName(query.trim())
                         }
                     }
                 }
@@ -88,7 +88,7 @@ class SearchFragment : Fragment() {
                 } else if (newText.isNotEmpty()) {
                     when (viewPager.currentItem) {
                         1 -> {
-                            searchSetViewPagerViewModel.filterSetByName(newText)
+                            searchSetViewPagerViewModel.filterSetByName(newText.trim())
                         }
                     }
                 }

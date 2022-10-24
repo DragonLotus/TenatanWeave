@@ -207,6 +207,10 @@ class SingleCardFragment : Fragment() {
                     cardText = cardText.replace("VARIABLE_VALUE", it.baseCard.variableValue[version].toString())
                 if (it.baseCard.variableString.isNotEmpty() && it.baseCard.variableString.size > version)
                     cardText = cardText.replace("VARIABLE_STRING", it.baseCard.variableString[version])
+                if (it.baseCard.variableString2.isNotEmpty() && it.baseCard.variableString2.size > version)
+                    cardText = cardText.replace("VARIABLE_STRING_2", it.baseCard.variableString2[version])
+                if (it.baseCard.shorthandName.isNotEmpty())
+                    cardText = cardText.replace("SH_CARD_NAME", it.baseCard.name)
                 if (it.baseCard.name.isNotEmpty())
                     cardText = cardText.replace("CARD_NAME", it.baseCard.name)
 

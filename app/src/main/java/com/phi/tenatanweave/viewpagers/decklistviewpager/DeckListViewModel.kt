@@ -71,6 +71,8 @@ class DeckListViewModel : ViewModel() {
                                     this.collectorNumber,
                                     this.finishList,
                                     finishFromDeck,
+                                    this.parentSide,
+                                    this.isMarvel,
                                     this.baseCard
                                 )
                             }
@@ -130,6 +132,8 @@ class DeckListViewModel : ViewModel() {
                             it.collectorNumber,
                             it.finishList,
                             equipment.finish,
+                            it.parentSide,
+                            it.isMarvel,
                             it.baseCard
                         )
                     if (!checkIfLegalWithHero(cardPrinting, heroCardPrinting))
@@ -175,6 +179,8 @@ class DeckListViewModel : ViewModel() {
                             it.collectorNumber,
                             it.finishList,
                             coreDeckCard.finish,
+                            it.parentSide,
+                            it.isMarvel,
                             it.baseCard
                         )
                     if (!checkIfLegalWithHero(cardPrinting, heroCardPrinting))
@@ -325,16 +331,18 @@ class DeckListViewModel : ViewModel() {
             else if (cardPrinting.baseCard.specialization.contains(heroCardPrinting.baseCard.name))
                 return legal
 
-
+            //Need to make sure that type ALL doesn't get in
             if (mDeck.value?.format != "None") {
-                if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
-                    || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
+                if (cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.HERO
+                    || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.TOKEN
+                    || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.ALL
                     || cardPrinting.baseCard.illegalFormats.contains(mDeck.value?.format)
                 )
                     legal = false
             } else {
-                if (TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.HERO
-                    || TypeEnum.valueOf(cardPrinting.baseCard.type) == TypeEnum.TOKEN
+                if (cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.HERO
+                    || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.TOKEN
+                    || cardPrinting.baseCard.getTypeAsEnum() == TypeEnum.ALL
                 )
                     legal = false
             }
@@ -349,6 +357,7 @@ class DeckListViewModel : ViewModel() {
 
             return legal
         }
+
         return false
     }
 

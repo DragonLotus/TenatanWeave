@@ -21,8 +21,12 @@ enum class SubTypeEnum {
     ATTACK,
     ITEM,
     GEM,
+    AFFLICTION,
     AURA,
     DEMON,
+    DRAGON,
+    INVOCATION,
+    ASH,
     ALLY,
     LANDMARK,
     SCEPTER,
@@ -30,7 +34,8 @@ enum class SubTypeEnum {
     AXE,
     FLAIL,
     SCYTHE,
-    OFF_HAND;
+    OFF_HAND,
+    ROCK;
 
     override fun toString(): String {
         return when (this) {
@@ -64,6 +69,11 @@ enum class SubTypeEnum {
             FLAIL -> "Flail"
             SCYTHE -> "Scythe"
             OFF_HAND -> "Off-Hand"
+            DRAGON -> "Dragon"
+            ASH -> "Ash"
+            INVOCATION -> "Invocation"
+            AFFLICTION -> "Affliction"
+            ROCK -> "Rock"
         }
     }
 

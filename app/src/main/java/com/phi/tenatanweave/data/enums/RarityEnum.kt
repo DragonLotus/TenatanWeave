@@ -6,6 +6,7 @@ enum class RarityEnum {
     L,
     M,
     S,
+    MV,
     R,
     C,
     P,
@@ -18,6 +19,7 @@ enum class RarityEnum {
             L -> "Legendary"
             M -> "Majestic"
             S -> "Super Rare"
+            MV -> "Marvel"
             R -> "Rare"
             C -> "Common"
             P -> "Promo"

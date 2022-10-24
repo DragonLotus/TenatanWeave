@@ -19,21 +19,41 @@ class CardRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
         with(card) {
             itemView.deck_list_card_name.text = name
 
-            itemView.card_textview.text = when(getTypeAsEnum()) {
-                    TypeEnum.HERO -> "Intellect: $intellect | Health: $health"
-                    TypeEnum.EQUIPMENT -> "Defense: ${getDefenseSafe(printing.version)}"
-                    TypeEnum.WEAPON -> "Power: ${getPowerSafe(printing.version)}"
-                    TypeEnum.ACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
-                    TypeEnum.ATTACK_REACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
-                    TypeEnum.DEFENSE_REACTION -> "Defense: ${getDefenseSafe(printing.version)} | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
-                    TypeEnum.RESOURCE -> "Pitch: ${getPitchSafe(printing.version)}"
-                    TypeEnum.INSTANT -> "Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
-                    TypeEnum.TOKEN -> ""
-                    TypeEnum.MENTOR -> ""
-                    TypeEnum.ALL -> ""
+            itemView.card_textview.text = when (getTypeAsEnum()) {
+                TypeEnum.HERO -> "Intellect: $intellect | Health: $health"
+                TypeEnum.EQUIPMENT -> "Defense: ${getDefenseSafe(printing.version)}"
+                TypeEnum.WEAPON -> "Power: ${getPowerSafe(printing.version)}"
+                TypeEnum.ACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${getDefenseSafe(printing.version)} | Pitch: ${
+                    getPitchSafe(
+                        printing.version
+                    )
+                } | Cost: $cost"
+                TypeEnum.ATTACK_REACTION -> "Power: ${getPowerSafe(printing.version)} | Defense: ${
+                    getDefenseSafe(
+                        printing.version
+                    )
+                } | Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
+                TypeEnum.DEFENSE_REACTION -> "Defense: ${getDefenseSafe(printing.version)} | Pitch: ${
+                    getPitchSafe(
+                        printing.version
+                    )
+                } | Cost: $cost"
+                TypeEnum.RESOURCE -> "Pitch: ${getPitchSafe(printing.version)}"
+                TypeEnum.INSTANT -> "Pitch: ${getPitchSafe(printing.version)} | Cost: $cost"
+                TypeEnum.TOKEN -> ""
+                TypeEnum.MENTOR -> ""
+                TypeEnum.ALL -> ""
             }
 
-            itemView.card_text2.text = "${getHeroClassAsEnum()} ${getTypeAsEnum()} ${if(subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(" ") else ""}"
+            itemView.card_text2.text = if (getTypeAsEnum() != TypeEnum.ALL) {
+                "${getHeroClassAsEnum()} ${getTypeAsEnum()} ${
+                    if (subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(
+                        " "
+                    ) else ""
+                }"
+            } else {
+                "${getHeroClassAsEnum()} ${if (subTypes.isNotEmpty()) "- " + getSubTypesAsEnum().joinToString(" ") else ""}"
+            }
 
             GlideApp.with(context)
 //                .asBitmap()
