@@ -32,6 +32,7 @@
     <string name="label_include_generic">Include Generic: </string>
     <string name="label_type">Type: </string>
     <string name="label_subtype">Sub-Type: </string>
+    <string name="label_talent">Talent: </string>
     <string name="label_pitch">Pitch: </string>
     <string name="label_compare">Cost | Power | Defense: </string>
     <string name="label_add">Add</string>

@@ -51,6 +51,14 @@ class SearchCardResultViewModel : ViewModel() {
     }
     val subTypeList: LiveData<MutableList<FilterStateEnum>> = mSubTypeList
 
+    private var mTalentList = MutableLiveData<MutableList<FilterStateEnum>>().apply {
+        value = mutableListOf()
+        for (i in TalentEnum.values().indices)
+            value!!.add(FilterStateEnum.NONE)
+        value!![0] = FilterStateEnum.IS
+    }
+    val talentList: LiveData<MutableList<FilterStateEnum>> = mTalentList
+
     private var mCompareCostList = MutableLiveData<MutableList<CompareCard>>().apply {
         value = mutableListOf()
     }
@@ -214,6 +222,27 @@ class SearchCardResultViewModel : ViewModel() {
         }
     }
 
+    fun setTalentFilterStateAtIndex(
+        position: Int,
+        filterState: FilterStateEnum,
+        adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
+    ) {
+        mTalentList.value!![position] = filterState
+        adapter.notifyItemChanged(position)
+    }
+
+    fun clearSelectedTalents(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+        for ((index, state) in mTalentList.value!!.withIndex()) {
+            if (index == 0) {
+                mTalentList.value!![0] = FilterStateEnum.IS
+                adapter.notifyItemChanged(index)
+            } else if (state != FilterStateEnum.NONE) {
+                mTalentList.value!![index] = FilterStateEnum.NONE
+                adapter.notifyItemChanged(index)
+            }
+        }
+    }
+
     fun setRarityFilterStateAtIndex(
         position: Int,
         filterState: FilterStateEnum,
@@ -297,6 +326,10 @@ class SearchCardResultViewModel : ViewModel() {
 
             if (mSubTypeList.value!![0] != FilterStateEnum.IS)
                 if (!passSubTypeFilter(card))
+                    continue
+
+            if (mTalentList.value!![0] != FilterStateEnum.IS)
+                if (!passTalentFilter(card))
                     continue
 
             if (mCompareCostList.value!!.isNotEmpty())
@@ -385,6 +418,29 @@ class SearchCardResultViewModel : ViewModel() {
             if (cardPrinting.baseCard.subTypes.isNotEmpty())
                 for (subType in cardPrinting.baseCard.getSubTypesAsEnum()) {
                     if (mSubTypeList.value!![subType.ordinal] == FilterStateEnum.IS) {
+                        passFilter = true
+                        break
+                    }
+                }
+
+        return passFilter
+    }
+
+    private fun passTalentFilter(cardPrinting: Printing): Boolean {
+        var passFilter = false
+        if (!mTalentList.value!!.contains(FilterStateEnum.IS)) {
+            passFilter = true
+            if (cardPrinting.baseCard.talents.isNotEmpty())
+                for (talent in cardPrinting.baseCard.getTalentsAsEnum()) {
+                    if (mTalentList.value!![talent.ordinal] == FilterStateEnum.NOT) {
+                        passFilter = false
+                        break
+                    }
+                }
+        } else
+            if (cardPrinting.baseCard.talents.isNotEmpty())
+                for (talent in cardPrinting.baseCard.getTalentsAsEnum()) {
+                    if (mTalentList.value!![talent.ordinal] == FilterStateEnum.IS) {
                         passFilter = true
                         break
                     }

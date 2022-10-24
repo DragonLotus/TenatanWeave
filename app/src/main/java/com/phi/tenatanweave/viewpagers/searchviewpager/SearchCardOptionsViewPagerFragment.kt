@@ -37,6 +37,7 @@ import com.phi.tenatanweave.recyclerviews.comparepowerrecycler.ComparePowerRecyc
 import com.phi.tenatanweave.recyclerviews.pitchrecycler.PitchRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.rarityrecycler.RarityRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.subtyperecycler.SubTypeRecyclerAdapter
+import com.phi.tenatanweave.recyclerviews.talentrecycler.TalentRecyclerAdapter
 import com.phi.tenatanweave.recyclerviews.typerecycler.TypeRecyclerAdapter
 
 class SearchCardOptionsViewPagerFragment : Fragment() {
@@ -62,6 +63,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
 //        scrollView.isNestedScrollingEnabled = false
         val typeRecyclerView = root.findViewById<RecyclerView>(R.id.type_recyclerview)
         val subTypeRecyclerView = root.findViewById<RecyclerView>(R.id.subtype_recyclerview)
+        val talentRecyclerView = root.findViewById<RecyclerView>(R.id.talent_recyclerview)
         val pitchRecyclerView = root.findViewById<RecyclerView>(R.id.pitch_recyclerview)
         val costRecyclerView = root.findViewById<RecyclerView>(R.id.cost_recyclerview)
         val powerRecyclerView = root.findViewById<RecyclerView>(R.id.power_recyclerview)
@@ -199,6 +201,59 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
         subTypeRecyclerView.layoutManager = subTypeLayoutManager
         subTypeRecyclerView.adapter = subTypeRecyclerAdapter
         subTypeRecyclerView.suppressLayout(true)
+
+        val talentLayoutManager = GridLayoutManager(context, 3)
+        val talentRecyclerAdapter =
+            TalentRecyclerAdapter(
+                requireContext(),
+                searchCardResultViewModel.talentList.value!!
+            ) {
+                clearEditTextFocus()
+                talentRecyclerView.suppressLayout(false)
+                val position = talentRecyclerView.getChildLayoutPosition(it.parent as View)
+                val selectedFilterState =
+                    searchCardResultViewModel.talentList.value!![position]
+
+                if (position == 0 && (searchCardResultViewModel.talentList.value!!.contains(FilterStateEnum.NOT)
+                            || searchCardResultViewModel.talentList.value!!.contains(FilterStateEnum.IS))
+                ) {
+                    activity!!.runOnUiThread {
+                        searchCardResultViewModel.clearSelectedTalents(talentRecyclerView.adapter!!)
+                    }
+                } else if (position != 0) {
+
+                    activity!!.runOnUiThread {
+                        if (searchCardResultViewModel.talentList.value!![0] != FilterStateEnum.NONE)
+                            searchCardResultViewModel.setTalentFilterStateAtIndex(
+                                0,
+                                FilterStateEnum.NONE,
+                                talentRecyclerView.adapter!!
+                            )
+                        searchCardResultViewModel.setTalentFilterStateAtIndex(
+                            position,
+                            FilterStateEnum.values()[(selectedFilterState.ordinal + 1) % FilterStateEnum.values().size],
+                            talentRecyclerView.adapter!!
+                        )
+                    }
+
+                    if (!searchCardResultViewModel.talentList.value!!.contains(FilterStateEnum.IS)
+                        && !searchCardResultViewModel.talentList.value!!.contains(FilterStateEnum.NOT)
+                    )
+                        activity!!.runOnUiThread {
+                            searchCardResultViewModel.setTalentFilterStateAtIndex(
+                                0,
+                                FilterStateEnum.IS,
+                                talentRecyclerView.adapter!!
+                            )
+                        }
+                }
+                talentRecyclerView.suppressLayout(true)
+                scrollView.disableScroll = true
+            }
+
+        talentRecyclerView.layoutManager = talentLayoutManager
+        talentRecyclerView.adapter = talentRecyclerAdapter
+        talentRecyclerView.suppressLayout(true)
 
         val pitchLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         val pitchRecyclerAdapter =
@@ -338,7 +393,7 @@ class SearchCardOptionsViewPagerFragment : Fragment() {
             ) {
                 clearEditTextFocus()
                 cardTextRecyclerView.suppressLayout(false)
-                val position = subTypeRecyclerView.getChildLayoutPosition(it.parent as View)
+                val position = cardTextRecyclerView.getChildLayoutPosition(it.parent as View)
                 searchCardResultViewModel.removeCardText(position, cardTextRecyclerView)
                 if (searchCardResultViewModel.cardTextList.value!!.size == 0) {
                     cardTextRecyclerView.visibility = View.GONE

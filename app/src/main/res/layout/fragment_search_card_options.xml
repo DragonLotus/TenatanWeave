@@ -130,6 +130,24 @@
                     app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
+                    android:id="@+id/talent_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:text="@string/label_talent"
+                    android:textSize="@dimen/heading_1"
+                    android:textIsSelectable="false"
+                    app:layout_constraintTop_toBottomOf="@id/subtype_recyclerview"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/talent_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/talent_label"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
                     android:id="@+id/pitch_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -138,7 +156,7 @@
                     android:textSize="@dimen/heading_1"
                     android:textIsSelectable="false"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subtype_recyclerview"
+                    app:layout_constraintTop_toBottomOf="@id/talent_recyclerview"
                     app:layout_constraintBottom_toTopOf="@id/pitch_recyclerview"/>
 
             <androidx.recyclerview.widget.RecyclerView

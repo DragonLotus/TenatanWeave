@@ -322,12 +322,11 @@ class SingleCardFragment : Fragment() {
             formatList,
             requireContext()
         )
-        if (singleCardViewModel.cardPrinting.value!!.baseCard.illegalFormats.isNotEmpty()) {
-            legalityRecyclerAdapter.setList(singleCardViewModel.cardPrinting.value!!.baseCard.illegalFormats)
-            legalityRecyclerView.adapter = legalityRecyclerAdapter
-            legalityRecyclerView.layoutManager = legalityRecyclerLayoutManager
-            legalityRecyclerView.suppressLayout(true)
-        }
+
+        legalityRecyclerAdapter.setList(singleCardViewModel.cardPrinting.value!!.baseCard.illegalFormats)
+        legalityRecyclerView.adapter = legalityRecyclerAdapter
+        legalityRecyclerView.layoutManager = legalityRecyclerLayoutManager
+        legalityRecyclerView.suppressLayout(true)
 
         val rulingRecyclerLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val rulingRecyclerAdapter =
